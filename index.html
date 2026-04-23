@@ -152,13 +152,8 @@
     font-size: 14px;
     color: var(--ink);
     flex: 1;
-    cursor: text;
     padding: 2px 4px;
-    border-radius: 3px;
-    outline: none;
   }
-  .column-title:hover { background: #f0ece2; }
-  .column-title:focus { background: #fff8e1; box-shadow: 0 0 0 2px var(--amber); }
   .count-badge {
     background: var(--bg);
     color: var(--ink-muted);
@@ -556,6 +551,233 @@
     color: var(--ink-muted);
   }
   .rules-note strong { color: var(--ink); }
+
+  .empty-import {
+    text-align: center;
+    padding: 28px 16px;
+    color: var(--ink-muted);
+  }
+  .empty-import-text {
+    font-size: 13px;
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+  .btn-import {
+    background: var(--green);
+    color: white;
+    border: 0;
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .btn-import:hover { background: var(--green-dark); }
+  .import-status {
+    background: var(--green-light);
+    border-bottom: 1px solid #c8dcc9;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: var(--ink-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .import-status-text { flex: 1; line-height: 1.3; }
+  .import-status-text strong { color: var(--green-dark); font-weight: 600; }
+  .btn-clear-import {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--ink-muted);
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .btn-clear-import:hover { background: white; color: var(--red); border-color: var(--red); }
+  .card-timestamp {
+    flex-shrink: 0;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.15;
+  }
+  .card-timestamp .ts-time {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .card-timestamp .ts-offset {
+    display: block;
+    font-size: 10px;
+    color: var(--ink-muted);
+  }
+  @keyframes signup-fade-in {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .card.signup-stagger {
+    opacity: 0;
+    animation: signup-fade-in 280ms ease-out forwards;
+    animation-delay: calc(var(--stagger-idx, 0) * 80ms);
+  }
+
+  .season-switcher {
+    display: flex;
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .season-switcher .season-btn {
+    background: transparent;
+    color: white;
+    border: 0;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 0.65;
+    font-variant-numeric: tabular-nums;
+  }
+  .season-switcher .season-btn.active {
+    background: rgba(255,255,255,0.2);
+    opacity: 1;
+  }
+
+  .slot-meter {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px;
+    padding: 6px 12px;
+    min-width: 200px;
+    color: white;
+  }
+  .slot-meter-label {
+    font-size: 12px;
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+  .slot-meter-label strong { font-size: 14px; }
+  .slot-meter-pending {
+    opacity: 0.7;
+    font-weight: 500;
+    margin-left: 4px;
+  }
+  .slot-meter-bar {
+    height: 6px;
+    background: rgba(0,0,0,0.25);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .slot-meter-fill {
+    height: 100%;
+    transition: width 280ms ease-out, background 200ms;
+    border-radius: 3px;
+  }
+  .slot-meter-fill.low  { background: #6abf6f; }
+  .slot-meter-fill.high { background: #e0a13a; }
+  .slot-meter-fill.full { background: #e36767; }
+
+  .badge-pending   { background: #fff1d6; color: var(--amber); }
+  .badge-confirmed { background: var(--green-light); color: var(--green); }
+
+  .column.readonly .card { cursor: default; }
+  .column.readonly .cards { background: #fafaf6; }
+  .column.readonly .column-title::after {
+    content: ' (read-only)';
+    color: var(--ink-muted);
+    font-weight: 400;
+    font-size: 11px;
+    margin-left: 4px;
+  }
+
+  .action-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    padding: 12px;
+    background: var(--amber-bg);
+    border: 1px solid #f0d8b4;
+    border-radius: 6px;
+  }
+  .action-row button {
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--ink);
+    flex: 1;
+    min-width: 140px;
+  }
+  .action-row button.primary {
+    background: var(--green);
+    color: white;
+    border-color: var(--green);
+  }
+  .action-row button.primary:hover { background: var(--green-dark); }
+  .action-row button.warn {
+    color: var(--amber);
+    border-color: var(--amber);
+  }
+  .action-row button.warn:hover { background: #fde7d0; }
+
+  .modal-footer button.warn {
+    color: var(--amber);
+    border-color: #f0d8b4;
+  }
+  .modal-footer button.warn:hover { background: #fdf3e3; }
+
+  .setup-dialog { width: 520px; }
+  .setup-options {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+  .setup-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .setup-option:hover:not(.disabled) {
+    border-color: var(--green);
+    background: var(--green-light);
+  }
+  .setup-option.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .setup-option input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--green);
+    cursor: pointer;
+  }
+  .setup-option.disabled input { cursor: not-allowed; }
+  .setup-count {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--green);
+    min-width: 30px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .setup-option.disabled .setup-count { color: var(--ink-muted); }
+  .setup-label {
+    font-size: 13px;
+    color: var(--ink);
+    flex: 1;
+  }
 </style>
 </head>
 <body>
@@ -564,7 +786,8 @@
   <h1>Fred Wright Tournament Manager</h1>
   <span class="subtitle">Oakley Country Club</span>
   <div class="spacer"></div>
-  <span class="season-label">Season: <strong>2026</strong></span>
+  <div class="season-switcher" id="season-switcher"></div>
+  <div class="slot-meter" id="slot-meter"></div>
   <div class="view-toggle">
     <button data-view="internal" class="active">Management View</button>
     <button data-view="public">Player View</button>
@@ -583,7 +806,49 @@
 
   const CURRENT_SEASON = 2026;
   const LAST_SEASON = 2025;
-  const STORAGE_KEY = 'fred-wright-v2';
+  const STORAGE_KEY = 'fred-wright-v3';
+  const SLOT_CAP = 60;
+  const SEASONS = [LAST_SEASON, CURRENT_SEASON];
+  const LIST_IDS = ['participants', 'deferred', 'waitlist', 'new'];
+
+  function listDisplayName(listId, year) {
+    switch (listId) {
+      case 'participants': return year + ' Participants';
+      case 'deferred':     return 'Took ' + year + ' Off';
+      case 'waitlist':     return year + ' Waitlist';
+      case 'new':          return 'New Players ' + year;
+    }
+    return listId;
+  }
+
+  const IMPORT_OPEN_ISO = '2026-01-04T08:00:00';
+  const IMPORT_PAYLOAD = [
+    { name: 'Aronson, Mark',     timestamp: '2026-01-04T08:00:00' },
+    { name: 'Belmonte, Tony',    timestamp: '2026-01-04T08:00:01' },
+    { name: 'Carrera, Steve',    timestamp: '2026-01-04T08:00:03' },
+    { name: 'DiMauro, Frank',    timestamp: '2026-01-04T08:00:04' },
+    { name: 'Egan, Patrick',     timestamp: '2026-01-04T08:00:06' },
+    { name: 'Fagnant, Joe',      timestamp: '2026-01-04T08:00:08' },
+    { name: 'Galante, Vinny',    timestamp: '2026-01-04T08:00:10' },
+    { name: 'Hartigan, Sean',    timestamp: '2026-01-04T08:00:12' },
+    { name: 'Iannelli, Rich',    timestamp: '2026-01-04T08:00:14' },
+    { name: 'Jeong, Min',        timestamp: '2026-01-04T08:00:16' },
+    { name: 'Keenan, Tom',       timestamp: '2026-01-04T08:00:18' },
+    { name: 'Lavoie, Pete',      timestamp: '2026-01-04T08:00:19' },
+    { name: 'Mancuso, Carl',     timestamp: '2026-01-04T08:00:22' },
+    { name: 'Nardone, Dom',      timestamp: '2026-01-04T08:00:25' },
+    { name: 'Olsen, Erik',       timestamp: '2026-01-04T08:00:30' },
+    { name: 'Petrini, Lou',      timestamp: '2026-01-04T08:00:42' },
+    { name: 'Quinn, Brian',      timestamp: '2026-01-04T08:00:58' },
+    { name: 'Russo, Anthony',    timestamp: '2026-01-04T08:01:14' },
+    { name: 'Sciacca, Mike',     timestamp: '2026-01-04T08:01:33' },
+    { name: 'Tedeschi, Paul',    timestamp: '2026-01-04T08:01:52' },
+    { name: 'Underhill, Greg',   timestamp: '2026-01-04T08:02:14' },
+    { name: 'Vasquez, Hector',   timestamp: '2026-01-04T08:02:41' },
+    { name: 'Whalen, Dan',       timestamp: '2026-01-04T08:03:18' },
+    { name: 'Xu, Kevin',         timestamp: '2026-01-04T08:04:01' },
+    { name: 'Yannakakis, Nick',  timestamp: '2026-01-04T08:04:23' }
+  ];
 
   // ---------- SEED DATA ----------
   function seedData() {
@@ -593,7 +858,17 @@
       'Conroy, Jim', 'Copelotti, Andrew', 'Costello, Mike', 'Coughlin, John',
       'Cristofori, Mark', 'Deguglielmo, Paul', 'Doherty, Mark', 'Dolan, Ryan',
       'Douglas, James', 'Feldman, Doug', 'Foldenauer, Jeff', 'Gehrig, Joe Sr.',
-      'Gentile, Chris', 'Glynn, Paul'
+      'Gentile, Chris', 'Glynn, Paul',
+      'Halloran, Tim', 'Higgins, Bob', 'Hurley, Dave', 'Iorio, Sam',
+      'Jacobs, Mike', 'Kelley, Joe', 'Kennedy, Tom', 'Lally, Brian',
+      'Lawrence, Bill', 'Lentini, Vinny', 'MacDonald, Ross', 'Manzelli, Tony',
+      'Marsh, Pete', 'McCormack, Sean', 'McGowan, Jim', 'Mello, Carlos',
+      'Murphy, Bill', 'Nguyen, Tony', "O'Brien, Pat", "O'Connor, Mike",
+      'Oliveira, Joao', 'Palermo, Sal', 'Pappas, Nick', 'Perrone, Joe',
+      'Pham, Quang', 'Powers, Tim', 'Reilly, Brendan', 'Donovan, Bob',
+      'Romano, Frank', 'Sabatino, Gus', 'Saint Pierre, Marc', 'Salvucci, Joe',
+      'Santos, Marcus', 'Sheehan, Tim', 'Shimkus, Greg', 'Stein, Aaron',
+      'Sullivan, Brian', 'Walsh, Jim'
     ];
     const took2025Off = [
       'Kilpatrick, Brian', 'Hagopian, Russ', 'Jones, Bryan', 'Boike, Joe',
@@ -610,24 +885,26 @@
     const seedDate = '2024-12-01';
     participants2025.forEach(name => {
       players.push({
-        id: 'p' + (id++), name: name, list: 'participants', deferralYear: null, notes: '',
-        history: [{ date: seedDate, event: 'Added to Participants for ' + LAST_SEASON + ' season', type: 'add' }]
+        id: 'p' + (id++), name: name, notes: '',
+        seasons: { 2025: { list: 'participants' } },
+        history: [{ date: seedDate, event: 'Played in 2025 season', type: 'add' }]
       });
     });
     took2025Off.forEach(name => {
       players.push({
-        id: 'p' + (id++), name: name, list: 'deferred',
-        deferralYear: LAST_SEASON, lastDeferredSeason: LAST_SEASON, notes: '',
+        id: 'p' + (id++), name: name, notes: '',
+        seasons: { 2025: { list: 'deferred' } },
         history: [
           { date: '2024-11-15', event: 'Participant in prior season', type: 'add' },
-          { date: seedDate, event: 'Deferred for ' + LAST_SEASON + ' season', type: 'defer', season: LAST_SEASON }
+          { date: seedDate, event: 'Deferred for 2025 season', type: 'defer', season: 2025 }
         ]
       });
     });
     waitlist2025.forEach(name => {
       players.push({
-        id: 'p' + (id++), name: name, list: 'waitlist', deferralYear: null, notes: '',
-        history: [{ date: seedDate, event: 'Added to Waitlist for ' + LAST_SEASON + ' season', type: 'add' }]
+        id: 'p' + (id++), name: name, notes: '',
+        seasons: { 2025: { list: 'waitlist' } },
+        history: [{ date: seedDate, event: 'On 2025 waitlist', type: 'add' }]
       });
     });
 
@@ -635,31 +912,31 @@
       'Amico, Angelo': {
         notes: 'Plays fast — prefers 7:30 tee time. Original tournament member.',
         history: [
-          { date: '2019-11-01', event: 'Added to Participants for 2020 season', type: 'add' },
-          { date: '2020-11-01', event: 'Added to Participants for 2021 season', type: 'add' },
-          { date: '2021-11-01', event: 'Added to Participants for 2022 season', type: 'add' },
-          { date: '2022-11-01', event: 'Added to Participants for 2023 season', type: 'add' },
-          { date: '2023-11-01', event: 'Added to Participants for 2024 season', type: 'add' },
-          { date: '2024-12-01', event: 'Added to Participants for 2025 season', type: 'add' }
+          { date: '2019-11-01', event: 'Played in 2020 season', type: 'add' },
+          { date: '2020-11-01', event: 'Played in 2021 season', type: 'add' },
+          { date: '2021-11-01', event: 'Played in 2022 season', type: 'add' },
+          { date: '2022-11-01', event: 'Played in 2023 season', type: 'add' },
+          { date: '2023-11-01', event: 'Played in 2024 season', type: 'add' },
+          { date: '2024-12-01', event: 'Played in 2025 season', type: 'add' }
         ]
       },
       'Battista, Mike': {
         notes: 'Usually pairs with Burke. 14 handicap, consistent.',
         history: [
-          { date: '2021-11-01', event: 'Added to Participants for 2022 season', type: 'add' },
-          { date: '2022-11-01', event: 'Added to Participants for 2023 season', type: 'add' },
-          { date: '2023-11-01', event: 'Added to Participants for 2024 season', type: 'add' },
-          { date: '2024-12-01', event: 'Added to Participants for 2025 season', type: 'add' }
+          { date: '2021-11-01', event: 'Played in 2022 season', type: 'add' },
+          { date: '2022-11-01', event: 'Played in 2023 season', type: 'add' },
+          { date: '2023-11-01', event: 'Played in 2024 season', type: 'add' },
+          { date: '2024-12-01', event: 'Played in 2025 season', type: 'add' }
         ]
       },
       'Burke, Mike': {
         notes: 'Prefers walking. Cart only in bad weather. Pair with Battista.',
         history: [
-          { date: '2020-11-01', event: 'Added to Participants for 2021 season', type: 'add' },
-          { date: '2021-11-01', event: 'Added to Participants for 2022 season', type: 'add' },
-          { date: '2022-11-01', event: 'Added to Participants for 2023 season', type: 'add' },
-          { date: '2023-11-01', event: 'Added to Participants for 2024 season', type: 'add' },
-          { date: '2024-12-01', event: 'Added to Participants for 2025 season', type: 'add' }
+          { date: '2020-11-01', event: 'Played in 2021 season', type: 'add' },
+          { date: '2021-11-01', event: 'Played in 2022 season', type: 'add' },
+          { date: '2022-11-01', event: 'Played in 2023 season', type: 'add' },
+          { date: '2023-11-01', event: 'Played in 2024 season', type: 'add' },
+          { date: '2024-12-01', event: 'Played in 2025 season', type: 'add' }
         ]
       },
       'Chryssis, Alex': {
@@ -668,44 +945,42 @@
           { date: '2021-11-15', event: 'Added to Waitlist for 2022 season', type: 'add' },
           { date: '2022-11-15', event: 'Carried on Waitlist for 2023 season', type: 'add' },
           { date: '2023-02-10', event: 'Moved from Waitlist → Participants', type: 'move' },
-          { date: '2023-11-01', event: 'Added to Participants for 2024 season', type: 'add' },
-          { date: '2024-12-01', event: 'Added to Participants for 2025 season', type: 'add' }
+          { date: '2023-11-01', event: 'Played in 2024 season', type: 'add' },
+          { date: '2024-12-01', event: 'Played in 2025 season', type: 'add' }
         ]
       },
       'Coughlin, John': {
         notes: 'Attorney — schedule around trial calendar. Prefers late March weekends.',
         history: [
-          { date: '2022-11-01', event: 'Added to Participants for 2023 season', type: 'add' },
-          { date: '2023-11-01', event: 'Added to Participants for 2024 season', type: 'add' },
-          { date: '2024-12-01', event: 'Added to Participants for 2025 season', type: 'add' }
+          { date: '2022-11-01', event: 'Played in 2023 season', type: 'add' },
+          { date: '2023-11-01', event: 'Played in 2024 season', type: 'add' },
+          { date: '2024-12-01', event: 'Played in 2025 season', type: 'add' }
         ]
       },
       'Reynolds, Jim': {
         notes: 'Shoulder surgery in 2022, back trouble late 2024 — check on status before confirming 2026.',
         history: [
-          { date: '2020-11-01', event: 'Added to Participants for 2021 season', type: 'add' },
+          { date: '2020-11-01', event: 'Played in 2021 season', type: 'add' },
           { date: '2021-11-01', event: 'Deferred for 2022 season', type: 'defer', season: 2022 },
-          { date: '2022-11-01', event: 'Returned from 2022 deferral — added to Participants', type: 'return' },
-          { date: '2023-11-01', event: 'Added to Participants for 2024 season', type: 'add' },
-          { date: '2024-11-15', event: 'Participant in 2024 season', type: 'add' },
+          { date: '2022-11-01', event: 'Returned from 2022 deferral', type: 'return' },
+          { date: '2023-11-01', event: 'Played in 2024 season', type: 'add' },
+          { date: '2024-11-15', event: 'Played in 2024 season', type: 'add' },
           { date: '2024-12-01', event: 'Deferred for 2025 season', type: 'defer', season: 2025 }
         ]
       },
       'Kilpatrick, Brian': {
         history: [
-          { date: '2021-11-01', event: 'Added to Participants for 2022 season', type: 'add' },
-          { date: '2022-11-01', event: 'Added to Participants for 2023 season', type: 'add' },
-          { date: '2023-11-01', event: 'Added to Participants for 2024 season', type: 'add' },
-          { date: '2024-11-15', event: 'Participant in 2024 season', type: 'add' },
+          { date: '2021-11-01', event: 'Played in 2022 season', type: 'add' },
+          { date: '2022-11-01', event: 'Played in 2023 season', type: 'add' },
+          { date: '2023-11-01', event: 'Played in 2024 season', type: 'add' },
           { date: '2024-12-01', event: 'Deferred for 2025 season', type: 'defer', season: 2025 }
         ]
       },
       'Bartley, Jack': {
         notes: 'Work travel schedule variable. Confirm early for 2026.',
         history: [
-          { date: '2022-11-01', event: 'Added to Participants for 2023 season', type: 'add' },
-          { date: '2023-11-01', event: 'Added to Participants for 2024 season', type: 'add' },
-          { date: '2024-11-15', event: 'Participant in 2024 season', type: 'add' },
+          { date: '2022-11-01', event: 'Played in 2023 season', type: 'add' },
+          { date: '2023-11-01', event: 'Played in 2024 season', type: 'add' },
           { date: '2024-12-01', event: 'Deferred for 2025 season', type: 'defer', season: 2025 }
         ]
       },
@@ -714,7 +989,7 @@
         history: [
           { date: '2022-11-15', event: 'Added to Waitlist for 2023 season', type: 'add' },
           { date: '2023-11-15', event: 'Carried on Waitlist for 2024 season', type: 'add' },
-          { date: '2024-12-01', event: 'Added to Waitlist for 2025 season', type: 'add' }
+          { date: '2024-12-01', event: 'On 2025 waitlist', type: 'add' }
         ]
       },
       "O'Neill, Conor": {
@@ -736,14 +1011,8 @@
     });
 
     return {
-      lists: [
-        { id: 'participants', name: 'Participants' },
-        { id: 'deferred', name: 'Took Year Off' },
-        { id: 'waitlist', name: 'Waitlist' },
-        { id: 'new', name: 'New Players' }
-      ],
-      players: players,
-      dismissedReturnBanner: false
+      activeSeason: CURRENT_SEASON,
+      players: players
     };
   }
 
@@ -753,15 +1022,24 @@
   let searchQuery = '';
   const columnSearch = {};
   let dragging = null; // { playerId, cardEl }
+  const importStagger = new Map(); // playerId -> stagger index for fade-in animation
+  let staggerClearTimer = null;
+
+  function scheduleStaggerClear(delayMs) {
+    if (staggerClearTimer) clearTimeout(staggerClearTimer);
+    staggerClearTimer = setTimeout(() => {
+      importStagger.clear();
+      staggerClearTimer = null;
+    }, delayMs);
+  }
 
   function loadState() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return seedData();
       const parsed = JSON.parse(raw);
-      if (!parsed || !Array.isArray(parsed.players) || !Array.isArray(parsed.lists)) {
-        return seedData();
-      }
+      if (!parsed || !Array.isArray(parsed.players)) return seedData();
+      if (typeof parsed.activeSeason !== 'number') parsed.activeSeason = CURRENT_SEASON;
       return parsed;
     } catch (e) {
       return seedData();
@@ -779,100 +1057,198 @@
 
   // ---------- HELPERS ----------
   function today() { return new Date().toISOString().slice(0, 10); }
+
+  function formatSignupTime(iso) {
+    const t = iso.slice(11, 19);
+    let [h, m, s] = t.split(':').map(Number);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0') + ' ' + ampm;
+  }
+  function formatSignupOffset(iso) {
+    const open = new Date(IMPORT_OPEN_ISO).getTime();
+    const t = new Date(iso).getTime();
+    const diff = Math.max(0, Math.floor((t - open) / 1000));
+    const m = Math.floor(diff / 60);
+    const s = diff % 60;
+    return '+' + m + ':' + String(s).padStart(2, '0');
+  }
+  function formatSignupDate(iso) {
+    const [y, mo, d] = iso.slice(0, 10).split('-').map(Number);
+    return mo + '/' + d + '/' + y;
+  }
   function logHistory(player, event, type, extra) {
     if (!player.history) player.history = [];
     const entry = { date: today(), event: event, type: type || 'move' };
     if (extra) Object.assign(entry, extra);
     player.history.push(entry);
   }
-  function findList(id) { return state.lists.find(l => l.id === id); }
-  function playersInList(id) { return state.players.filter(p => p.list === id); }
 
-  function deferredLastSeason(player) {
-    return player.lastDeferredSeason === LAST_SEASON;
+  function getSeason(player, year) {
+    return player.seasons && player.seasons[year];
   }
-  function getReturningPlayers() {
-    return state.players.filter(p =>
-      p.list === 'deferred' && p.deferralYear && p.deferralYear < CURRENT_SEASON
-    );
+  function setSeason(player, year, value) {
+    if (!player.seasons) player.seasons = {};
+    if (value === null) delete player.seasons[year];
+    else player.seasons[year] = value;
+  }
+  function playersInListForSeason(year, listId) {
+    return state.players.filter(p => {
+      const s = getSeason(p, year);
+      return s && s.list === listId;
+    });
+  }
+  function getStatus(player, year) {
+    const s = getSeason(player, year);
+    if (!s || s.list !== 'participants') return null;
+    if (year === CURRENT_SEASON) return s.status || 'confirmed';
+    return 'played';
+  }
+  function previouslyDeferred(player) {
+    const prior = getSeason(player, LAST_SEASON);
+    return !!(prior && prior.list === 'deferred');
+  }
+
+  function participantCounts() {
+    let confirmed = 0, pending = 0;
+    for (const p of state.players) {
+      const s = getSeason(p, CURRENT_SEASON);
+      if (!s || s.list !== 'participants') continue;
+      if (s.status === 'pending') pending++;
+      else confirmed++;
+    }
+    return { confirmed, pending };
+  }
+  function rolloverCandidates(listId) {
+    return state.players.filter(p => {
+      const s = getSeason(p, LAST_SEASON);
+      return s && s.list === listId && !getSeason(p, CURRENT_SEASON);
+    });
   }
 
   // ---------- RENDER ----------
   const mainEl = document.getElementById('main-view');
   const bannerArea = document.getElementById('banner-area');
   const overlay = document.getElementById('modal-overlay');
+  const switcherEl = document.getElementById('season-switcher');
+  const slotMeterEl = document.getElementById('slot-meter');
 
   function render() {
-    renderBanner();
+    renderHeaderControls();
+    renderSetupBanner();
     if (currentView === 'internal') renderInternal();
     else renderPublic();
   }
 
-  function renderBanner() {
+  function renderHeaderControls() {
+    switcherEl.innerHTML = SEASONS.map(y =>
+      '<button class="season-btn' + (state.activeSeason === y ? ' active' : '') + '" data-year="' + y + '">' + y + '</button>'
+    ).join('');
+    switcherEl.querySelectorAll('.season-btn').forEach(btn => {
+      btn.onclick = () => {
+        state.activeSeason = Number(btn.dataset.year);
+        saveState();
+        render();
+      };
+    });
+
+    const showMeter = state.activeSeason === CURRENT_SEASON && currentView === 'internal';
+    slotMeterEl.style.visibility = showMeter ? 'visible' : 'hidden';
+    const { confirmed, pending } = showMeter ? participantCounts() : { confirmed: 0, pending: 0 };
+    const pct = Math.min(100, Math.round((confirmed / SLOT_CAP) * 100));
+    let level = 'low';
+    if (confirmed >= SLOT_CAP) level = 'full';
+    else if (confirmed >= SLOT_CAP * 0.8) level = 'high';
+    updateSlotMeter(confirmed, pending, pct, level);
+  }
+
+  function updateSlotMeter(confirmed, pending, pct, level) {
+    if (!slotMeterEl.firstChild) {
+      slotMeterEl.innerHTML =
+        '<div class="slot-meter-label">' +
+          '<strong class="slot-confirmed"></strong> / ' + SLOT_CAP + ' confirmed' +
+          ' <span class="slot-meter-pending"></span>' +
+        '</div>' +
+        '<div class="slot-meter-bar"><div class="slot-meter-fill"></div></div>';
+    }
+    slotMeterEl.querySelector('.slot-confirmed').textContent = confirmed;
+    const pendingEl = slotMeterEl.querySelector('.slot-meter-pending');
+    pendingEl.textContent = pending > 0 ? '+' + pending + ' pending' : '';
+    const fill = slotMeterEl.querySelector('.slot-meter-fill');
+    fill.className = 'slot-meter-fill ' + level;
+    fill.style.width = pct + '%';
+  }
+
+  function renderSetupBanner() {
     bannerArea.innerHTML = '';
-    if (state.dismissedReturnBanner) return;
-    const returning = getReturningPlayers();
-    if (returning.length === 0) return;
+    if (state.activeSeason !== CURRENT_SEASON || currentView !== 'internal') return;
+
+    let unrolled = 0;
+    let anyRolled = false;
+    for (const p of state.players) {
+      const prior = getSeason(p, LAST_SEASON);
+      const current = getSeason(p, CURRENT_SEASON);
+      if (current) anyRolled = true;
+      if (prior && ROLLOVER_SOURCES.has(prior.list) && !current) unrolled++;
+    }
+    if (unrolled === 0) return;
+
+    const text = anyRolled
+      ? '<strong>' + unrolled + ' player' + (unrolled === 1 ? '' : 's') + ' from ' + LAST_SEASON + '</strong> ' +
+        'still available to roll over.'
+      : '<strong>' + CURRENT_SEASON + ' season is empty.</strong> ' +
+        'Roll over players from ' + LAST_SEASON + ' to start building the list.';
+
     const div = document.createElement('div');
     div.className = 'banner';
-    const plural = returning.length === 1 ? '' : 's';
-    const verb = returning.length === 1 ? 'is' : 'are';
     div.innerHTML =
       '<div class="banner-icon">&#x27F2;</div>' +
-      '<div class="banner-text">' +
-        '<strong>' + returning.length + ' player' + plural + '</strong> ' +
-        'deferred for ' + LAST_SEASON + ' and ' + verb + ' ready to return for ' + CURRENT_SEASON + '.' +
-      '</div>' +
-      '<button id="banner-return-all">Return All to Participants</button>' +
-      '<button class="secondary" id="banner-dismiss">Dismiss</button>';
+      '<div class="banner-text">' + text + '</div>' +
+      '<button id="banner-setup">' + (anyRolled ? 'Continue' : 'Set Up ' + CURRENT_SEASON + ' Season') + '</button>';
     bannerArea.appendChild(div);
-    document.getElementById('banner-return-all').onclick = () => {
-      returning.forEach(p => {
-        p.list = 'participants';
-        p.deferralYear = null;
-        logHistory(p, 'Returned from ' + LAST_SEASON + ' deferral — added to Participants', 'return');
-      });
-      saveState();
-      render();
-    };
-    document.getElementById('banner-dismiss').onclick = () => {
-      state.dismissedReturnBanner = true;
-      saveState();
-      render();
-    };
+    document.getElementById('banner-setup').onclick = showSetupDialog;
   }
 
   function renderInternal() {
+    const isActive = state.activeSeason === CURRENT_SEASON;
+    const noteText = isActive
+      ? '<strong>' + CURRENT_SEASON + ' season:</strong> Click a Pending player to confirm or decline. ' +
+        'Decline moves them to "Took ' + CURRENT_SEASON + ' Off" — eligible to return ' + (CURRENT_SEASON + 1) + '. ' +
+        'Drag cards to move or reorder.'
+      : '<strong>' + state.activeSeason + ' season (read-only):</strong> Historical view of last season. ' +
+        'Switch to ' + CURRENT_SEASON + ' to make changes.';
+
     mainEl.innerHTML = '<div class="kanban" id="kanban"></div>' +
-      '<div class="rules-note"><strong>Active rules:</strong> Players in Participants auto-carry into next season. ' +
-      'Deferring moves them to Took Year Off for one season. ' +
-      'A second consecutive deferral triggers a warning and suggests moving them to the bottom of the Waitlist. ' +
-      'Click any column name to rename it. Drag cards to move or reorder.</div>';
+      '<div class="rules-note">' + noteText + '</div>';
 
     const kanban = document.getElementById('kanban');
-    state.lists.forEach(list => {
+    LIST_IDS.forEach(listId => {
       const col = document.createElement('div');
       col.className = 'column';
-      col.dataset.listId = list.id;
+      col.dataset.listId = listId;
+      if (!isActive) col.classList.add('readonly');
 
       const header = document.createElement('div');
       header.className = 'column-header';
       const titleEl = document.createElement('div');
       titleEl.className = 'column-title';
-      titleEl.contentEditable = 'true';
-      titleEl.textContent = list.name;
-      titleEl.dataset.listId = list.id;
+      titleEl.textContent = listDisplayName(listId, state.activeSeason);
       const countEl = document.createElement('span');
       countEl.className = 'count-badge';
-      const players = playersInList(list.id);
+      const players = playersInListForSeason(state.activeSeason, listId);
       countEl.textContent = players.length;
+      header.appendChild(titleEl);
+      header.appendChild(countEl);
       const addBtn = document.createElement('button');
       addBtn.className = 'btn-add';
       addBtn.textContent = '+';
       addBtn.title = 'Add player';
-      addBtn.onclick = () => addPlayerToList(list.id);
-      header.appendChild(titleEl);
-      header.appendChild(countEl);
+      if (isActive) {
+        addBtn.onclick = () => addPlayerToList(listId);
+      } else {
+        addBtn.style.visibility = 'hidden';
+        addBtn.tabIndex = -1;
+      }
       header.appendChild(addBtn);
 
       const searchWrap = document.createElement('div');
@@ -881,8 +1257,8 @@
       searchInput.type = 'text';
       searchInput.className = 'column-search';
       searchInput.placeholder = 'Search…';
-      searchInput.value = columnSearch[list.id] || '';
-      searchInput.setAttribute('aria-label', 'Search ' + list.name);
+      searchInput.value = columnSearch[listId] || '';
+      searchInput.setAttribute('aria-label', 'Search ' + listDisplayName(listId, state.activeSeason));
       const clearBtn = document.createElement('button');
       clearBtn.type = 'button';
       clearBtn.className = 'column-search-clear';
@@ -892,11 +1268,37 @@
       searchWrap.appendChild(searchInput);
       searchWrap.appendChild(clearBtn);
 
+      const isNew = listId === 'new';
+      const importedPlayers = isNew && isActive ? players.filter(p => p.signupTimestamp) : [];
+      let statusEl = null;
+      if (isNew && isActive && importedPlayers.length > 0) {
+        const tsList = importedPlayers.map(p => p.signupTimestamp).slice().sort();
+        const first = tsList[0];
+        const last = tsList[tsList.length - 1];
+        statusEl = document.createElement('div');
+        statusEl.className = 'import-status';
+        statusEl.innerHTML =
+          '<div class="import-status-text">' +
+            '<strong>Imported &middot; ' + escapeHtml(formatSignupDate(first)) + '</strong> &middot; ' +
+            escapeHtml(formatSignupTime(first)) + '&ndash;' + escapeHtml(formatSignupTime(last)) +
+          '</div>' +
+          '<button class="btn-clear-import">Clear</button>';
+      }
+
       const cardsEl = document.createElement('div');
       cardsEl.className = 'cards';
-      cardsEl.dataset.listId = list.id;
-      players.forEach((p, i) => cardsEl.appendChild(renderCard(p, i + 1)));
-      attachDropHandlers(cardsEl);
+      cardsEl.dataset.listId = listId;
+      if (isNew && isActive && players.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-import';
+        empty.innerHTML =
+          '<div class="empty-import-text">No new signups yet</div>' +
+          '<button class="btn-import">Import from Golf Genius</button>';
+        cardsEl.appendChild(empty);
+      } else {
+        players.forEach((p, i) => cardsEl.appendChild(renderCard(p, i + 1)));
+      }
+      if (isActive) attachDropHandlers(cardsEl);
 
       const applyColumnFilter = () => {
         const q = searchInput.value.toLowerCase().trim();
@@ -921,11 +1323,11 @@
       };
       const setSearch = (val) => {
         searchInput.value = val;
-        columnSearch[list.id] = val;
+        columnSearch[listId] = val;
         applyColumnFilter();
       };
       searchInput.addEventListener('input', () => {
-        columnSearch[list.id] = searchInput.value;
+        columnSearch[listId] = searchInput.value;
         applyColumnFilter();
       });
       searchInput.addEventListener('keydown', e => {
@@ -937,31 +1339,32 @@
       };
 
       col.appendChild(header);
+      if (statusEl) col.appendChild(statusEl);
       col.appendChild(searchWrap);
       col.appendChild(cardsEl);
       kanban.appendChild(col);
 
-      applyColumnFilter();
-
-      titleEl.addEventListener('blur', () => {
-        const newName = titleEl.textContent.trim();
-        if (newName && newName !== list.name) {
-          list.name = newName;
-          saveState();
-        } else {
-          titleEl.textContent = list.name;
+      if (isNew && isActive) {
+        const importBtn = cardsEl.querySelector('.btn-import');
+        if (importBtn) importBtn.onclick = showImportConfirm;
+        if (statusEl) {
+          statusEl.querySelector('.btn-clear-import').onclick = clearImportedPlayers;
         }
-      });
-      titleEl.addEventListener('keydown', e => {
-        if (e.key === 'Enter') { e.preventDefault(); titleEl.blur(); }
-      });
+      }
+
+      applyColumnFilter();
     });
   }
 
   function renderCard(p, position) {
+    const year = state.activeSeason;
+    const seasonInfo = getSeason(p, year);
+    const listId = seasonInfo ? seasonInfo.list : null;
+    const isActive = year === CURRENT_SEASON;
+
     const div = document.createElement('div');
     div.className = 'card';
-    div.draggable = true;
+    div.draggable = isActive;
     div.dataset.playerId = p.id;
 
     const handleEl = document.createElement('span');
@@ -984,37 +1387,55 @@
     nameEl.textContent = p.name;
     div.appendChild(nameEl);
 
-    if (p.list === 'deferred' && p.deferralYear) {
+    if (listId === 'participants' && isActive) {
+      const status = getStatus(p, year);
+      const badge = document.createElement('span');
+      badge.className = 'badge badge-' + status;
+      badge.textContent = status === 'confirmed' ? 'Confirmed' : 'Pending';
+      div.appendChild(badge);
+    } else if (listId === 'deferred') {
       const badge = document.createElement('span');
       badge.className = 'badge badge-deferred';
-      badge.textContent = 'Deferred ' + p.deferralYear;
+      badge.textContent = 'Deferred ' + year;
       div.appendChild(badge);
-    } else if (p.list === 'new') {
+    } else if (listId === 'new' && !p.signupTimestamp) {
       const badge = document.createElement('span');
       badge.className = 'badge badge-new';
       badge.textContent = 'New';
       div.appendChild(badge);
-    } else if (p.list === 'participants' && p.lastDeferredSeason === LAST_SEASON) {
-      const badge = document.createElement('span');
-      badge.className = 'badge badge-returning';
-      badge.textContent = 'Returning';
-      div.appendChild(badge);
+    }
+
+    if (listId === 'new' && p.signupTimestamp) {
+      const tsEl = document.createElement('span');
+      tsEl.className = 'card-timestamp';
+      tsEl.innerHTML =
+        '<span class="ts-time">' + escapeHtml(formatSignupTime(p.signupTimestamp)) + '</span>' +
+        '<span class="ts-offset">' + escapeHtml(formatSignupOffset(p.signupTimestamp)) + '</span>';
+      tsEl.title = 'Signed up via Golf Genius at ' + formatSignupTime(p.signupTimestamp) + ' on ' + formatSignupDate(p.signupTimestamp);
+      div.appendChild(tsEl);
+    }
+
+    if (importStagger.has(p.id)) {
+      div.classList.add('signup-stagger');
+      div.style.setProperty('--stagger-idx', importStagger.get(p.id));
     }
 
     let dragStarted = false;
-    div.addEventListener('dragstart', e => {
-      dragStarted = true;
-      dragging = { playerId: p.id, cardEl: div };
-      div.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
-      try { e.dataTransfer.setData('text/plain', p.id); } catch (err) {}
-    });
-    div.addEventListener('dragend', () => {
-      div.classList.remove('dragging');
-      dragging = null;
-      document.querySelectorAll('.cards.drop-target').forEach(el => el.classList.remove('drop-target'));
-    });
-    div.addEventListener('click', e => {
+    if (isActive) {
+      div.addEventListener('dragstart', e => {
+        dragStarted = true;
+        dragging = { playerId: p.id, cardEl: div };
+        div.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        try { e.dataTransfer.setData('text/plain', p.id); } catch (err) {}
+      });
+      div.addEventListener('dragend', () => {
+        div.classList.remove('dragging');
+        dragging = null;
+        document.querySelectorAll('.cards.drop-target').forEach(el => el.classList.remove('drop-target'));
+      });
+    }
+    div.addEventListener('click', () => {
       if (dragStarted) { dragStarted = false; return; }
       showPlayerModal(p.id);
     });
@@ -1038,17 +1459,9 @@
       const player = state.players.find(p => p.id === dragging.playerId);
       if (!player) return;
       const toListId = cardsEl.dataset.listId;
-      const fromListId = player.list;
-
       const afterEl = getDropTarget(cardsEl, e.clientY);
       const afterPlayerId = afterEl ? afterEl.dataset.playerId : null;
-
-      if (fromListId !== toListId && toListId === 'deferred' && deferredLastSeason(player)) {
-        showConfirmSecondDeferral(player, fromListId);
-        return;
-      }
-
-      applyMove(player, toListId, afterPlayerId);
+      attemptMove(player, toListId, afterPlayerId);
     });
   }
 
@@ -1066,18 +1479,49 @@
     return closest.card;
   }
 
+  function guardDefer(player, onDefer, onWaitlist) {
+    if (previouslyDeferred(player)) {
+      showDeferralWarning(player, onWaitlist, onDefer);
+    } else {
+      onDefer();
+    }
+  }
+
+  function attemptMove(player, toListId, afterPlayerId) {
+    if (toListId === 'deferred') {
+      guardDefer(player,
+        () => applyMove(player, 'deferred', afterPlayerId),
+        () => applyMove(player, 'waitlist', null)
+      );
+      return;
+    }
+    applyMove(player, toListId, afterPlayerId);
+  }
+
+  function showDeferralWarning(player, onWaitlist, onDeferAnyway) {
+    showConfirmDialog({
+      title: 'Second Consecutive Deferral',
+      bodyHtml:
+        '<p><strong>' + escapeHtml(player.name) + '</strong> already deferred for the ' + LAST_SEASON + ' season. ' +
+        'Per tournament rules, a second consecutive deferral should send them to the <strong>bottom of the ' + CURRENT_SEASON + ' Waitlist</strong>.</p>' +
+        '<p style="margin-top:8px;">You can override this if needed.</p>',
+      buttons: [
+        { label: 'Cancel' },
+        { label: 'Defer Anyway (override)', className: 'warn', onClick: () => { closeModal(); onDeferAnyway(); } },
+        { label: 'Move to Waitlist', className: 'primary', onClick: () => { closeModal(); onWaitlist(); } }
+      ]
+    });
+  }
+
   function applyMove(player, toListId, afterPlayerId) {
-    const fromListId = player.list;
+    const year = state.activeSeason;
+    const fromListId = (getSeason(player, year) || {}).list;
     const curIdx = state.players.findIndex(p => p.id === player.id);
     if (curIdx >= 0) state.players.splice(curIdx, 1);
 
-    player.list = toListId;
-    if (toListId === 'deferred') {
-      player.deferralYear = CURRENT_SEASON;
-      player.lastDeferredSeason = CURRENT_SEASON;
-    } else if (fromListId === 'deferred') {
-      player.deferralYear = null;
-    }
+    const newSeasonInfo = { list: toListId };
+    if (toListId === 'participants') newSeasonInfo.status = 'pending';
+    setSeason(player, year, newSeasonInfo);
 
     if (afterPlayerId) {
       const afterIdx = state.players.findIndex(p => p.id === afterPlayerId);
@@ -1090,11 +1534,11 @@
     if (fromListId !== toListId) {
       let moveType = 'move';
       let extra;
-      if (toListId === 'deferred') { moveType = 'defer'; extra = { season: CURRENT_SEASON }; }
+      if (toListId === 'deferred') { moveType = 'defer'; extra = { season: year }; }
       else if (fromListId === 'deferred') moveType = 'return';
-      logHistory(player, 'Moved from ' + findList(fromListId).name + ' → ' + findList(toListId).name, moveType, extra);
+      logHistory(player, 'Moved from ' + listDisplayName(fromListId, year) + ' → ' + listDisplayName(toListId, year), moveType, extra);
     } else {
-      logHistory(player, 'Reordered within ' + findList(toListId).name, 'reorder');
+      logHistory(player, 'Reordered within ' + listDisplayName(toListId, year), 'reorder');
     }
 
     saveState();
@@ -1109,11 +1553,35 @@
     overlay.innerHTML = '';
   }
 
+  function showConfirmDialog({ title, bodyHtml, buttons, extraClass }) {
+    const c = document.createElement('div');
+    c.className = 'confirm' + (extraClass ? ' ' + extraClass : '');
+    c.innerHTML =
+      '<h2>' + title + '</h2>' +
+      bodyHtml +
+      '<div class="confirm-actions">' +
+        buttons.map((b, i) =>
+          '<button data-idx="' + i + '"' + (b.className ? ' class="' + b.className + '"' : '') + '>' + b.label + '</button>'
+        ).join('') +
+      '</div>';
+    overlay.innerHTML = '';
+    overlay.appendChild(c);
+    overlay.classList.remove('hidden');
+    buttons.forEach((b, i) => {
+      c.querySelector('[data-idx="' + i + '"]').onclick = b.onClick
+        ? () => b.onClick(c)
+        : closeModal;
+    });
+  }
+
   function showPlayerModal(playerId) {
     const p = state.players.find(x => x.id === playerId);
     if (!p) return;
-    const currentList = findList(p.list);
-    const otherLists = state.lists.filter(l => l.id !== p.list);
+    const year = state.activeSeason;
+    const isActive = year === CURRENT_SEASON;
+    const seasonInfo = getSeason(p, year);
+    const currentListId = seasonInfo ? seasonInfo.list : null;
+    const status = isActive ? getStatus(p, year) : null;
 
     const initialHistory = p.history || [];
     const firstYear = initialHistory.length ? initialHistory[0].date.slice(0, 4) : '—';
@@ -1121,9 +1589,27 @@
       .filter(h => h.type === 'defer' && h.season)
       .map(h => String(h.season));
     const deferSeasonsStr = deferSeasons.length ? deferSeasons.join(', ') : '—';
+    const currentListName = currentListId ? listDisplayName(currentListId, year) : 'Not in ' + year;
+
+    const otherListIds = LIST_IDS.filter(id => id !== currentListId);
 
     const modal = document.createElement('div');
     modal.className = 'modal';
+
+    let actionsHtml = '';
+    if (isActive && currentListId === 'participants' && status === 'pending') {
+      actionsHtml =
+        '<button class="primary" data-action="confirm">&check; Confirm for ' + year + '</button>' +
+        '<button class="warn" data-action="decline">&times; Decline (defer to ' + (year + 1) + ')</button>';
+    } else if (isActive && currentListId === 'participants' && status === 'confirmed') {
+      actionsHtml =
+        '<button data-action="unconfirm">Mark Pending</button>' +
+        '<button class="warn" data-action="decline">Decline (defer to ' + (year + 1) + ')</button>';
+    }
+
+    const moveButtons = isActive
+      ? otherListIds.map(id => '<button data-move="' + id + '">Move to ' + escapeHtml(listDisplayName(id, year)) + '</button>').join('')
+      : '';
 
     modal.innerHTML =
       '<div class="modal-header">' +
@@ -1132,11 +1618,12 @@
       '</div>' +
       '<div class="modal-body">' +
         '<div class="stats-grid">' +
-          '<div class="stat-item"><span class="stat-label">Current list</span><span class="stat-value">' + escapeHtml(currentList.name) + '</span></div>' +
+          '<div class="stat-item"><span class="stat-label">' + year + ' status</span><span class="stat-value">' + escapeHtml(currentListName) + (status ? ' (' + status + ')' : '') + '</span></div>' +
           '<div class="stat-item"><span class="stat-label">In system since</span><span class="stat-value">' + firstYear + '</span></div>' +
           '<div class="stat-item"><span class="stat-label">Times deferred</span><span class="stat-value">' + deferSeasons.length + '</span></div>' +
           '<div class="stat-item"><span class="stat-label">Deferred seasons</span><span class="stat-value">' + deferSeasonsStr + '</span></div>' +
         '</div>' +
+        (actionsHtml ? '<div class="action-row">' + actionsHtml + '</div>' : '') +
         '<div class="notes-section">' +
           '<h3>Notes</h3>' +
           '<textarea class="notes-textarea" id="notes-textarea" placeholder="Back trouble — morning tee times only. Usually pairs with Mike Burke. Emailed 3/15, no reply yet."></textarea>' +
@@ -1154,9 +1641,9 @@
         '</div>' +
       '</div>' +
       '<div class="modal-footer">' +
-        otherLists.map(l => '<button data-move="' + l.id + '">Move to ' + escapeHtml(l.name) + '</button>').join('') +
+        moveButtons +
         '<div style="flex:1"></div>' +
-        '<button class="danger" id="m-delete">Delete</button>' +
+        (isActive ? '<button class="danger" id="m-delete">Delete</button>' : '') +
       '</div>';
 
     overlay.innerHTML = '';
@@ -1166,6 +1653,7 @@
     const categoryForType = {
       move: 'moves', reorder: 'moves', add: 'moves',
       defer: 'deferrals', return: 'deferrals',
+      confirm: 'moves', decline: 'deferrals',
       note: 'notes'
     };
     const chips = modal.querySelectorAll('.filter-chip');
@@ -1213,7 +1701,8 @@
     };
 
     modal.querySelector('#m-close').onclick = closeModal;
-    modal.querySelector('#m-delete').onclick = () => {
+    const deleteBtn = modal.querySelector('#m-delete');
+    if (deleteBtn) deleteBtn.onclick = () => {
       if (!confirm('Delete ' + p.name + ' from the tournament entirely?')) return;
       state.players = state.players.filter(x => x.id !== p.id);
       saveState();
@@ -1222,55 +1711,176 @@
     };
     modal.querySelectorAll('[data-move]').forEach(btn => {
       btn.onclick = () => {
-        const toListId = btn.dataset.move;
-        if (toListId === 'deferred' && deferredLastSeason(p)) {
+        closeModal();
+        attemptMove(p, btn.dataset.move, null);
+      };
+    });
+    modal.querySelectorAll('[data-action]').forEach(btn => {
+      btn.onclick = () => {
+        const action = btn.dataset.action;
+        if (action === 'decline') {
           closeModal();
-          showConfirmSecondDeferral(p, p.list);
+          guardDefer(p,
+            () => {
+              setSeason(p, year, { list: 'deferred' });
+              logHistory(p, 'Declined ' + year + ' — deferred (eligible to return ' + (year + 1) + ')', 'decline', { season: year });
+              saveState();
+              render();
+            },
+            () => applyMove(p, 'waitlist', null)
+          );
           return;
         }
-        applyMove(p, toListId, null);
+        if (action === 'confirm') {
+          setSeason(p, year, { list: 'participants', status: 'confirmed' });
+          logHistory(p, 'Confirmed for ' + year + ' season', 'confirm');
+        } else if (action === 'unconfirm') {
+          setSeason(p, year, { list: 'participants', status: 'pending' });
+          logHistory(p, 'Marked Pending for ' + year + ' season', 'move');
+        }
+        saveState();
         closeModal();
+        render();
       };
     });
   }
 
-  function showConfirmSecondDeferral(player, fromListId) {
-    const c = document.createElement('div');
-    c.className = 'confirm';
-    c.innerHTML =
-      '<h2>Second Consecutive Deferral</h2>' +
-      '<p><strong>' + escapeHtml(player.name) + '</strong> already deferred for the ' + LAST_SEASON + ' season. ' +
-      'Per tournament rules, a second consecutive deferral sends them to the bottom of the Waitlist.</p>' +
-      '<div class="confirm-actions">' +
-        '<button id="c-cancel">Cancel</button>' +
-        '<button id="c-waitlist" class="primary">Move to Waitlist (bottom)</button>' +
-      '</div>';
-    overlay.innerHTML = '';
-    overlay.appendChild(c);
-    overlay.classList.remove('hidden');
+  function showImportConfirm() {
+    const first = IMPORT_PAYLOAD[0].timestamp;
+    const last = IMPORT_PAYLOAD[IMPORT_PAYLOAD.length - 1].timestamp;
+    showConfirmDialog({
+      title: 'Import from Golf Genius',
+      bodyHtml:
+        '<p>Import <strong>' + IMPORT_PAYLOAD.length + ' new signups</strong> from Golf Genius ' +
+        '(' + escapeHtml(formatSignupDate(first)) + ', ' +
+        escapeHtml(formatSignupTime(first)) + '&ndash;' + escapeHtml(formatSignupTime(last)) + ')?</p>',
+      buttons: [
+        { label: 'Cancel' },
+        { label: 'Import', className: 'primary', onClick: () => { closeModal(); performImport(); } }
+      ]
+    });
+  }
 
-    c.querySelector('#c-cancel').onclick = () => {
-      closeModal();
-      render();
-    };
-    c.querySelector('#c-waitlist').onclick = () => {
-      applyMove(player, 'waitlist', null);
-      closeModal();
-    };
+  function performImport() {
+    const baseId = Date.now();
+    IMPORT_PAYLOAD.forEach((entry, idx) => {
+      const player = {
+        id: 'p' + (baseId + idx),
+        name: entry.name,
+        notes: '',
+        signupTimestamp: entry.timestamp,
+        seasons: { [CURRENT_SEASON]: { list: 'new' } },
+        history: [{
+          date: entry.timestamp.slice(0, 10),
+          event: 'Signed up via Golf Genius at ' + formatSignupTime(entry.timestamp) + ' on ' + formatSignupDate(entry.timestamp),
+          type: 'add'
+        }]
+      };
+      state.players.push(player);
+      importStagger.set(player.id, idx);
+    });
+    saveState();
+    render();
+    scheduleStaggerClear(IMPORT_PAYLOAD.length * 80 + 320);
+  }
+
+  function clearImportedPlayers() {
+    const imported = state.players.filter(p => {
+      const s = getSeason(p, CURRENT_SEASON);
+      return s && s.list === 'new' && p.signupTimestamp;
+    });
+    if (imported.length === 0) return;
+    if (!confirm('Clear ' + imported.length + ' imported signup' + (imported.length === 1 ? '' : 's') + ' from New Players?')) return;
+    state.players = state.players.filter(p => {
+      const s = getSeason(p, CURRENT_SEASON);
+      return !(s && s.list === 'new' && p.signupTimestamp);
+    });
+    saveState();
+    render();
+  }
+
+  const ROLLOVER_SOURCES = new Set(['participants', 'deferred', 'waitlist']);
+  const ROLLOVER_GROUPS = [
+    {
+      id: 'carryovers', sourceList: 'participants', targetList: 'participants', defaultChecked: true,
+      label: 'active ' + LAST_SEASON + ' participants &rarr; ' + CURRENT_SEASON + ' Pending',
+      historyFn: () => 'Rolled over from ' + LAST_SEASON + ' Participants → ' + CURRENT_SEASON + ' Pending',
+      historyType: 'move'
+    },
+    {
+      id: 'deferrals', sourceList: 'deferred', targetList: 'participants', defaultChecked: true,
+      label: 'returning ' + LAST_SEASON + ' deferrals &rarr; ' + CURRENT_SEASON + ' Pending',
+      historyFn: () => 'Returning from ' + LAST_SEASON + ' deferral → ' + CURRENT_SEASON + ' Pending',
+      historyType: 'return'
+    },
+    {
+      id: 'waitlist', sourceList: 'waitlist', targetList: 'waitlist', defaultChecked: false,
+      label: LAST_SEASON + ' waitlist holdovers &rarr; ' + CURRENT_SEASON + ' Waitlist',
+      historyFn: () => 'Carried on Waitlist for ' + CURRENT_SEASON + ' season',
+      historyType: 'move'
+    }
+  ];
+
+  function showSetupDialog() {
+    const groups = ROLLOVER_GROUPS.map(g => ({ ...g, players: rolloverCandidates(g.sourceList) }));
+    const optionsHtml = groups.map(g => {
+      const empty = g.players.length === 0;
+      const checked = !empty && g.defaultChecked;
+      return '<label class="setup-option' + (empty ? ' disabled' : '') + '">' +
+        '<input type="checkbox" data-group="' + g.id + '"' + (checked ? ' checked' : '') + (empty ? ' disabled' : '') + '>' +
+        '<span class="setup-count">' + g.players.length + '</span>' +
+        '<span class="setup-label">' + g.label + '</span>' +
+      '</label>';
+    }).join('');
+
+    showConfirmDialog({
+      title: 'Set Up ' + CURRENT_SEASON + ' Season',
+      extraClass: 'setup-dialog',
+      bodyHtml:
+        '<p>Carry players forward from ' + LAST_SEASON + '. They\'ll land in ' + CURRENT_SEASON + ' Participants as <strong>Pending</strong> until you confirm each one.</p>' +
+        '<div class="setup-options">' + optionsHtml + '</div>',
+      buttons: [
+        { label: 'Cancel' },
+        { label: 'Roll Over', className: 'primary', onClick: (c) => {
+          const selected = groups.filter(g => c.querySelector('input[data-group="' + g.id + '"]').checked);
+          closeModal();
+          performRollover(selected);
+        }}
+      ]
+    });
+  }
+
+  function performRollover(selectedGroups) {
+    const all = [];
+    selectedGroups.forEach(group => {
+      group.players.forEach(p => {
+        const newSeason = { list: group.targetList };
+        if (group.targetList === 'participants') newSeason.status = 'pending';
+        setSeason(p, CURRENT_SEASON, newSeason);
+        logHistory(p, group.historyFn(), group.historyType);
+        all.push(p);
+      });
+    });
+
+    all.forEach((p, idx) => importStagger.set(p.id, idx));
+    saveState();
+    render();
+    scheduleStaggerClear(all.length * 60 + 320);
   }
 
   function addPlayerToList(listId) {
     const name = prompt('Player name (format: Last, First)');
     if (!name || !name.trim()) return;
+    const year = state.activeSeason;
+    const seasonInfo = { list: listId };
+    if (listId === 'participants') seasonInfo.status = 'pending';
     const newPlayer = {
       id: 'p' + Date.now(),
       name: name.trim(),
-      list: listId,
-      deferralYear: listId === 'deferred' ? CURRENT_SEASON : null,
       notes: '',
-      history: [{ date: today(), event: 'Added to ' + findList(listId).name, type: 'add' }]
+      seasons: { [year]: seasonInfo },
+      history: [{ date: today(), event: 'Added to ' + listDisplayName(listId, year), type: 'add' }]
     };
-    if (listId === 'deferred') newPlayer.lastDeferredSeason = CURRENT_SEASON;
     state.players.push(newPlayer);
     saveState();
     render();
@@ -1278,12 +1888,24 @@
 
   // ---------- PUBLIC VIEW ----------
   function renderPublic() {
+    const year = state.activeSeason;
+    const isActive = year === CURRENT_SEASON;
     const inList = state.players
-      .filter(p => p.list === 'participants')
+      .filter(p => {
+        const s = getSeason(p, year);
+        if (!s || s.list !== 'participants') return false;
+        if (!isActive) return true;
+        return (s.status || 'confirmed') === 'confirmed';
+      })
       .map(p => p.name)
       .sort((a, b) => a.localeCompare(b));
     const waitingList = state.players
-      .filter(p => p.list !== 'participants')
+      .filter(p => {
+        const s = getSeason(p, year);
+        if (!s) return false;
+        if (s.list !== 'participants') return true;
+        return isActive && s.status === 'pending';
+      })
       .map(p => p.name)
       .sort((a, b) => a.localeCompare(b));
 
