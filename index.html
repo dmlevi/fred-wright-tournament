@@ -411,13 +411,28 @@
     overflow-y: auto;
   }
   .public-list .player-row {
-    padding: 8px 20px;
+    padding: 6px 20px;
     font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
   }
+  .public-list .player-letter {
+    width: 16px;
+    flex-shrink: 0;
+    color: var(--green);
+    font-weight: 700;
+    font-size: 12px;
+    text-align: center;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+  .public-list .player-name { flex: 1; }
   .public-list .player-row.highlighted {
     background: #fff8e1;
     font-weight: 600;
   }
+  .public-list .player-row.highlighted .player-letter { opacity: 1; }
   .empty-state {
     color: var(--ink-muted);
     font-size: 13px;
@@ -496,7 +511,8 @@
     });
     took2025Off.forEach(name => {
       players.push({
-        id: 'p' + (id++), name: name, list: 'deferred', deferralYear: LAST_SEASON,
+        id: 'p' + (id++), name: name, list: 'deferred',
+        deferralYear: LAST_SEASON, lastDeferredSeason: LAST_SEASON,
         history: [
           { date: '2024-11-15', event: 'Participant in prior season' },
           { date: seedDate, event: 'Deferred for ' + LAST_SEASON + ' season' }
@@ -561,9 +577,7 @@
   function playersInList(id) { return state.players.filter(p => p.list === id); }
 
   function deferredLastSeason(player) {
-    if (!player.history) return false;
-    const pattern = 'Deferred for ' + LAST_SEASON;
-    return player.history.some(h => h.event && h.event.indexOf(pattern) !== -1);
+    return player.lastDeferredSeason === LAST_SEASON;
   }
   function getReturningPlayers() {
     return state.players.filter(p =>
@@ -710,8 +724,7 @@
       badge.className = 'badge badge-new';
       badge.textContent = 'New';
       div.appendChild(badge);
-    } else if (p.list === 'participants' && p.history &&
-               p.history.some(h => h.event && h.event.indexOf('Returned from') !== -1)) {
+    } else if (p.list === 'participants' && p.lastDeferredSeason === LAST_SEASON) {
       const badge = document.createElement('span');
       badge.className = 'badge badge-returning';
       badge.textContent = 'Returning';
@@ -789,8 +802,12 @@
     if (curIdx >= 0) state.players.splice(curIdx, 1);
 
     player.list = toListId;
-    if (toListId === 'deferred') player.deferralYear = CURRENT_SEASON;
-    else if (fromListId === 'deferred') player.deferralYear = null;
+    if (toListId === 'deferred') {
+      player.deferralYear = CURRENT_SEASON;
+      player.lastDeferredSeason = CURRENT_SEASON;
+    } else if (fromListId === 'deferred') {
+      player.deferralYear = null;
+    }
 
     if (afterPlayerId) {
       const afterIdx = state.players.findIndex(p => p.id === afterPlayerId);
@@ -918,6 +935,7 @@
       deferralYear: listId === 'deferred' ? CURRENT_SEASON : null,
       history: [{ date: today(), event: 'Added to ' + findList(listId).name }]
     };
+    if (listId === 'deferred') newPlayer.lastDeferredSeason = CURRENT_SEASON;
     state.players.push(newPlayer);
     saveState();
     render();
@@ -934,29 +952,35 @@
       .map(p => p.name)
       .sort((a, b) => a.localeCompare(b));
 
-    const renderRows = (list) =>
-      list.length === 0
-        ? '<div class="empty-state">No one here.</div>'
-        : list.map(n =>
-            '<div class="player-row' + (highlight(n) ? ' highlighted' : '') + '">' +
-              escapeHtml(n) +
-            '</div>').join('');
+    const renderRows = (list) => {
+      if (list.length === 0) return '<div class="empty-state">No one here.</div>';
+      let prevLetter = '';
+      return list.map(n => {
+        const letter = n.charAt(0).toUpperCase();
+        const showLetter = letter !== prevLetter;
+        prevLetter = letter;
+        return '<div class="player-row' + (highlight(n) ? ' highlighted' : '') + '">' +
+          '<span class="player-letter">' + (showLetter ? letter : '') + '</span>' +
+          '<span class="player-name">' + escapeHtml(n) + '</span>' +
+          '</div>';
+      }).join('');
+    };
+
+    const renderColumn = (title, names) =>
+      '<div class="public-column">' +
+        '<h2>' + title + ' <span class="public-count">' + names.length + ' players &middot; alphabetical</span></h2>' +
+        '<div class="public-list">' + renderRows(names) + '</div>' +
+      '</div>';
 
     mainEl.innerHTML =
       '<div class="player-view">' +
         '<input type="text" class="search-box" id="search" placeholder="Search for your name..." value="' + escapeHtml(searchQuery) + '" />' +
         '<div class="public-grid">' +
-          '<div class="public-column">' +
-            '<h2>In the Tournament <span class="public-count">' + inList.length + ' players</span></h2>' +
-            '<div class="public-list">' + renderRows(inList) + '</div>' +
-          '</div>' +
-          '<div class="public-column">' +
-            '<h2>Waiting <span class="public-count">' + waitingList.length + ' players</span></h2>' +
-            '<div class="public-list">' + renderRows(waitingList) + '</div>' +
-          '</div>' +
+          renderColumn('In the Tournament', inList) +
+          renderColumn('Waiting', waitingList) +
         '</div>' +
-        '<div class="rules-note"><strong>Player view:</strong> shows only whether a player is in the current tournament field or waiting. ' +
-        'Specific bucket (deferred, waitlist, new) and queue position are not exposed.</div>' +
+        '<div class="rules-note">Names are listed <strong>alphabetically by last name</strong>. ' +
+        'Placement in the Waiting list does <strong>not</strong> reflect position in the queue or priority for entry.</div>' +
       '</div>';
 
     const searchEl = document.getElementById('search');
