@@ -182,6 +182,56 @@
     padding: 0;
   }
   .btn-add:hover { border-color: var(--green); color: var(--green); }
+  .column-search-wrap {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .column-search {
+    width: 100%;
+    padding: 5px 24px 5px 8px;
+    font-size: 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: #faf8f3;
+    color: var(--ink);
+    font-family: inherit;
+  }
+  .column-search:focus {
+    outline: none;
+    border-color: var(--green);
+    background: white;
+    box-shadow: 0 0 0 2px rgba(30,86,49,0.1);
+  }
+  .column-search::placeholder { color: #aaa; }
+  .column-search-clear {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border: 0;
+    background: transparent;
+    color: var(--ink-muted);
+    cursor: pointer;
+    padding: 0;
+    font-size: 16px;
+    line-height: 1;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+  .column-search-clear.visible { display: flex; }
+  .column-search-clear:hover { color: var(--ink); background: rgba(0,0,0,0.06); }
+  .search-empty {
+    padding: 14px 8px;
+    font-size: 12px;
+    color: var(--ink-muted);
+    text-align: center;
+    font-style: italic;
+  }
   .cards {
     flex: 1;
     overflow-y: auto;
@@ -299,7 +349,7 @@
     border-top: 1px solid var(--border);
     padding-top: 16px;
   }
-  .history h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--ink-muted); margin-bottom: 10px; }
+  .history h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--ink-muted); margin-bottom: 8px; }
   .history-entry {
     display: flex;
     gap: 12px;
@@ -310,6 +360,61 @@
   .history-entry:last-child { border-bottom: 0; }
   .history-entry .h-date { color: var(--ink-muted); width: 100px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
   .history-entry .h-event { flex: 1; }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 16px;
+    padding: 12px 14px;
+    background: var(--green-light);
+    border: 1px solid #c8dcc9;
+    border-radius: 6px;
+  }
+  .stat-item { display: flex; flex-direction: column; gap: 2px; }
+  .stat-label { font-size: 10px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.4px; font-weight: 600; }
+  .stat-value { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .notes-section { margin-top: 18px; border-top: 1px solid var(--border); padding-top: 16px; }
+  .notes-section h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--ink-muted); margin-bottom: 10px; }
+  .notes-textarea {
+    width: 100%;
+    min-height: 72px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.4;
+    resize: vertical;
+    background: #faf8f3;
+    color: var(--ink);
+  }
+  .notes-textarea:focus { outline: none; border-color: var(--green); background: white; box-shadow: 0 0 0 3px rgba(30,86,49,0.08); }
+  .notes-textarea::placeholder { color: #aaa; font-style: italic; }
+  .notes-save-btn {
+    margin-top: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--ink);
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .notes-save-btn:not(:disabled):hover { border-color: var(--green); color: var(--green); }
+  .notes-save-btn:disabled { opacity: 0.4; cursor: default; }
+  .history-filters { display: flex; gap: 6px; margin: 0 0 12px; flex-wrap: wrap; }
+  .filter-chip {
+    padding: 3px 10px;
+    font-size: 11px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--ink-muted);
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .filter-chip:hover { border-color: var(--green); color: var(--green); }
+  .filter-chip.active { background: var(--green); color: white; border-color: var(--green); }
   .modal-footer {
     padding: 14px 20px;
     border-top: 1px solid var(--border);
@@ -461,7 +566,7 @@
   <div class="spacer"></div>
   <span class="season-label">Season: <strong>2026</strong></span>
   <div class="view-toggle">
-    <button data-view="internal" class="active">Pro View</button>
+    <button data-view="internal" class="active">Management View</button>
     <button data-view="public">Player View</button>
   </div>
   <button class="btn-reset" id="btn-reset">Reset Demo Data</button>
@@ -478,7 +583,7 @@
 
   const CURRENT_SEASON = 2026;
   const LAST_SEASON = 2025;
-  const STORAGE_KEY = 'fred-wright-v1';
+  const STORAGE_KEY = 'fred-wright-v2';
 
   // ---------- SEED DATA ----------
   function seedData() {
@@ -505,25 +610,129 @@
     const seedDate = '2024-12-01';
     participants2025.forEach(name => {
       players.push({
-        id: 'p' + (id++), name: name, list: 'participants', deferralYear: null,
-        history: [{ date: seedDate, event: 'Added to Participants for ' + LAST_SEASON + ' season' }]
+        id: 'p' + (id++), name: name, list: 'participants', deferralYear: null, notes: '',
+        history: [{ date: seedDate, event: 'Added to Participants for ' + LAST_SEASON + ' season', type: 'add' }]
       });
     });
     took2025Off.forEach(name => {
       players.push({
         id: 'p' + (id++), name: name, list: 'deferred',
-        deferralYear: LAST_SEASON, lastDeferredSeason: LAST_SEASON,
+        deferralYear: LAST_SEASON, lastDeferredSeason: LAST_SEASON, notes: '',
         history: [
-          { date: '2024-11-15', event: 'Participant in prior season' },
-          { date: seedDate, event: 'Deferred for ' + LAST_SEASON + ' season' }
+          { date: '2024-11-15', event: 'Participant in prior season', type: 'add' },
+          { date: seedDate, event: 'Deferred for ' + LAST_SEASON + ' season', type: 'defer', season: LAST_SEASON }
         ]
       });
     });
     waitlist2025.forEach(name => {
       players.push({
-        id: 'p' + (id++), name: name, list: 'waitlist', deferralYear: null,
-        history: [{ date: seedDate, event: 'Added to Waitlist for ' + LAST_SEASON + ' season' }]
+        id: 'p' + (id++), name: name, list: 'waitlist', deferralYear: null, notes: '',
+        history: [{ date: seedDate, event: 'Added to Waitlist for ' + LAST_SEASON + ' season', type: 'add' }]
       });
+    });
+
+    const demoExtras = {
+      'Amico, Angelo': {
+        notes: 'Plays fast — prefers 7:30 tee time. Original tournament member.',
+        history: [
+          { date: '2019-11-01', event: 'Added to Participants for 2020 season', type: 'add' },
+          { date: '2020-11-01', event: 'Added to Participants for 2021 season', type: 'add' },
+          { date: '2021-11-01', event: 'Added to Participants for 2022 season', type: 'add' },
+          { date: '2022-11-01', event: 'Added to Participants for 2023 season', type: 'add' },
+          { date: '2023-11-01', event: 'Added to Participants for 2024 season', type: 'add' },
+          { date: '2024-12-01', event: 'Added to Participants for 2025 season', type: 'add' }
+        ]
+      },
+      'Battista, Mike': {
+        notes: 'Usually pairs with Burke. 14 handicap, consistent.',
+        history: [
+          { date: '2021-11-01', event: 'Added to Participants for 2022 season', type: 'add' },
+          { date: '2022-11-01', event: 'Added to Participants for 2023 season', type: 'add' },
+          { date: '2023-11-01', event: 'Added to Participants for 2024 season', type: 'add' },
+          { date: '2024-12-01', event: 'Added to Participants for 2025 season', type: 'add' }
+        ]
+      },
+      'Burke, Mike': {
+        notes: 'Prefers walking. Cart only in bad weather. Pair with Battista.',
+        history: [
+          { date: '2020-11-01', event: 'Added to Participants for 2021 season', type: 'add' },
+          { date: '2021-11-01', event: 'Added to Participants for 2022 season', type: 'add' },
+          { date: '2022-11-01', event: 'Added to Participants for 2023 season', type: 'add' },
+          { date: '2023-11-01', event: 'Added to Participants for 2024 season', type: 'add' },
+          { date: '2024-12-01', event: 'Added to Participants for 2025 season', type: 'add' }
+        ]
+      },
+      'Chryssis, Alex': {
+        notes: 'Promoted from Waitlist in Feb 2023. Strong player — consistent low gross.',
+        history: [
+          { date: '2021-11-15', event: 'Added to Waitlist for 2022 season', type: 'add' },
+          { date: '2022-11-15', event: 'Carried on Waitlist for 2023 season', type: 'add' },
+          { date: '2023-02-10', event: 'Moved from Waitlist → Participants', type: 'move' },
+          { date: '2023-11-01', event: 'Added to Participants for 2024 season', type: 'add' },
+          { date: '2024-12-01', event: 'Added to Participants for 2025 season', type: 'add' }
+        ]
+      },
+      'Coughlin, John': {
+        notes: 'Attorney — schedule around trial calendar. Prefers late March weekends.',
+        history: [
+          { date: '2022-11-01', event: 'Added to Participants for 2023 season', type: 'add' },
+          { date: '2023-11-01', event: 'Added to Participants for 2024 season', type: 'add' },
+          { date: '2024-12-01', event: 'Added to Participants for 2025 season', type: 'add' }
+        ]
+      },
+      'Reynolds, Jim': {
+        notes: 'Shoulder surgery in 2022, back trouble late 2024 — check on status before confirming 2026.',
+        history: [
+          { date: '2020-11-01', event: 'Added to Participants for 2021 season', type: 'add' },
+          { date: '2021-11-01', event: 'Deferred for 2022 season', type: 'defer', season: 2022 },
+          { date: '2022-11-01', event: 'Returned from 2022 deferral — added to Participants', type: 'return' },
+          { date: '2023-11-01', event: 'Added to Participants for 2024 season', type: 'add' },
+          { date: '2024-11-15', event: 'Participant in 2024 season', type: 'add' },
+          { date: '2024-12-01', event: 'Deferred for 2025 season', type: 'defer', season: 2025 }
+        ]
+      },
+      'Kilpatrick, Brian': {
+        history: [
+          { date: '2021-11-01', event: 'Added to Participants for 2022 season', type: 'add' },
+          { date: '2022-11-01', event: 'Added to Participants for 2023 season', type: 'add' },
+          { date: '2023-11-01', event: 'Added to Participants for 2024 season', type: 'add' },
+          { date: '2024-11-15', event: 'Participant in 2024 season', type: 'add' },
+          { date: '2024-12-01', event: 'Deferred for 2025 season', type: 'defer', season: 2025 }
+        ]
+      },
+      'Bartley, Jack': {
+        notes: 'Work travel schedule variable. Confirm early for 2026.',
+        history: [
+          { date: '2022-11-01', event: 'Added to Participants for 2023 season', type: 'add' },
+          { date: '2023-11-01', event: 'Added to Participants for 2024 season', type: 'add' },
+          { date: '2024-11-15', event: 'Participant in 2024 season', type: 'add' },
+          { date: '2024-12-01', event: 'Deferred for 2025 season', type: 'defer', season: 2025 }
+        ]
+      },
+      'Judge, Greg': {
+        notes: 'Priority for next open spot. Member since 2018. Confirmed 2026 interest via email 2/10.',
+        history: [
+          { date: '2022-11-15', event: 'Added to Waitlist for 2023 season', type: 'add' },
+          { date: '2023-11-15', event: 'Carried on Waitlist for 2024 season', type: 'add' },
+          { date: '2024-12-01', event: 'Added to Waitlist for 2025 season', type: 'add' }
+        ]
+      },
+      "O'Neill, Conor": {
+        notes: "Son of past member John O'Neill (founding member, 1998). Sponsored by Paul Glynn.",
+        history: [
+          { date: '2023-11-15', event: 'Added to Waitlist for 2024 season', type: 'add' },
+          { date: '2024-12-01', event: 'Carried on Waitlist for 2025 season', type: 'add' }
+        ]
+      },
+      'Micalizzi, Dave': {
+        notes: 'Referred by Jim Conroy. Eager for first year.'
+      }
+    };
+    players.forEach(p => {
+      const extra = demoExtras[p.name];
+      if (!extra) return;
+      if (extra.notes !== undefined) p.notes = extra.notes;
+      if (extra.history) p.history = extra.history;
     });
 
     return {
@@ -542,6 +751,7 @@
   let state = loadState();
   let currentView = 'internal';
   let searchQuery = '';
+  const columnSearch = {};
   let dragging = null; // { playerId, cardEl }
 
   function loadState() {
@@ -569,9 +779,11 @@
 
   // ---------- HELPERS ----------
   function today() { return new Date().toISOString().slice(0, 10); }
-  function logHistory(player, event) {
+  function logHistory(player, event, type, extra) {
     if (!player.history) player.history = [];
-    player.history.push({ date: today(), event: event });
+    const entry = { date: today(), event: event, type: type || 'move' };
+    if (extra) Object.assign(entry, extra);
+    player.history.push(entry);
   }
   function findList(id) { return state.lists.find(l => l.id === id); }
   function playersInList(id) { return state.players.filter(p => p.list === id); }
@@ -618,7 +830,7 @@
       returning.forEach(p => {
         p.list = 'participants';
         p.deferralYear = null;
-        logHistory(p, 'Returned from ' + LAST_SEASON + ' deferral — added to Participants');
+        logHistory(p, 'Returned from ' + LAST_SEASON + ' deferral — added to Participants', 'return');
       });
       saveState();
       render();
@@ -663,15 +875,73 @@
       header.appendChild(countEl);
       header.appendChild(addBtn);
 
+      const searchWrap = document.createElement('div');
+      searchWrap.className = 'column-search-wrap';
+      const searchInput = document.createElement('input');
+      searchInput.type = 'text';
+      searchInput.className = 'column-search';
+      searchInput.placeholder = 'Search…';
+      searchInput.value = columnSearch[list.id] || '';
+      searchInput.setAttribute('aria-label', 'Search ' + list.name);
+      const clearBtn = document.createElement('button');
+      clearBtn.type = 'button';
+      clearBtn.className = 'column-search-clear';
+      clearBtn.textContent = '×';
+      clearBtn.title = 'Clear search';
+      clearBtn.setAttribute('aria-label', 'Clear search');
+      searchWrap.appendChild(searchInput);
+      searchWrap.appendChild(clearBtn);
+
       const cardsEl = document.createElement('div');
       cardsEl.className = 'cards';
       cardsEl.dataset.listId = list.id;
       players.forEach((p, i) => cardsEl.appendChild(renderCard(p, i + 1)));
       attachDropHandlers(cardsEl);
 
+      const applyColumnFilter = () => {
+        const q = searchInput.value.toLowerCase().trim();
+        const cards = cardsEl.querySelectorAll('.card');
+        let visible = 0;
+        cards.forEach(card => {
+          const name = card.querySelector('.card-name').textContent.toLowerCase();
+          const match = !q || name.includes(q);
+          card.style.display = match ? '' : 'none';
+          if (match) visible++;
+        });
+        countEl.textContent = q ? visible + ' / ' + players.length : players.length;
+        const existingEmpty = cardsEl.querySelector('.search-empty');
+        if (existingEmpty) existingEmpty.remove();
+        if (q && visible === 0) {
+          const msg = document.createElement('div');
+          msg.className = 'search-empty';
+          msg.textContent = 'No matches';
+          cardsEl.appendChild(msg);
+        }
+        clearBtn.classList.toggle('visible', q.length > 0);
+      };
+      const setSearch = (val) => {
+        searchInput.value = val;
+        columnSearch[list.id] = val;
+        applyColumnFilter();
+      };
+      searchInput.addEventListener('input', () => {
+        columnSearch[list.id] = searchInput.value;
+        applyColumnFilter();
+      });
+      searchInput.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && searchInput.value) setSearch('');
+      });
+      clearBtn.onclick = () => {
+        setSearch('');
+        searchInput.focus();
+      };
+
       col.appendChild(header);
+      col.appendChild(searchWrap);
       col.appendChild(cardsEl);
       kanban.appendChild(col);
+
+      applyColumnFilter();
 
       titleEl.addEventListener('blur', () => {
         const newName = titleEl.textContent.trim();
@@ -818,9 +1088,13 @@
     }
 
     if (fromListId !== toListId) {
-      logHistory(player, 'Moved from ' + findList(fromListId).name + ' → ' + findList(toListId).name);
+      let moveType = 'move';
+      let extra;
+      if (toListId === 'deferred') { moveType = 'defer'; extra = { season: CURRENT_SEASON }; }
+      else if (fromListId === 'deferred') moveType = 'return';
+      logHistory(player, 'Moved from ' + findList(fromListId).name + ' → ' + findList(toListId).name, moveType, extra);
     } else {
-      logHistory(player, 'Reordered within ' + findList(toListId).name);
+      logHistory(player, 'Reordered within ' + findList(toListId).name, 'reorder');
     }
 
     saveState();
@@ -840,22 +1114,16 @@
     if (!p) return;
     const currentList = findList(p.list);
     const otherLists = state.lists.filter(l => l.id !== p.list);
-    const history = (p.history || []).slice().reverse();
+
+    const initialHistory = p.history || [];
+    const firstYear = initialHistory.length ? initialHistory[0].date.slice(0, 4) : '—';
+    const deferSeasons = initialHistory
+      .filter(h => h.type === 'defer' && h.season)
+      .map(h => String(h.season));
+    const deferSeasonsStr = deferSeasons.length ? deferSeasons.join(', ') : '—';
 
     const modal = document.createElement('div');
     modal.className = 'modal';
-
-    const historyHtml = history.length === 0
-      ? '<div class="empty-state">No activity yet.</div>'
-      : history.map(h =>
-          '<div class="history-entry">' +
-            '<span class="h-date">' + escapeHtml(h.date) + '</span>' +
-            '<span class="h-event">' + escapeHtml(h.event) + '</span>' +
-          '</div>').join('');
-
-    const deferredRow = p.deferralYear
-      ? '<div class="detail-row"><span class="label">Deferred for</span><span class="value">' + p.deferralYear + ' season</span></div>'
-      : '';
 
     modal.innerHTML =
       '<div class="modal-header">' +
@@ -863,10 +1131,27 @@
         '<button class="close" id="m-close">&times;</button>' +
       '</div>' +
       '<div class="modal-body">' +
-        '<div class="detail-row"><span class="label">Current list</span><span class="value">' + escapeHtml(currentList.name) + '</span></div>' +
-        deferredRow +
-        '<div class="detail-row"><span class="label">Used deferral?</span><span class="value">' + (deferredLastSeason(p) ? 'Yes (last season)' : 'No') + '</span></div>' +
-        '<div class="history"><h3>History</h3>' + historyHtml + '</div>' +
+        '<div class="stats-grid">' +
+          '<div class="stat-item"><span class="stat-label">Current list</span><span class="stat-value">' + escapeHtml(currentList.name) + '</span></div>' +
+          '<div class="stat-item"><span class="stat-label">In system since</span><span class="stat-value">' + firstYear + '</span></div>' +
+          '<div class="stat-item"><span class="stat-label">Times deferred</span><span class="stat-value">' + deferSeasons.length + '</span></div>' +
+          '<div class="stat-item"><span class="stat-label">Deferred seasons</span><span class="stat-value">' + deferSeasonsStr + '</span></div>' +
+        '</div>' +
+        '<div class="notes-section">' +
+          '<h3>Notes</h3>' +
+          '<textarea class="notes-textarea" id="notes-textarea" placeholder="Back trouble — morning tee times only. Usually pairs with Mike Burke. Emailed 3/15, no reply yet."></textarea>' +
+          '<button class="notes-save-btn" id="notes-save" disabled>Save notes</button>' +
+        '</div>' +
+        '<div class="history">' +
+          '<h3>History</h3>' +
+          '<div class="history-filters">' +
+            '<button class="filter-chip active" data-filter="all">All</button>' +
+            '<button class="filter-chip" data-filter="moves">Moves</button>' +
+            '<button class="filter-chip" data-filter="deferrals">Deferrals</button>' +
+            '<button class="filter-chip" data-filter="notes">Notes</button>' +
+          '</div>' +
+          '<div id="history-list"></div>' +
+        '</div>' +
       '</div>' +
       '<div class="modal-footer">' +
         otherLists.map(l => '<button data-move="' + l.id + '">Move to ' + escapeHtml(l.name) + '</button>').join('') +
@@ -877,6 +1162,55 @@
     overlay.innerHTML = '';
     overlay.appendChild(modal);
     overlay.classList.remove('hidden');
+
+    const categoryForType = {
+      move: 'moves', reorder: 'moves', add: 'moves',
+      defer: 'deferrals', return: 'deferrals',
+      note: 'notes'
+    };
+    const chips = modal.querySelectorAll('.filter-chip');
+    const historyContainer = modal.querySelector('#history-list');
+    let activeFilter = 'all';
+    const renderHistoryList = (filter) => {
+      const hist = p.history || [];
+      const filtered = filter === 'all'
+        ? hist
+        : hist.filter(h => categoryForType[h.type || 'move'] === filter);
+      const reversed = filtered.slice().reverse();
+      historyContainer.innerHTML = reversed.length === 0
+        ? '<div class="empty-state">No entries in this category.</div>'
+        : reversed.map(h =>
+            '<div class="history-entry">' +
+              '<span class="h-date">' + escapeHtml(h.date) + '</span>' +
+              '<span class="h-event">' + escapeHtml(h.event) + '</span>' +
+            '</div>').join('');
+    };
+    chips.forEach(chip => {
+      chip.onclick = () => {
+        chips.forEach(c => c.classList.toggle('active', c === chip));
+        activeFilter = chip.dataset.filter;
+        renderHistoryList(activeFilter);
+      };
+    });
+    renderHistoryList(activeFilter);
+
+    const notesArea = modal.querySelector('#notes-textarea');
+    const notesBtn = modal.querySelector('#notes-save');
+    let initialNotes = p.notes || '';
+    notesArea.value = initialNotes;
+    notesArea.addEventListener('input', () => {
+      notesBtn.disabled = notesArea.value === initialNotes;
+    });
+    notesBtn.onclick = () => {
+      const newValue = notesArea.value;
+      if (newValue === initialNotes) return;
+      p.notes = newValue;
+      logHistory(p, newValue.trim() ? 'Notes updated' : 'Notes cleared', 'note');
+      saveState();
+      initialNotes = newValue;
+      notesBtn.disabled = true;
+      renderHistoryList(activeFilter);
+    };
 
     modal.querySelector('#m-close').onclick = closeModal;
     modal.querySelector('#m-delete').onclick = () => {
@@ -933,7 +1267,8 @@
       name: name.trim(),
       list: listId,
       deferralYear: listId === 'deferred' ? CURRENT_SEASON : null,
-      history: [{ date: today(), event: 'Added to ' + findList(listId).name }]
+      notes: '',
+      history: [{ date: today(), event: 'Added to ' + findList(listId).name, type: 'add' }]
     };
     if (listId === 'deferred') newPlayer.lastDeferredSeason = CURRENT_SEASON;
     state.players.push(newPlayer);
