@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fred Wright Tournament Manager</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f4f1ea;
+    --panel: #ffffff;
+    --ink: #1a1a1a;
+    --ink-muted: #6b6b6b;
+    --border: #d9d3c3;
+    --green: #1e5631;
+    --green-dark: #14421f;
+    --green-light: #e8f0ea;
+    --amber: #b8651a;
+    --amber-bg: #fdf3e3;
+    --red: #a33030;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    background: var(--green);
+    color: white;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 3px solid var(--green-dark);
+    flex-wrap: wrap;
+  }
+  header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  header .subtitle {
+    font-size: 13px;
+    opacity: 0.85;
+    margin-left: -12px;
+  }
+  header .spacer { flex: 1; }
+  .view-toggle {
+    display: flex;
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .view-toggle button {
+    background: transparent;
+    color: white;
+    border: 0;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    opacity: 0.7;
+  }
+  .view-toggle button.active {
+    background: rgba(255,255,255,0.2);
+    opacity: 1;
+  }
+  .season-label {
+    font-size: 13px;
+    opacity: 0.85;
+  }
+  .btn-reset {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .btn-reset:hover { background: rgba(255,255,255,0.1); }
+
+  #banner-area { padding: 0 24px; }
+  .banner {
+    background: var(--amber-bg);
+    border: 1px solid var(--amber);
+    border-left: 4px solid var(--amber);
+    padding: 12px 16px;
+    margin-top: 16px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .banner .banner-icon { font-size: 18px; }
+  .banner .banner-text { flex: 1; font-size: 14px; min-width: 200px; }
+  .banner .banner-text strong { color: var(--amber); }
+  .banner button {
+    background: var(--amber);
+    color: white;
+    border: 0;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .banner button.secondary {
+    background: transparent;
+    color: var(--amber);
+    border: 1px solid var(--amber);
+  }
+
+  main {
+    padding: 24px;
+  }
+
+  .kanban {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    min-height: 500px;
+  }
+  @media (max-width: 1100px) {
+    .kanban { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .kanban { grid-template-columns: 1fr; }
+  }
+  .column {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 180px);
+  }
+  .column-header {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .column-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink);
+    flex: 1;
+    cursor: text;
+    padding: 2px 4px;
+    border-radius: 3px;
+    outline: none;
+  }
+  .column-title:hover { background: #f0ece2; }
+  .column-title:focus { background: #fff8e1; box-shadow: 0 0 0 2px var(--amber); }
+  .count-badge {
+    background: var(--bg);
+    color: var(--ink-muted);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .btn-add {
+    background: transparent;
+    border: 1px dashed var(--border);
+    color: var(--ink-muted);
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .btn-add:hover { border-color: var(--green); color: var(--green); }
+  .cards {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+    min-height: 80px;
+    transition: background 0.15s;
+  }
+  .cards.drop-target {
+    background: var(--green-light);
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    cursor: grab;
+    font-size: 14px;
+    transition: box-shadow 0.15s, border-color 0.15s, opacity 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+  }
+  .card:hover {
+    border-color: var(--green);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+  .card.dragging { opacity: 0.35; cursor: grabbing; }
+  .card-handle {
+    flex-shrink: 0;
+    width: 10px;
+    height: 16px;
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.35;
+    transition: opacity 0.15s;
+  }
+  .card:hover .card-handle { opacity: 0.9; }
+  .card-handle svg { display: block; }
+  .card-position {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    min-width: 22px;
+    text-align: right;
+    padding-right: 2px;
+  }
+  .card-name { flex: 1; }
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .badge-deferred { background: #fde7d0; color: var(--amber); }
+  .badge-new { background: #e6f0e8; color: var(--green); }
+  .badge-returning { background: #e3f0fd; color: #2764b4; }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+  }
+  .overlay.hidden { display: none; }
+  .modal {
+    background: var(--panel);
+    border-radius: 8px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    width: 480px;
+    max-width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-header {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .modal-header h2 { font-size: 18px; font-weight: 600; flex: 1; }
+  .modal-header .close {
+    background: none;
+    border: 0;
+    font-size: 22px;
+    color: var(--ink-muted);
+    cursor: pointer;
+    line-height: 1;
+  }
+  .modal-body { padding: 20px; overflow-y: auto; }
+  .detail-row {
+    display: flex;
+    gap: 12px;
+    padding: 6px 0;
+    font-size: 14px;
+  }
+  .detail-row .label { color: var(--ink-muted); width: 120px; }
+  .detail-row .value { flex: 1; font-weight: 500; }
+  .history {
+    margin-top: 18px;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }
+  .history h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--ink-muted); margin-bottom: 10px; }
+  .history-entry {
+    display: flex;
+    gap: 12px;
+    padding: 6px 0;
+    font-size: 13px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .history-entry:last-child { border-bottom: 0; }
+  .history-entry .h-date { color: var(--ink-muted); width: 100px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .history-entry .h-event { flex: 1; }
+  .modal-footer {
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    background: #faf8f3;
+  }
+  .modal-footer button {
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--ink);
+  }
+  .modal-footer button:hover { border-color: var(--green); }
+  .modal-footer button.danger {
+    color: var(--red);
+    border-color: #eac7c7;
+  }
+  .modal-footer button.danger:hover { background: #fcf0f0; }
+
+  .confirm {
+    background: var(--panel);
+    border-radius: 8px;
+    width: 440px;
+    max-width: 100%;
+    padding: 22px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  }
+  .confirm h2 { font-size: 16px; margin-bottom: 10px; }
+  .confirm p { font-size: 14px; color: var(--ink-muted); line-height: 1.5; margin-bottom: 18px; }
+  .confirm-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .confirm-actions button {
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--panel);
+  }
+  .confirm-actions button.primary {
+    background: var(--green);
+    color: white;
+    border-color: var(--green);
+  }
+
+  .player-view { max-width: 900px; margin: 0 auto; }
+  .search-box {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 15px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: white;
+    margin-bottom: 20px;
+  }
+  .search-box:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(30,86,49,0.1);
+  }
+  .public-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 700px) {
+    .public-grid { grid-template-columns: 1fr; }
+  }
+  .public-column {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+  }
+  .public-column h2 {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--green);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .public-column .public-count {
+    font-size: 13px;
+    color: var(--ink-muted);
+    font-weight: 400;
+  }
+  .public-list {
+    padding: 8px 0;
+    max-height: calc(100vh - 280px);
+    overflow-y: auto;
+  }
+  .public-list .player-row {
+    padding: 8px 20px;
+    font-size: 14px;
+  }
+  .public-list .player-row.highlighted {
+    background: #fff8e1;
+    font-weight: 600;
+  }
+  .empty-state {
+    color: var(--ink-muted);
+    font-size: 13px;
+    padding: 20px;
+    text-align: center;
+    font-style: italic;
+  }
+
+  .rules-note {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+  .rules-note strong { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Fred Wright Tournament Manager</h1>
+  <span class="subtitle">Oakley Country Club</span>
+  <div class="spacer"></div>
+  <span class="season-label">Season: <strong>2026</strong></span>
+  <div class="view-toggle">
+    <button data-view="internal" class="active">Pro View</button>
+    <button data-view="public">Player View</button>
+  </div>
+  <button class="btn-reset" id="btn-reset">Reset Demo Data</button>
+</header>
+
+<div id="banner-area"></div>
+<main id="main-view">Loading…</main>
+
+<div class="overlay hidden" id="modal-overlay"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  const CURRENT_SEASON = 2026;
+  const LAST_SEASON = 2025;
+  const STORAGE_KEY = 'fred-wright-v1';
+
+  // ---------- SEED DATA ----------
+  function seedData() {
+    const participants2025 = [
+      'Amico, Angelo', 'Battista, Mike', 'Bella, David', 'Burke, Mike',
+      'Campbell, Alan', 'Cancian, David', 'Casey, Peter', 'Chryssis, Alex',
+      'Conroy, Jim', 'Copelotti, Andrew', 'Costello, Mike', 'Coughlin, John',
+      'Cristofori, Mark', 'Deguglielmo, Paul', 'Doherty, Mark', 'Dolan, Ryan',
+      'Douglas, James', 'Feldman, Doug', 'Foldenauer, Jeff', 'Gehrig, Joe Sr.',
+      'Gentile, Chris', 'Glynn, Paul'
+    ];
+    const took2025Off = [
+      'Kilpatrick, Brian', 'Hagopian, Russ', 'Jones, Bryan', 'Boike, Joe',
+      'Cole, Curtis', 'Costello, Robbie', 'Reynolds, Jim', 'Kim, Brian',
+      'Garman, Shane', 'Arone, Dan', 'Hintlian, Ken', 'Bartley, Jack'
+    ];
+    const waitlist2025 = [
+      'Gehrig, Joe Jr.', 'Johnson, Phil', 'Micalizzi, Dave',
+      "O'Neill, Conor", 'Judge, Greg', 'Cohan, Nick'
+    ];
+
+    const players = [];
+    let id = 1;
+    const seedDate = '2024-12-01';
+    participants2025.forEach(name => {
+      players.push({
+        id: 'p' + (id++), name: name, list: 'participants', deferralYear: null,
+        history: [{ date: seedDate, event: 'Added to Participants for ' + LAST_SEASON + ' season' }]
+      });
+    });
+    took2025Off.forEach(name => {
+      players.push({
+        id: 'p' + (id++), name: name, list: 'deferred', deferralYear: LAST_SEASON,
+        history: [
+          { date: '2024-11-15', event: 'Participant in prior season' },
+          { date: seedDate, event: 'Deferred for ' + LAST_SEASON + ' season' }
+        ]
+      });
+    });
+    waitlist2025.forEach(name => {
+      players.push({
+        id: 'p' + (id++), name: name, list: 'waitlist', deferralYear: null,
+        history: [{ date: seedDate, event: 'Added to Waitlist for ' + LAST_SEASON + ' season' }]
+      });
+    });
+
+    return {
+      lists: [
+        { id: 'participants', name: 'Participants' },
+        { id: 'deferred', name: 'Took Year Off' },
+        { id: 'waitlist', name: 'Waitlist' },
+        { id: 'new', name: 'New Players' }
+      ],
+      players: players,
+      dismissedReturnBanner: false
+    };
+  }
+
+  // ---------- STATE ----------
+  let state = loadState();
+  let currentView = 'internal';
+  let searchQuery = '';
+  let dragging = null; // { playerId, cardEl }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return seedData();
+      const parsed = JSON.parse(raw);
+      if (!parsed || !Array.isArray(parsed.players) || !Array.isArray(parsed.lists)) {
+        return seedData();
+      }
+      return parsed;
+    } catch (e) {
+      return seedData();
+    }
+  }
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+  function resetState() {
+    if (!confirm('Reset all data to the 8/29/2025 seed? This will erase any changes.')) return;
+    state = seedData();
+    saveState();
+    render();
+  }
+
+  // ---------- HELPERS ----------
+  function today() { return new Date().toISOString().slice(0, 10); }
+  function logHistory(player, event) {
+    if (!player.history) player.history = [];
+    player.history.push({ date: today(), event: event });
+  }
+  function findList(id) { return state.lists.find(l => l.id === id); }
+  function playersInList(id) { return state.players.filter(p => p.list === id); }
+
+  function deferredLastSeason(player) {
+    if (!player.history) return false;
+    const pattern = 'Deferred for ' + LAST_SEASON;
+    return player.history.some(h => h.event && h.event.indexOf(pattern) !== -1);
+  }
+  function getReturningPlayers() {
+    return state.players.filter(p =>
+      p.list === 'deferred' && p.deferralYear && p.deferralYear < CURRENT_SEASON
+    );
+  }
+
+  // ---------- RENDER ----------
+  const mainEl = document.getElementById('main-view');
+  const bannerArea = document.getElementById('banner-area');
+  const overlay = document.getElementById('modal-overlay');
+
+  function render() {
+    renderBanner();
+    if (currentView === 'internal') renderInternal();
+    else renderPublic();
+  }
+
+  function renderBanner() {
+    bannerArea.innerHTML = '';
+    if (state.dismissedReturnBanner) return;
+    const returning = getReturningPlayers();
+    if (returning.length === 0) return;
+    const div = document.createElement('div');
+    div.className = 'banner';
+    const plural = returning.length === 1 ? '' : 's';
+    const verb = returning.length === 1 ? 'is' : 'are';
+    div.innerHTML =
+      '<div class="banner-icon">&#x27F2;</div>' +
+      '<div class="banner-text">' +
+        '<strong>' + returning.length + ' player' + plural + '</strong> ' +
+        'deferred for ' + LAST_SEASON + ' and ' + verb + ' ready to return for ' + CURRENT_SEASON + '.' +
+      '</div>' +
+      '<button id="banner-return-all">Return All to Participants</button>' +
+      '<button class="secondary" id="banner-dismiss">Dismiss</button>';
+    bannerArea.appendChild(div);
+    document.getElementById('banner-return-all').onclick = () => {
+      returning.forEach(p => {
+        p.list = 'participants';
+        p.deferralYear = null;
+        logHistory(p, 'Returned from ' + LAST_SEASON + ' deferral — added to Participants');
+      });
+      saveState();
+      render();
+    };
+    document.getElementById('banner-dismiss').onclick = () => {
+      state.dismissedReturnBanner = true;
+      saveState();
+      render();
+    };
+  }
+
+  function renderInternal() {
+    mainEl.innerHTML = '<div class="kanban" id="kanban"></div>' +
+      '<div class="rules-note"><strong>Active rules:</strong> Players in Participants auto-carry into next season. ' +
+      'Deferring moves them to Took Year Off for one season. ' +
+      'A second consecutive deferral triggers a warning and suggests moving them to the bottom of the Waitlist. ' +
+      'Click any column name to rename it. Drag cards to move or reorder.</div>';
+
+    const kanban = document.getElementById('kanban');
+    state.lists.forEach(list => {
+      const col = document.createElement('div');
+      col.className = 'column';
+      col.dataset.listId = list.id;
+
+      const header = document.createElement('div');
+      header.className = 'column-header';
+      const titleEl = document.createElement('div');
+      titleEl.className = 'column-title';
+      titleEl.contentEditable = 'true';
+      titleEl.textContent = list.name;
+      titleEl.dataset.listId = list.id;
+      const countEl = document.createElement('span');
+      countEl.className = 'count-badge';
+      const players = playersInList(list.id);
+      countEl.textContent = players.length;
+      const addBtn = document.createElement('button');
+      addBtn.className = 'btn-add';
+      addBtn.textContent = '+';
+      addBtn.title = 'Add player';
+      addBtn.onclick = () => addPlayerToList(list.id);
+      header.appendChild(titleEl);
+      header.appendChild(countEl);
+      header.appendChild(addBtn);
+
+      const cardsEl = document.createElement('div');
+      cardsEl.className = 'cards';
+      cardsEl.dataset.listId = list.id;
+      players.forEach((p, i) => cardsEl.appendChild(renderCard(p, i + 1)));
+      attachDropHandlers(cardsEl);
+
+      col.appendChild(header);
+      col.appendChild(cardsEl);
+      kanban.appendChild(col);
+
+      titleEl.addEventListener('blur', () => {
+        const newName = titleEl.textContent.trim();
+        if (newName && newName !== list.name) {
+          list.name = newName;
+          saveState();
+        } else {
+          titleEl.textContent = list.name;
+        }
+      });
+      titleEl.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); titleEl.blur(); }
+      });
+    });
+  }
+
+  function renderCard(p, position) {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.draggable = true;
+    div.dataset.playerId = p.id;
+
+    const handleEl = document.createElement('span');
+    handleEl.className = 'card-handle';
+    handleEl.innerHTML =
+      '<svg width="8" height="14" viewBox="0 0 8 14" fill="currentColor" aria-hidden="true">' +
+        '<circle cx="2" cy="3" r="1"/><circle cx="6" cy="3" r="1"/>' +
+        '<circle cx="2" cy="7" r="1"/><circle cx="6" cy="7" r="1"/>' +
+        '<circle cx="2" cy="11" r="1"/><circle cx="6" cy="11" r="1"/>' +
+      '</svg>';
+    div.appendChild(handleEl);
+
+    const posEl = document.createElement('span');
+    posEl.className = 'card-position';
+    posEl.textContent = position + '.';
+    div.appendChild(posEl);
+
+    const nameEl = document.createElement('span');
+    nameEl.className = 'card-name';
+    nameEl.textContent = p.name;
+    div.appendChild(nameEl);
+
+    if (p.list === 'deferred' && p.deferralYear) {
+      const badge = document.createElement('span');
+      badge.className = 'badge badge-deferred';
+      badge.textContent = 'Deferred ' + p.deferralYear;
+      div.appendChild(badge);
+    } else if (p.list === 'new') {
+      const badge = document.createElement('span');
+      badge.className = 'badge badge-new';
+      badge.textContent = 'New';
+      div.appendChild(badge);
+    } else if (p.list === 'participants' && p.history &&
+               p.history.some(h => h.event && h.event.indexOf('Returned from') !== -1)) {
+      const badge = document.createElement('span');
+      badge.className = 'badge badge-returning';
+      badge.textContent = 'Returning';
+      div.appendChild(badge);
+    }
+
+    let dragStarted = false;
+    div.addEventListener('dragstart', e => {
+      dragStarted = true;
+      dragging = { playerId: p.id, cardEl: div };
+      div.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      try { e.dataTransfer.setData('text/plain', p.id); } catch (err) {}
+    });
+    div.addEventListener('dragend', () => {
+      div.classList.remove('dragging');
+      dragging = null;
+      document.querySelectorAll('.cards.drop-target').forEach(el => el.classList.remove('drop-target'));
+    });
+    div.addEventListener('click', e => {
+      if (dragStarted) { dragStarted = false; return; }
+      showPlayerModal(p.id);
+    });
+
+    return div;
+  }
+
+  function attachDropHandlers(cardsEl) {
+    cardsEl.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      cardsEl.classList.add('drop-target');
+    });
+    cardsEl.addEventListener('dragleave', e => {
+      if (e.target === cardsEl) cardsEl.classList.remove('drop-target');
+    });
+    cardsEl.addEventListener('drop', e => {
+      e.preventDefault();
+      cardsEl.classList.remove('drop-target');
+      if (!dragging) return;
+      const player = state.players.find(p => p.id === dragging.playerId);
+      if (!player) return;
+      const toListId = cardsEl.dataset.listId;
+      const fromListId = player.list;
+
+      const afterEl = getDropTarget(cardsEl, e.clientY);
+      const afterPlayerId = afterEl ? afterEl.dataset.playerId : null;
+
+      if (fromListId !== toListId && toListId === 'deferred' && deferredLastSeason(player)) {
+        showConfirmSecondDeferral(player, fromListId);
+        return;
+      }
+
+      applyMove(player, toListId, afterPlayerId);
+    });
+  }
+
+  function getDropTarget(container, y) {
+    const cards = Array.from(container.querySelectorAll('.card')).filter(c => !c.classList.contains('dragging'));
+    let closest = { offset: Number.NEGATIVE_INFINITY, card: null };
+    for (let i = 0; i < cards.length; i++) {
+      const card = cards[i];
+      const box = card.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > closest.offset) {
+        closest = { offset: offset, card: card };
+      }
+    }
+    return closest.card;
+  }
+
+  function applyMove(player, toListId, afterPlayerId) {
+    const fromListId = player.list;
+    const curIdx = state.players.findIndex(p => p.id === player.id);
+    if (curIdx >= 0) state.players.splice(curIdx, 1);
+
+    player.list = toListId;
+    if (toListId === 'deferred') player.deferralYear = CURRENT_SEASON;
+    else if (fromListId === 'deferred') player.deferralYear = null;
+
+    if (afterPlayerId) {
+      const afterIdx = state.players.findIndex(p => p.id === afterPlayerId);
+      if (afterIdx >= 0) state.players.splice(afterIdx, 0, player);
+      else state.players.push(player);
+    } else {
+      state.players.push(player);
+    }
+
+    if (fromListId !== toListId) {
+      logHistory(player, 'Moved from ' + findList(fromListId).name + ' → ' + findList(toListId).name);
+    } else {
+      logHistory(player, 'Reordered within ' + findList(toListId).name);
+    }
+
+    saveState();
+    render();
+  }
+
+  // ---------- MODAL ----------
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+
+  function closeModal() {
+    overlay.classList.add('hidden');
+    overlay.innerHTML = '';
+  }
+
+  function showPlayerModal(playerId) {
+    const p = state.players.find(x => x.id === playerId);
+    if (!p) return;
+    const currentList = findList(p.list);
+    const otherLists = state.lists.filter(l => l.id !== p.list);
+    const history = (p.history || []).slice().reverse();
+
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+
+    const historyHtml = history.length === 0
+      ? '<div class="empty-state">No activity yet.</div>'
+      : history.map(h =>
+          '<div class="history-entry">' +
+            '<span class="h-date">' + escapeHtml(h.date) + '</span>' +
+            '<span class="h-event">' + escapeHtml(h.event) + '</span>' +
+          '</div>').join('');
+
+    const deferredRow = p.deferralYear
+      ? '<div class="detail-row"><span class="label">Deferred for</span><span class="value">' + p.deferralYear + ' season</span></div>'
+      : '';
+
+    modal.innerHTML =
+      '<div class="modal-header">' +
+        '<h2>' + escapeHtml(p.name) + '</h2>' +
+        '<button class="close" id="m-close">&times;</button>' +
+      '</div>' +
+      '<div class="modal-body">' +
+        '<div class="detail-row"><span class="label">Current list</span><span class="value">' + escapeHtml(currentList.name) + '</span></div>' +
+        deferredRow +
+        '<div class="detail-row"><span class="label">Used deferral?</span><span class="value">' + (deferredLastSeason(p) ? 'Yes (last season)' : 'No') + '</span></div>' +
+        '<div class="history"><h3>History</h3>' + historyHtml + '</div>' +
+      '</div>' +
+      '<div class="modal-footer">' +
+        otherLists.map(l => '<button data-move="' + l.id + '">Move to ' + escapeHtml(l.name) + '</button>').join('') +
+        '<div style="flex:1"></div>' +
+        '<button class="danger" id="m-delete">Delete</button>' +
+      '</div>';
+
+    overlay.innerHTML = '';
+    overlay.appendChild(modal);
+    overlay.classList.remove('hidden');
+
+    modal.querySelector('#m-close').onclick = closeModal;
+    modal.querySelector('#m-delete').onclick = () => {
+      if (!confirm('Delete ' + p.name + ' from the tournament entirely?')) return;
+      state.players = state.players.filter(x => x.id !== p.id);
+      saveState();
+      closeModal();
+      render();
+    };
+    modal.querySelectorAll('[data-move]').forEach(btn => {
+      btn.onclick = () => {
+        const toListId = btn.dataset.move;
+        if (toListId === 'deferred' && deferredLastSeason(p)) {
+          closeModal();
+          showConfirmSecondDeferral(p, p.list);
+          return;
+        }
+        applyMove(p, toListId, null);
+        closeModal();
+      };
+    });
+  }
+
+  function showConfirmSecondDeferral(player, fromListId) {
+    const c = document.createElement('div');
+    c.className = 'confirm';
+    c.innerHTML =
+      '<h2>Second Consecutive Deferral</h2>' +
+      '<p><strong>' + escapeHtml(player.name) + '</strong> already deferred for the ' + LAST_SEASON + ' season. ' +
+      'Per tournament rules, a second consecutive deferral sends them to the bottom of the Waitlist.</p>' +
+      '<div class="confirm-actions">' +
+        '<button id="c-cancel">Cancel</button>' +
+        '<button id="c-waitlist" class="primary">Move to Waitlist (bottom)</button>' +
+      '</div>';
+    overlay.innerHTML = '';
+    overlay.appendChild(c);
+    overlay.classList.remove('hidden');
+
+    c.querySelector('#c-cancel').onclick = () => {
+      closeModal();
+      render();
+    };
+    c.querySelector('#c-waitlist').onclick = () => {
+      applyMove(player, 'waitlist', null);
+      closeModal();
+    };
+  }
+
+  function addPlayerToList(listId) {
+    const name = prompt('Player name (format: Last, First)');
+    if (!name || !name.trim()) return;
+    const newPlayer = {
+      id: 'p' + Date.now(),
+      name: name.trim(),
+      list: listId,
+      deferralYear: listId === 'deferred' ? CURRENT_SEASON : null,
+      history: [{ date: today(), event: 'Added to ' + findList(listId).name }]
+    };
+    state.players.push(newPlayer);
+    saveState();
+    render();
+  }
+
+  // ---------- PUBLIC VIEW ----------
+  function renderPublic() {
+    const inList = state.players
+      .filter(p => p.list === 'participants')
+      .map(p => p.name)
+      .sort((a, b) => a.localeCompare(b));
+    const waitingList = state.players
+      .filter(p => p.list !== 'participants')
+      .map(p => p.name)
+      .sort((a, b) => a.localeCompare(b));
+
+    const renderRows = (list) =>
+      list.length === 0
+        ? '<div class="empty-state">No one here.</div>'
+        : list.map(n =>
+            '<div class="player-row' + (highlight(n) ? ' highlighted' : '') + '">' +
+              escapeHtml(n) +
+            '</div>').join('');
+
+    mainEl.innerHTML =
+      '<div class="player-view">' +
+        '<input type="text" class="search-box" id="search" placeholder="Search for your name..." value="' + escapeHtml(searchQuery) + '" />' +
+        '<div class="public-grid">' +
+          '<div class="public-column">' +
+            '<h2>In the Tournament <span class="public-count">' + inList.length + ' players</span></h2>' +
+            '<div class="public-list">' + renderRows(inList) + '</div>' +
+          '</div>' +
+          '<div class="public-column">' +
+            '<h2>Waiting <span class="public-count">' + waitingList.length + ' players</span></h2>' +
+            '<div class="public-list">' + renderRows(waitingList) + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="rules-note"><strong>Player view:</strong> shows only whether a player is in the current tournament field or waiting. ' +
+        'Specific bucket (deferred, waitlist, new) and queue position are not exposed.</div>' +
+      '</div>';
+
+    const searchEl = document.getElementById('search');
+    searchEl.addEventListener('input', e => {
+      searchQuery = e.target.value;
+      const cursor = searchEl.selectionStart;
+      renderPublic();
+      const newSearch = document.getElementById('search');
+      newSearch.focus();
+      newSearch.setSelectionRange(cursor, cursor);
+    });
+  }
+  function highlight(name) {
+    if (!searchQuery.trim()) return false;
+    return name.toLowerCase().indexOf(searchQuery.toLowerCase().trim()) !== -1;
+  }
+
+  // ---------- UTILS ----------
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  // ---------- WIRE UP ----------
+  document.querySelectorAll('.view-toggle button').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentView = btn.dataset.view;
+      render();
+    };
+  });
+  document.getElementById('btn-reset').onclick = resetState;
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !overlay.classList.contains('hidden')) closeModal();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
