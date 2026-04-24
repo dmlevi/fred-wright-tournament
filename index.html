@@ -72,7 +72,7 @@
     font-size: 13px;
     opacity: 0.85;
   }
-  .btn-reset {
+  .btn-reset, .btn-print {
     background: transparent;
     color: white;
     border: 1px solid rgba(255,255,255,0.3);
@@ -81,7 +81,7 @@
     font-size: 12px;
     cursor: pointer;
   }
-  .btn-reset:hover { background: rgba(255,255,255,0.1); }
+  .btn-reset:hover, .btn-print:hover { background: rgba(255,255,255,0.1); }
 
   #banner-area { padding: 0 24px; }
   .banner {
@@ -146,7 +146,13 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    cursor: grab;
+    user-select: none;
   }
+  .column-header:active { cursor: grabbing; }
+  .column.col-dragging { opacity: 0.4; }
+  .column.col-drop-before { box-shadow: -3px 0 0 0 var(--green); }
+  .column.col-drop-after  { box-shadow:  3px 0 0 0 var(--green); }
   .column-title {
     font-weight: 600;
     font-size: 14px;
@@ -256,6 +262,19 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   }
   .card.dragging { opacity: 0.35; cursor: grabbing; }
+  .col-handle {
+    flex-shrink: 0;
+    width: 10px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.35;
+    transition: opacity 0.15s;
+    color: var(--ink-muted);
+  }
+  .column-header:hover .col-handle { opacity: 0.9; }
+  .col-handle svg { display: block; }
   .card-handle {
     flex-shrink: 0;
     width: 10px;
@@ -291,6 +310,18 @@
   .badge-deferred { background: #fde7d0; color: var(--amber); }
   .badge-new { background: #e6f0e8; color: var(--green); }
   .badge-returning { background: #e3f0fd; color: #2764b4; }
+  .defer-tag {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--amber);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    border: 1px solid rgba(184, 101, 26, 0.3);
+  }
 
   .overlay {
     position: fixed;
@@ -459,6 +490,10 @@
     background: var(--green);
     color: white;
     border-color: var(--green);
+  }
+  .confirm-actions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
   .player-view { max-width: 900px; margin: 0 auto; }
@@ -684,13 +719,6 @@
 
   .column.readonly .card { cursor: default; }
   .column.readonly .cards { background: #fafaf6; }
-  .column.readonly .column-title::after {
-    content: ' (read-only)';
-    color: var(--ink-muted);
-    font-weight: 400;
-    font-size: 11px;
-    margin-left: 4px;
-  }
 
   .action-row {
     display: flex;
@@ -778,6 +806,109 @@
     color: var(--ink);
     flex: 1;
   }
+  .setup-summary {
+    margin-top: 4px;
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    background: #faf8f3;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .setup-summary-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .setup-summary-row .label { color: var(--ink-muted); }
+  .setup-summary-row .value { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .setup-summary-row .value.over { color: var(--amber); }
+  .setup-summary-warn {
+    font-size: 12px;
+    color: var(--amber);
+    font-weight: 500;
+  }
+  .setup-summary-empty {
+    color: var(--ink-muted);
+    font-style: italic;
+    text-align: center;
+  }
+
+  #print-view { display: none; }
+  @media print {
+    @page { margin: 0.5in; }
+    body { background: white; color: black; }
+    header, #banner-area, main, .overlay, #modal-overlay { display: none !important; }
+    #print-view {
+      display: block;
+      font-family: Georgia, "Times New Roman", serif;
+      color: black;
+      padding: 0;
+    }
+    #print-view .print-header {
+      border-bottom: 2px solid black;
+      padding-bottom: 10px;
+      margin-bottom: 18px;
+    }
+    #print-view h1 {
+      font-size: 22pt;
+      margin: 0;
+      font-weight: 600;
+    }
+    #print-view .print-meta {
+      font-size: 10pt;
+      color: #444;
+      margin-top: 4px;
+    }
+    #print-view .print-summary {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 22px;
+      font-size: 11pt;
+    }
+    #print-view .print-summary strong { font-weight: 600; }
+    #print-view .print-section {
+      break-inside: avoid;
+      margin-bottom: 24px;
+    }
+    #print-view h2 {
+      font-size: 14pt;
+      margin: 0 0 10px 0;
+      border-bottom: 1px solid #999;
+      padding-bottom: 4px;
+      font-weight: 600;
+    }
+    #print-view .print-roster {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      column-count: 2;
+      column-gap: 36px;
+      font-size: 11pt;
+      line-height: 1.65;
+    }
+    #print-view .print-roster li {
+      break-inside: avoid;
+      padding: 1px 0;
+    }
+    #print-view .print-roster li.pending { color: #555; font-style: italic; }
+    #print-view .pending-tag {
+      font-size: 9pt;
+      color: #777;
+      font-style: normal;
+    }
+    #print-view .print-waitlist {
+      margin: 0;
+      padding-left: 28px;
+      font-size: 11pt;
+      line-height: 1.7;
+    }
+    #print-view .print-empty {
+      color: #777;
+      font-style: italic;
+      font-size: 11pt;
+    }
+  }
 </style>
 </head>
 <body>
@@ -792,11 +923,14 @@
     <button data-view="internal" class="active">Management View</button>
     <button data-view="public">Player View</button>
   </div>
+  <button class="btn-print" id="btn-print" title="Print roster and waitlist">Print</button>
   <button class="btn-reset" id="btn-reset">Reset Demo Data</button>
 </header>
 
 <div id="banner-area"></div>
 <main id="main-view">Loading…</main>
+
+<div id="print-view"></div>
 
 <div class="overlay hidden" id="modal-overlay"></div>
 
@@ -806,16 +940,30 @@
 
   const CURRENT_SEASON = 2026;
   const LAST_SEASON = 2025;
-  const STORAGE_KEY = 'fred-wright-v3';
+  const STORAGE_KEY = 'fred-wright-v6';
   const SLOT_CAP = 60;
   const SEASONS = [LAST_SEASON, CURRENT_SEASON];
   const LIST_IDS = ['participants', 'deferred', 'waitlist', 'new'];
+  const DEFAULT_COLUMN_ORDER = ['new', 'waitlist', 'participants', 'deferred'];
+  const GRIP_SVG =
+    '<svg width="8" height="14" viewBox="0 0 8 14" fill="currentColor" aria-hidden="true">' +
+      '<circle cx="2" cy="3" r="1"/><circle cx="6" cy="3" r="1"/>' +
+      '<circle cx="2" cy="7" r="1"/><circle cx="6" cy="7" r="1"/>' +
+      '<circle cx="2" cy="11" r="1"/><circle cx="6" cy="11" r="1"/>' +
+    '</svg>';
+
+  function getDeferSeasons(player) {
+    return (player.history || [])
+      .filter(h => (h.type === 'defer' || h.type === 'decline') && h.season)
+      .map(h => Number(h.season));
+  }
 
   function listDisplayName(listId, year) {
     switch (listId) {
       case 'participants': return year + ' Participants';
-      case 'deferred':     return 'Took ' + year + ' Off';
-      case 'waitlist':     return year + ' Waitlist';
+      case 'deferred':
+        return 'Deferred in ' + year;
+      case 'waitlist':     return 'Waitlist';
       case 'new':          return 'New Players ' + year;
     }
     return listId;
@@ -1012,7 +1160,8 @@
 
     return {
       activeSeason: CURRENT_SEASON,
-      players: players
+      players: players,
+      columnOrder: DEFAULT_COLUMN_ORDER.slice()
     };
   }
 
@@ -1022,6 +1171,7 @@
   let searchQuery = '';
   const columnSearch = {};
   let dragging = null; // { playerId, cardEl }
+  let columnDragging = null; // column id being dragged
   const importStagger = new Map(); // playerId -> stagger index for fade-in animation
   let staggerClearTimer = null;
 
@@ -1033,6 +1183,30 @@
     }, delayMs);
   }
 
+  function sanitizeColumnOrder(order) {
+    const known = new Set(DEFAULT_COLUMN_ORDER);
+    const result = Array.isArray(order) ? order.filter(id => known.has(id)) : [];
+    DEFAULT_COLUMN_ORDER.forEach(id => {
+      if (!result.includes(id)) result.push(id);
+    });
+    return result;
+  }
+
+  function reorderColumn(fromId, toId, dropBefore) {
+    if (fromId === toId) return;
+    const order = state.columnOrder.slice();
+    const fromIdx = order.indexOf(fromId);
+    if (fromIdx < 0) return;
+    order.splice(fromIdx, 1);
+    let toIdx = order.indexOf(toId);
+    if (toIdx < 0) return;
+    if (!dropBefore) toIdx += 1;
+    order.splice(toIdx, 0, fromId);
+    state.columnOrder = order;
+    saveState();
+    render();
+  }
+
   function loadState() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -1040,6 +1214,7 @@
       const parsed = JSON.parse(raw);
       if (!parsed || !Array.isArray(parsed.players)) return seedData();
       if (typeof parsed.activeSeason !== 'number') parsed.activeSeason = CURRENT_SEASON;
+      parsed.columnOrder = sanitizeColumnOrder(parsed.columnOrder);
       return parsed;
     } catch (e) {
       return seedData();
@@ -1109,10 +1284,11 @@
     return !!(prior && prior.list === 'deferred');
   }
 
-  function participantCounts() {
+  function participantCounts(year) {
+    if (year === undefined) year = CURRENT_SEASON;
     let confirmed = 0, pending = 0;
     for (const p of state.players) {
-      const s = getSeason(p, CURRENT_SEASON);
+      const s = getSeason(p, year);
       if (!s || s.list !== 'participants') continue;
       if (s.status === 'pending') pending++;
       else confirmed++;
@@ -1138,6 +1314,55 @@
     renderSetupBanner();
     if (currentView === 'internal') renderInternal();
     else renderPublic();
+  }
+
+  const printViewEl = document.getElementById('print-view');
+  function renderPrintView() {
+    const year = state.activeSeason;
+    const participants = playersInListForSeason(year, 'participants').slice()
+      .sort((a, b) => a.name.localeCompare(b.name));
+    const waitlist = playersInListForSeason(year, 'waitlist');
+    const { confirmed, pending } = participantCounts(year);
+
+    const printedOn = new Date().toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    const rosterItems = participants.map(p => {
+      const s = getSeason(p, year);
+      const isPending = year === CURRENT_SEASON && s && s.status === 'pending';
+      return '<li' + (isPending ? ' class="pending"' : '') + '>' +
+        escapeHtml(p.name) +
+        (isPending ? ' <span class="pending-tag">(pending)</span>' : '') +
+        '</li>';
+    }).join('');
+
+    const waitlistItems = waitlist.map(p => '<li>' + escapeHtml(p.name) + '</li>').join('');
+
+    const summaryParts = [
+      '<span><strong>' + confirmed + '</strong> confirmed / ' + SLOT_CAP + ' slots</span>'
+    ];
+    if (pending > 0) summaryParts.push('<span>' + pending + ' pending</span>');
+    summaryParts.push('<span>' + waitlist.length + ' on waitlist</span>');
+
+    printViewEl.innerHTML =
+      '<div class="print-header">' +
+        '<h1>Fred Wright Tournament &mdash; ' + year + ' Roster</h1>' +
+        '<div class="print-meta">Oakley Country Club &middot; Printed ' + escapeHtml(printedOn) + '</div>' +
+      '</div>' +
+      '<div class="print-summary">' + summaryParts.join('') + '</div>' +
+      '<section class="print-section">' +
+        '<h2>Participants</h2>' +
+        (rosterItems
+          ? '<ul class="print-roster">' + rosterItems + '</ul>'
+          : '<p class="print-empty">No participants yet.</p>') +
+      '</section>' +
+      '<section class="print-section">' +
+        '<h2>Waitlist</h2>' +
+        (waitlistItems
+          ? '<ol class="print-waitlist">' + waitlistItems + '</ol>'
+          : '<p class="print-empty">No players on the waitlist.</p>') +
+      '</section>';
   }
 
   function renderHeaderControls() {
@@ -1211,31 +1436,52 @@
 
   function renderInternal() {
     const isActive = state.activeSeason === CURRENT_SEASON;
-    const noteText = isActive
-      ? '<strong>' + CURRENT_SEASON + ' season:</strong> Click a Pending player to confirm or decline. ' +
-        'Decline moves them to "Took ' + CURRENT_SEASON + ' Off" — eligible to return ' + (CURRENT_SEASON + 1) + '. ' +
-        'Drag cards to move or reorder.'
-      : '<strong>' + state.activeSeason + ' season (read-only):</strong> Historical view of last season. ' +
-        'Switch to ' + CURRENT_SEASON + ' to make changes.';
+    mainEl.innerHTML = '<div class="kanban" id="kanban"></div>';
 
-    mainEl.innerHTML = '<div class="kanban" id="kanban"></div>' +
-      '<div class="rules-note">' + noteText + '</div>';
-
+    columnDragging = null;
     const kanban = document.getElementById('kanban');
-    LIST_IDS.forEach(listId => {
+    const year = state.activeSeason;
+    state.columnOrder.forEach(listId => {
+      const title = listDisplayName(listId, year);
+
       const col = document.createElement('div');
       col.className = 'column';
       col.dataset.listId = listId;
+      col.dataset.colYear = year;
+      col.dataset.columnId = listId;
       if (!isActive) col.classList.add('readonly');
+
+      attachColumnReorderHandlers(col, listId);
 
       const header = document.createElement('div');
       header.className = 'column-header';
+      const handleEl = document.createElement('span');
+      handleEl.className = 'col-handle';
+      handleEl.setAttribute('aria-hidden', 'true');
+      handleEl.innerHTML = GRIP_SVG;
+      header.appendChild(handleEl);
+      header.draggable = true;
+      header.addEventListener('dragstart', e => {
+        if (e.target.closest('button, input')) {
+          e.preventDefault();
+          return;
+        }
+        columnDragging = listId;
+        col.classList.add('col-dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        try { e.dataTransfer.setData('text/plain', 'column:' + listId); } catch (err) {}
+      });
+      header.addEventListener('dragend', () => {
+        columnDragging = null;
+        document.querySelectorAll('.col-dragging, .col-drop-before, .col-drop-after')
+          .forEach(el => el.classList.remove('col-dragging', 'col-drop-before', 'col-drop-after'));
+      });
       const titleEl = document.createElement('div');
       titleEl.className = 'column-title';
-      titleEl.textContent = listDisplayName(listId, state.activeSeason);
+      titleEl.textContent = title;
       const countEl = document.createElement('span');
       countEl.className = 'count-badge';
-      const players = playersInListForSeason(state.activeSeason, listId);
+      const players = playersInListForSeason(year, listId);
       countEl.textContent = players.length;
       header.appendChild(titleEl);
       header.appendChild(countEl);
@@ -1258,7 +1504,7 @@
       searchInput.className = 'column-search';
       searchInput.placeholder = 'Search…';
       searchInput.value = columnSearch[listId] || '';
-      searchInput.setAttribute('aria-label', 'Search ' + listDisplayName(listId, state.activeSeason));
+      searchInput.setAttribute('aria-label', 'Search ' + title);
       const clearBtn = document.createElement('button');
       clearBtn.type = 'button';
       clearBtn.className = 'column-search-clear';
@@ -1288,6 +1534,7 @@
       const cardsEl = document.createElement('div');
       cardsEl.className = 'cards';
       cardsEl.dataset.listId = listId;
+      cardsEl.dataset.colYear = year;
       if (isNew && isActive && players.length === 0) {
         const empty = document.createElement('div');
         empty.className = 'empty-import';
@@ -1352,7 +1599,7 @@
         }
       }
 
-      applyColumnFilter();
+      if (searchInput.value) applyColumnFilter();
     });
   }
 
@@ -1360,21 +1607,16 @@
     const year = state.activeSeason;
     const seasonInfo = getSeason(p, year);
     const listId = seasonInfo ? seasonInfo.list : null;
-    const isActive = year === CURRENT_SEASON;
+    const editable = year === CURRENT_SEASON;
 
     const div = document.createElement('div');
     div.className = 'card';
-    div.draggable = isActive;
+    div.draggable = editable;
     div.dataset.playerId = p.id;
 
     const handleEl = document.createElement('span');
     handleEl.className = 'card-handle';
-    handleEl.innerHTML =
-      '<svg width="8" height="14" viewBox="0 0 8 14" fill="currentColor" aria-hidden="true">' +
-        '<circle cx="2" cy="3" r="1"/><circle cx="6" cy="3" r="1"/>' +
-        '<circle cx="2" cy="7" r="1"/><circle cx="6" cy="7" r="1"/>' +
-        '<circle cx="2" cy="11" r="1"/><circle cx="6" cy="11" r="1"/>' +
-      '</svg>';
+    handleEl.innerHTML = GRIP_SVG;
     div.appendChild(handleEl);
 
     const posEl = document.createElement('span');
@@ -1387,7 +1629,7 @@
     nameEl.textContent = p.name;
     div.appendChild(nameEl);
 
-    if (listId === 'participants' && isActive) {
+    if (listId === 'participants' && year === CURRENT_SEASON) {
       const status = getStatus(p, year);
       const badge = document.createElement('span');
       badge.className = 'badge badge-' + status;
@@ -1396,13 +1638,24 @@
     } else if (listId === 'deferred') {
       const badge = document.createElement('span');
       badge.className = 'badge badge-deferred';
-      badge.textContent = 'Deferred ' + year;
+      badge.textContent = 'Deferred in ' + year;
       div.appendChild(badge);
     } else if (listId === 'new' && !p.signupTimestamp) {
       const badge = document.createElement('span');
       badge.className = 'badge badge-new';
       badge.textContent = 'New';
       div.appendChild(badge);
+    }
+
+    const deferSeasons = getDeferSeasons(p);
+    const mostRecentDefer = deferSeasons.length ? Math.max.apply(null, deferSeasons) : null;
+    const suppressYear = listId === 'deferred' ? year : null;
+    if (mostRecentDefer !== null && mostRecentDefer !== suppressYear) {
+      const tag = document.createElement('span');
+      tag.className = 'defer-tag';
+      tag.textContent = 'Deferred in ' + mostRecentDefer;
+      tag.title = 'Most recent deferral: ' + mostRecentDefer + ' (see history for prior deferrals)';
+      div.appendChild(tag);
     }
 
     if (listId === 'new' && p.signupTimestamp) {
@@ -1421,7 +1674,7 @@
     }
 
     let dragStarted = false;
-    if (isActive) {
+    if (editable) {
       div.addEventListener('dragstart', e => {
         dragStarted = true;
         dragging = { playerId: p.id, cardEl: div };
@@ -1443,8 +1696,34 @@
     return div;
   }
 
+  function attachColumnReorderHandlers(col, columnId) {
+    col.addEventListener('dragover', e => {
+      if (!columnDragging || columnDragging === columnId) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const box = col.getBoundingClientRect();
+      const dropBefore = e.clientX < box.left + box.width / 2;
+      col.classList.toggle('col-drop-before', dropBefore);
+      col.classList.toggle('col-drop-after', !dropBefore);
+    });
+    col.addEventListener('dragleave', e => {
+      if (!col.contains(e.relatedTarget)) {
+        col.classList.remove('col-drop-before', 'col-drop-after');
+      }
+    });
+    col.addEventListener('drop', e => {
+      if (!columnDragging || columnDragging === columnId) return;
+      e.preventDefault();
+      const box = col.getBoundingClientRect();
+      const dropBefore = e.clientX < box.left + box.width / 2;
+      col.classList.remove('col-drop-before', 'col-drop-after');
+      reorderColumn(columnDragging, columnId, dropBefore);
+    });
+  }
+
   function attachDropHandlers(cardsEl) {
     cardsEl.addEventListener('dragover', e => {
+      if (columnDragging) return;
       e.preventDefault();
       e.dataTransfer.dropEffect = 'move';
       cardsEl.classList.add('drop-target');
@@ -1453,6 +1732,7 @@
       if (e.target === cardsEl) cardsEl.classList.remove('drop-target');
     });
     cardsEl.addEventListener('drop', e => {
+      if (columnDragging) return;
       e.preventDefault();
       cardsEl.classList.remove('drop-target');
       if (!dragging) return;
@@ -1536,7 +1816,8 @@
       let extra;
       if (toListId === 'deferred') { moveType = 'defer'; extra = { season: year }; }
       else if (fromListId === 'deferred') moveType = 'return';
-      logHistory(player, 'Moved from ' + listDisplayName(fromListId, year) + ' → ' + listDisplayName(toListId, year), moveType, extra);
+      const fromDisplay = fromListId ? listDisplayName(fromListId, year) : 'Not in ' + year;
+      logHistory(player, 'Moved from ' + fromDisplay + ' → ' + listDisplayName(toListId, year), moveType, extra);
     } else {
       logHistory(player, 'Reordered within ' + listDisplayName(toListId, year), 'reorder');
     }
@@ -1585,10 +1866,9 @@
 
     const initialHistory = p.history || [];
     const firstYear = initialHistory.length ? initialHistory[0].date.slice(0, 4) : '—';
-    const deferSeasons = initialHistory
-      .filter(h => h.type === 'defer' && h.season)
-      .map(h => String(h.season));
+    const deferSeasons = getDeferSeasons(p);
     const deferSeasonsStr = deferSeasons.length ? deferSeasons.join(', ') : '—';
+
     const currentListName = currentListId ? listDisplayName(currentListId, year) : 'Not in ' + year;
 
     const otherListIds = LIST_IDS.filter(id => id !== currentListId);
@@ -1815,7 +2095,7 @@
     },
     {
       id: 'waitlist', sourceList: 'waitlist', targetList: 'waitlist', defaultChecked: false,
-      label: LAST_SEASON + ' waitlist holdovers &rarr; ' + CURRENT_SEASON + ' Waitlist',
+      label: LAST_SEASON + ' waitlist holdovers &rarr; Waitlist',
       historyFn: () => 'Carried on Waitlist for ' + CURRENT_SEASON + ' season',
       historyType: 'move'
     }
@@ -1838,16 +2118,77 @@
       extraClass: 'setup-dialog',
       bodyHtml:
         '<p>Carry players forward from ' + LAST_SEASON + '. They\'ll land in ' + CURRENT_SEASON + ' Participants as <strong>Pending</strong> until you confirm each one.</p>' +
-        '<div class="setup-options">' + optionsHtml + '</div>',
+        '<div class="setup-options">' + optionsHtml + '</div>' +
+        '<div class="setup-summary" id="setup-summary"></div>',
       buttons: [
         { label: 'Cancel' },
         { label: 'Roll Over', className: 'primary', onClick: (c) => {
           const selected = groups.filter(g => c.querySelector('input[data-group="' + g.id + '"]').checked);
+          if (selected.length === 0) return;
           closeModal();
           performRollover(selected);
         }}
       ]
     });
+
+    const modal = overlay.querySelector('.setup-dialog');
+    if (!modal) return;
+    const summaryEl = modal.querySelector('#setup-summary');
+    const rolloverBtn = modal.querySelector('[data-idx="1"]');
+    const checkboxes = modal.querySelectorAll('input[type="checkbox"][data-group]');
+
+    const updateSummary = () => {
+      let pendingCount = 0, waitlistCount = 0, totalCount = 0;
+      groups.forEach(g => {
+        const cb = modal.querySelector('input[data-group="' + g.id + '"]');
+        if (!cb || !cb.checked) return;
+        totalCount += g.players.length;
+        if (g.targetList === 'participants') pendingCount += g.players.length;
+        else if (g.targetList === 'waitlist') waitlistCount += g.players.length;
+      });
+
+      if (totalCount === 0) {
+        summaryEl.innerHTML = '<div class="setup-summary-empty">Nothing selected.</div>';
+      } else {
+        const overCap = pendingCount > SLOT_CAP;
+        const overBy = pendingCount - SLOT_CAP;
+        let html = '';
+        html +=
+          '<div class="setup-summary-row">' +
+            '<span class="label">Pending after roll-over</span>' +
+            '<span class="value' + (overCap ? ' over' : '') + '">' +
+              pendingCount + ' / ' + SLOT_CAP +
+            '</span>' +
+          '</div>';
+        if (overCap) {
+          html +=
+            '<div class="setup-summary-warn">' +
+              'Exceeds cap by ' + overBy + ' — you\'ll trim ' + overBy + ' pending down before confirming.' +
+            '</div>';
+        }
+        if (waitlistCount > 0) {
+          html +=
+            '<div class="setup-summary-row">' +
+              '<span class="label">Added to Waitlist</span>' +
+              '<span class="value">' + waitlistCount + '</span>' +
+            '</div>';
+        }
+        summaryEl.innerHTML = html;
+      }
+
+      if (rolloverBtn) {
+        if (totalCount === 0) {
+          rolloverBtn.textContent = 'Roll Over';
+          rolloverBtn.disabled = true;
+        } else {
+          rolloverBtn.textContent = 'Roll Over ' + totalCount + ' Player' + (totalCount === 1 ? '' : 's');
+          rolloverBtn.disabled = false;
+        }
+      }
+    };
+
+    checkboxes.forEach(cb => cb.addEventListener('change', updateSummary));
+    updateSummary();
   }
 
   function performRollover(selectedGroups) {
@@ -1972,6 +2313,10 @@
     };
   });
   document.getElementById('btn-reset').onclick = resetState;
+  document.getElementById('btn-print').onclick = () => {
+    renderPrintView();
+    window.print();
+  };
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && !overlay.classList.contains('hidden')) closeModal();
   });
