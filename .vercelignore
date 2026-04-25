@@ -1,0 +1,8 @@
+# While the placeholder index.html is live, hide the real app from production.
+# Remove this file (or empty it) when ready to ship the real demo.
+app.html
+standings.html
+the-program.html
+shared.js
+designs/
+.claude/

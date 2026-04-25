@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fred Wright &mdash; Engagement (Live Editor)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #fbfaf6;
+    --surface: #ffffff;
+    --surface-warm: #f7f4ec;
+    --surface-hover: #f3efe4;
+    --ink: #17150f;
+    --ink-soft: #4a463e;
+    --ink-muted: #847c6d;
+    --ink-dim: #b5ad9d;
+    --border: #e3ddca;
+    --border-soft: #eeead9;
+    --forest: #1a5033;
+    --forest-dark: #13401f;
+    --forest-soft: #e4ede7;
+    --amber: #a85d1e;
+    --amber-soft: #f3e5cf;
+    --red: #a33030;
+    --red-soft: #f5e0e0;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+
+    --cat-major: #a33030;
+    --cat-major-soft: #f5e0e0;
+    --cat-premier: #a85d1e;
+    --cat-premier-soft: #f3e5cf;
+    --cat-tournament: #1a5033;
+    --cat-tournament-soft: #e4ede7;
+    --cat-league: #5a5a8a;
+    --cat-league-soft: #e8e8f0;
+    --cat-social: #847c6d;
+    --cat-social-soft: #f0ede4;
+    --cat-discretionary: #6b3e8a;
+    --cat-discretionary-soft: #efe7f4;
+  }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    font-size: 13px;
+    line-height: 1.4;
+    font-feature-settings: "cv11", "ss03";
+    min-height: 100vh;
+  }
+
+  /* Header — same shell as back-office */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 18px;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  header h1 {
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  header h1::before {
+    content: "";
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--forest);
+  }
+  header h1 .title-sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+    padding-left: 10px;
+    margin-left: 4px;
+    border-left: 1px solid var(--border);
+    font-weight: 400;
+  }
+  header .spacer { flex: 1; }
+
+  .nav-tabs {
+    display: inline-flex;
+    background: var(--surface-warm);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px;
+  }
+  .nav-tab {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 0;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 3px;
+    font-family: var(--sans);
+  }
+  .nav-tab.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+
+  .header-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+    background: var(--surface-warm);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    font-feature-settings: "tnum" 1;
+  }
+  .header-badge strong { color: var(--forest); font-weight: 700; }
+
+  .btn {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    cursor: pointer;
+    height: 32px;
+    font-family: var(--sans);
+  }
+  .btn:hover { color: var(--ink); background: var(--surface-warm); }
+  .btn.primary { background: var(--forest); color: white; border-color: var(--forest); font-weight: 600; }
+  .btn.primary:hover { background: var(--forest-dark); }
+
+  /* Stat strip */
+  .stat-strip {
+    padding: 10px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    gap: 0;
+    font-size: 12px;
+  }
+  .stat-item {
+    padding: 0 18px;
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    border-right: 1px solid var(--border);
+  }
+  .stat-item:first-child { padding-left: 0; }
+  .stat-item:last-child { border-right: 0; padding-right: 0; }
+  .stat-num {
+    font-weight: 700;
+    font-size: 16px;
+    font-feature-settings: "tnum" 1;
+    font-family: var(--mono);
+  }
+  .stat-num.forest { color: var(--forest); }
+  .stat-num.amber { color: var(--amber); }
+  .stat-label { color: var(--ink-muted); font-weight: 500; }
+  .stat-spacer { flex: 1; }
+  .stat-hint { font-size: 11px; color: var(--ink-muted); font-family: var(--mono); }
+
+  /* Live-preview flash banner (appears on weight change) */
+  .flash {
+    padding: 8px 20px;
+    background: var(--forest-soft);
+    border-bottom: 1px solid #b9d3bf;
+    font-size: 12px;
+    color: var(--forest-dark);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .flash strong { font-weight: 700; }
+  .flash .pulse {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--forest);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.9; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.2); }
+  }
+
+  /* Main layout — two columns */
+  main {
+    display: grid;
+    grid-template-columns: minmax(420px, 42%) 1fr;
+    gap: 14px;
+    padding: 14px 20px 28px;
+    min-height: calc(100vh - 120px);
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 140px);
+    overflow: hidden;
+  }
+  .panel-header {
+    padding: 11px 14px 10px;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .panel-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+  }
+  .panel-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+    font-feature-settings: "tnum" 1;
+  }
+  .panel-spacer { flex: 1; }
+  .panel-body { flex: 1; overflow-y: auto; }
+
+  /* LEFT: Weight Editor */
+  .editor-section {
+    padding: 12px 14px 14px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .editor-section:last-child { border-bottom: 0; }
+  .editor-section-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    font-weight: 600;
+    margin-bottom: 9px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .editor-section-title .count {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-dim);
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .cat-row {
+    display: grid;
+    grid-template-columns: 14px 1fr auto auto;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .cat-row:hover { background: var(--surface-warm); }
+  .cat-row.editing { background: var(--forest-soft); }
+  .cat-dot { width: 10px; height: 10px; border-radius: 3px; }
+  .cat-dot.major { background: var(--cat-major); }
+  .cat-dot.premier { background: var(--cat-premier); }
+  .cat-dot.tournament { background: var(--cat-tournament); }
+  .cat-dot.league { background: var(--cat-league); }
+  .cat-dot.social { background: var(--cat-social); }
+  .cat-dot.discretionary { background: var(--cat-discretionary); }
+  .cat-label {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .cat-name { font-size: 13px; font-weight: 500; color: var(--ink); }
+  .cat-sub { font-size: 10px; color: var(--ink-muted); font-family: var(--mono); }
+  .cat-stepper {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+    overflow: hidden;
+    height: 26px;
+  }
+  .cat-stepper button {
+    background: transparent;
+    border: 0;
+    width: 22px;
+    height: 24px;
+    cursor: pointer;
+    color: var(--ink-muted);
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .cat-stepper button:hover { color: var(--forest); background: var(--surface-warm); }
+  .cat-stepper input {
+    width: 34px;
+    text-align: center;
+    border: 0;
+    border-left: 1px solid var(--border-soft);
+    border-right: 1px solid var(--border-soft);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    background: transparent;
+    outline: none;
+    height: 24px;
+    font-feature-settings: "tnum" 1;
+  }
+  .cat-pts-unit {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .tourn-row {
+    display: grid;
+    grid-template-columns: 8px 1fr auto auto;
+    align-items: center;
+    gap: 9px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .tourn-row:hover { background: var(--surface-warm); }
+  .tourn-bar { width: 3px; height: 18px; border-radius: 2px; }
+  .tourn-bar.major { background: var(--cat-major); }
+  .tourn-bar.premier { background: var(--cat-premier); }
+  .tourn-bar.tournament { background: var(--cat-tournament); }
+  .tourn-bar.league { background: var(--cat-league); }
+  .tourn-bar.social { background: var(--cat-social); }
+  .tourn-bar.discretionary { background: var(--cat-discretionary); }
+  .tourn-main { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .tourn-name { color: var(--ink); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tourn-date { font-family: var(--mono); font-size: 10px; color: var(--ink-muted); font-feature-settings: "tnum" 1; }
+  .tourn-participants {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-muted);
+    font-feature-settings: "tnum" 1;
+    white-space: nowrap;
+  }
+  .tourn-weight {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    font-feature-settings: "tnum" 1;
+    background: var(--surface-warm);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 6px;
+    min-width: 30px;
+    text-align: center;
+  }
+  .tourn-weight.override { color: var(--amber); border-color: var(--amber-soft); }
+
+  .disc-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 10px;
+    align-items: center;
+    padding: 5px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  .disc-row:hover { background: var(--surface-warm); }
+  .disc-main { display: flex; flex-direction: column; gap: 1px; }
+  .disc-who { color: var(--ink); font-weight: 500; }
+  .disc-why { font-size: 10px; color: var(--ink-muted); }
+  .disc-date { font-family: var(--mono); font-size: 10px; color: var(--ink-muted); font-feature-settings: "tnum" 1; }
+  .disc-pts {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--cat-discretionary);
+    font-feature-settings: "tnum" 1;
+    background: var(--cat-discretionary-soft);
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+  .disc-budget {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-muted);
+    padding: 4px 8px;
+    background: var(--surface-warm);
+    border-radius: 3px;
+    margin-top: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .disc-budget .used { color: var(--forest); font-weight: 700; }
+
+  /* RIGHT: Live Leaderboard */
+  .lb-toolbar {
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface-warm);
+    font-size: 11px;
+  }
+  .lb-toggle {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .lb-toggle button {
+    background: transparent;
+    border: 0;
+    padding: 4px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    font-family: var(--sans);
+  }
+  .lb-toggle button.active { background: var(--forest-soft); color: var(--forest); font-weight: 600; }
+
+  .lb-row {
+    display: grid;
+    grid-template-columns: 28px 1fr auto auto;
+    gap: 10px;
+    align-items: center;
+    padding: 7px 14px;
+    border-bottom: 1px solid var(--border-soft);
+    position: relative;
+    transition: background 0.15s;
+  }
+  .lb-row:hover { background: var(--surface-warm); }
+  .lb-row.qualifying::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 4px; bottom: 4px;
+    width: 2px;
+    background: var(--forest);
+  }
+  .lb-row.below-cut { opacity: 0.55; }
+  .lb-row.changed { background: var(--forest-soft); }
+  .lb-rank {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+    text-align: right;
+    font-feature-settings: "tnum" 1;
+    font-weight: 500;
+  }
+  .lb-row.qualifying .lb-rank { color: var(--forest); font-weight: 700; }
+  .lb-name-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .lb-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.003em;
+  }
+  .lb-source {
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    font-weight: 500;
+  }
+  .lb-source.defer { color: var(--amber); }
+  .lb-source.wait { color: var(--ink-soft); }
+  .lb-source.new { color: var(--forest); }
+
+  .lb-bar {
+    width: 120px;
+    height: 8px;
+    border-radius: 2px;
+    display: flex;
+    overflow: hidden;
+    background: var(--surface-warm);
+    border: 1px solid var(--border-soft);
+  }
+  .lb-bar > span { height: 100%; display: block; }
+  .lb-points {
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    font-feature-settings: "tnum" 1;
+    text-align: right;
+    min-width: 36px;
+  }
+  .lb-delta {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--forest);
+    margin-left: 3px;
+  }
+  .lb-delta.down { color: var(--amber); }
+
+  .cut-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    background: var(--bg);
+    border-top: 1px dashed var(--amber);
+    border-bottom: 1px dashed var(--amber);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--amber);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+  }
+  .cut-line .line { flex: 1; height: 1px; background: var(--amber-soft); }
+
+  .add-tourn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ink-muted);
+    font-size: 11px;
+    padding: 6px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 4px;
+  }
+  .add-tourn:hover { color: var(--forest); background: var(--forest-soft); }
+  .add-tourn::before {
+    content: "+";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border: 1px dashed var(--ink-dim);
+    border-radius: 3px;
+    font-weight: 600;
+    color: var(--ink-muted);
+  }
+  .add-tourn:hover::before { border-color: var(--forest); color: var(--forest); }
+
+  /* Legend dots under the bars */
+  .lb-legend {
+    padding: 10px 14px;
+    border-top: 1px solid var(--border-soft);
+    background: var(--surface-warm);
+    font-size: 10px;
+    color: var(--ink-muted);
+    font-family: var(--mono);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .lb-legend .dot {
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .lb-legend .dot::before {
+    content: "";
+    width: 8px; height: 8px; border-radius: 2px;
+  }
+  .lb-legend .dot.major::before { background: var(--cat-major); }
+  .lb-legend .dot.premier::before { background: var(--cat-premier); }
+  .lb-legend .dot.tournament::before { background: var(--cat-tournament); }
+  .lb-legend .dot.league::before { background: var(--cat-league); }
+  .lb-legend .dot.senior::before { background: var(--ink-soft); }
+  .lb-legend .dot.discretionary::before { background: var(--cat-discretionary); }
+
+  @media (max-width: 1000px) {
+    main { grid-template-columns: 1fr; }
+    .panel { max-height: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>
+    <span>Fred Wright</span>
+    <span class="title-sub">Engagement</span>
+  </h1>
+  <nav class="nav-tabs">
+    <button class="nav-tab">Management</button>
+    <button class="nav-tab active">Engagement</button>
+    <button class="nav-tab">Players</button>
+    <button class="nav-tab">History</button>
+  </nav>
+  <div class="header-badge">
+    Season <strong>2026</strong>
+  </div>
+  <div class="header-badge">
+    Through <strong>Jul 28</strong>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn">Export CSV</button>
+  <button class="btn primary">Publish Standings</button>
+</header>
+
+<div class="stat-strip">
+  <div class="stat-item"><span class="stat-num forest">10</span><span class="stat-label">open slots</span></div>
+  <div class="stat-item"><span class="stat-num">24</span><span class="stat-label">eligible pool</span></div>
+  <div class="stat-item"><span class="stat-num">59</span><span class="stat-label">top score</span></div>
+  <div class="stat-item"><span class="stat-num">28</span><span class="stat-label">median</span></div>
+  <div class="stat-item"><span class="stat-num amber">30</span><span class="stat-label">cut line (#10)</span></div>
+  <div class="stat-spacer"></div>
+  <span class="stat-hint">carryover: 48 confirmed &middot; 2 pending</span>
+</div>
+
+<div class="flash">
+  <span class="pulse"></span>
+  <span><strong>Live preview:</strong> weight changes update the leaderboard instantly. Three names moved when you last adjusted Member&#8209;Member.</span>
+</div>
+
+<main>
+  <!-- LEFT: Weight Editor -->
+  <section class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Weight Editor</div>
+      <span class="panel-meta">6 categories &middot; 8 tournaments</span>
+      <div class="panel-spacer"></div>
+      <span class="panel-meta">saved 2m ago</span>
+    </div>
+    <div class="panel-body">
+
+      <div class="editor-section">
+        <div class="editor-section-title">Categories <span class="count">&middot; drag to reorder</span></div>
+
+        <div class="cat-row editing">
+          <span class="cat-dot major"></span>
+          <div class="cat-label">
+            <span class="cat-name">Major</span>
+            <span class="cat-sub">2 events &middot; Member&#8209;Member, Club Championship</span>
+          </div>
+          <div class="cat-stepper">
+            <button>&minus;</button><input value="12"><button>+</button>
+          </div>
+          <span class="cat-pts-unit">pts</span>
+        </div>
+
+        <div class="cat-row">
+          <span class="cat-dot premier"></span>
+          <div class="cat-label">
+            <span class="cat-name">Premier</span>
+            <span class="cat-sub">2 events &middot; Member&#8209;Guest, Senior Championship</span>
+          </div>
+          <div class="cat-stepper">
+            <button>&minus;</button><input value="8"><button>+</button>
+          </div>
+          <span class="cat-pts-unit">pts</span>
+        </div>
+
+        <div class="cat-row">
+          <span class="cat-dot tournament"></span>
+          <div class="cat-label">
+            <span class="cat-name">Tournament</span>
+            <span class="cat-sub">2 events &middot; Spring Opener, Fall Classic</span>
+          </div>
+          <div class="cat-stepper">
+            <button>&minus;</button><input value="5"><button>+</button>
+          </div>
+          <span class="cat-pts-unit">pts</span>
+        </div>
+
+        <div class="cat-row">
+          <span class="cat-dot league"></span>
+          <div class="cat-label">
+            <span class="cat-name">League</span>
+            <span class="cat-sub">Wednesday Group &middot; per week</span>
+          </div>
+          <div class="cat-stepper">
+            <button>&minus;</button><input value="2"><button>+</button>
+          </div>
+          <span class="cat-pts-unit">pts</span>
+        </div>
+
+        <div class="cat-row">
+          <span class="cat-dot social"></span>
+          <div class="cat-label">
+            <span class="cat-name">Social</span>
+            <span class="cat-sub">Charity Scramble, Twilight Mixer</span>
+          </div>
+          <div class="cat-stepper">
+            <button>&minus;</button><input value="1"><button>+</button>
+          </div>
+          <span class="cat-pts-unit">pts</span>
+        </div>
+
+        <div class="cat-row">
+          <span class="cat-dot discretionary"></span>
+          <div class="cat-label">
+            <span class="cat-name">Discretionary</span>
+            <span class="cat-sub">Pro &amp; chair awards &middot; pool-based</span>
+          </div>
+          <div class="cat-stepper">
+            <button>&minus;</button><input value="3"><button>+</button>
+          </div>
+          <span class="cat-pts-unit">avg</span>
+        </div>
+      </div>
+
+      <div class="editor-section">
+        <div class="editor-section-title">Tournaments &mdash; 2026 Season <span class="count">&middot; 7 played, 2 upcoming</span></div>
+
+        <div class="tourn-row">
+          <span class="tourn-bar tournament"></span>
+          <div class="tourn-main">
+            <span class="tourn-name">Spring Opener</span>
+            <span class="tourn-date">Apr 18 &middot; Tournament</span>
+          </div>
+          <span class="tourn-participants">32 played</span>
+          <span class="tourn-weight">5</span>
+        </div>
+
+        <div class="tourn-row">
+          <span class="tourn-bar premier"></span>
+          <div class="tourn-main">
+            <span class="tourn-name">Member&#8209;Guest</span>
+            <span class="tourn-date">May 16 &middot; Premier</span>
+          </div>
+          <span class="tourn-participants">56 played</span>
+          <span class="tourn-weight">8</span>
+        </div>
+
+        <div class="tourn-row">
+          <span class="tourn-bar league"></span>
+          <div class="tourn-main">
+            <span class="tourn-name">Wednesday League &times;10</span>
+            <span class="tourn-date">Apr 22 &ndash; Jul 2 &middot; League</span>
+          </div>
+          <span class="tourn-participants">avg 28/wk</span>
+          <span class="tourn-weight">2</span>
+        </div>
+
+        <div class="tourn-row">
+          <span class="tourn-bar premier"></span>
+          <div class="tourn-main">
+            <span class="tourn-name">Senior Championship</span>
+            <span class="tourn-date">Jun 13 &middot; Premier</span>
+          </div>
+          <span class="tourn-participants">38 played</span>
+          <span class="tourn-weight">8</span>
+        </div>
+
+        <div class="tourn-row">
+          <span class="tourn-bar major"></span>
+          <div class="tourn-main">
+            <span class="tourn-name">Member&#8209;Member</span>
+            <span class="tourn-date">Jul 11 &middot; Major &middot; override +2</span>
+          </div>
+          <span class="tourn-participants">64 played</span>
+          <span class="tourn-weight override">14</span>
+        </div>
+
+        <div class="tourn-row">
+          <span class="tourn-bar social"></span>
+          <div class="tourn-main">
+            <span class="tourn-name">Charity Scramble</span>
+            <span class="tourn-date">Jul 25 &middot; Social</span>
+          </div>
+          <span class="tourn-participants">22 played</span>
+          <span class="tourn-weight">1</span>
+        </div>
+
+        <div class="tourn-row" style="opacity: 0.5;">
+          <span class="tourn-bar major"></span>
+          <div class="tourn-main">
+            <span class="tourn-name">Club Championship</span>
+            <span class="tourn-date">Aug 15 &middot; Major &middot; upcoming</span>
+          </div>
+          <span class="tourn-participants">&mdash;</span>
+          <span class="tourn-weight">12</span>
+        </div>
+
+        <div class="add-tourn">Add tournament</div>
+      </div>
+
+      <div class="editor-section">
+        <div class="editor-section-title">Discretionary Awards <span class="count">&middot; this season</span></div>
+
+        <div class="disc-row">
+          <div class="disc-main">
+            <span class="disc-who">Chryssis, Alex</span>
+            <span class="disc-why">Ran Junior Day clinic &middot; M. Donovan (chair)</span>
+          </div>
+          <span class="disc-date">Jun 20</span>
+          <span class="disc-pts">+3</span>
+        </div>
+
+        <div class="disc-row">
+          <div class="disc-main">
+            <span class="disc-who">Burke, Mike</span>
+            <span class="disc-why">Starter duty, M&#8209;M weekend &middot; T. Reilly (pro)</span>
+          </div>
+          <span class="disc-date">Jul 11</span>
+          <span class="disc-pts">+3</span>
+        </div>
+
+        <div class="disc-row">
+          <div class="disc-main">
+            <span class="disc-who">Russo, Tony</span>
+            <span class="disc-why">Cart fleet help, post-storm &middot; T. Reilly (pro)</span>
+          </div>
+          <span class="disc-date">Jun 08</span>
+          <span class="disc-pts">+3</span>
+        </div>
+
+        <div class="disc-row">
+          <div class="disc-main">
+            <span class="disc-who">Donovan, Pat</span>
+            <span class="disc-why">New member orientation &middot; M. Donovan (chair)</span>
+          </div>
+          <span class="disc-date">May 02</span>
+          <span class="disc-pts">+2</span>
+        </div>
+
+        <div class="disc-budget">
+          Budget remaining: <span class="used">49</span> / 60 pts &middot; 11 spent
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- RIGHT: Live Leaderboard -->
+  <section class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Eligible Pool &mdash; Live</div>
+      <span class="panel-meta">24 members &middot; 10 slots open</span>
+      <div class="panel-spacer"></div>
+      <span class="panel-meta">sorted by points &middot; desc</span>
+    </div>
+
+    <div class="lb-toolbar">
+      <div class="lb-toggle">
+        <button class="active">All</button>
+        <button>Returned</button>
+        <button>Waitlist</button>
+        <button>New</button>
+      </div>
+      <span class="panel-meta" style="margin-left: auto;">5 returned &middot; 7 waitlist &middot; 12 new</span>
+    </div>
+
+    <div class="panel-body">
+      <!-- Top 10 — qualifying -->
+      <div class="lb-row qualifying changed">
+        <span class="lb-rank">1</span>
+        <div class="lb-name-wrap"><span class="lb-name">Amico, Angelo</span><span class="lb-source defer">returned from defer &middot; 12 yrs</span></div>
+        <div class="lb-bar"><span style="width:40%;background:var(--cat-major);"></span><span style="width:14%;background:var(--cat-premier);"></span><span style="width:10%;background:var(--cat-tournament);"></span><span style="width:27%;background:var(--cat-league);"></span><span style="width:9%;background:var(--ink-soft);"></span></div>
+        <div class="lb-points">59<span class="lb-delta">+2</span></div>
+      </div>
+
+      <div class="lb-row qualifying changed">
+        <span class="lb-rank">2</span>
+        <div class="lb-name-wrap"><span class="lb-name">Burke, Mike</span><span class="lb-source defer">returned from defer &middot; 18 yrs</span></div>
+        <div class="lb-bar"><span style="width:28%;background:var(--cat-major);"></span><span style="width:16%;background:var(--cat-premier);"></span><span style="width:10%;background:var(--cat-tournament);"></span><span style="width:24%;background:var(--cat-league);"></span><span style="width:16%;background:var(--ink-soft);"></span><span style="width:6%;background:var(--cat-discretionary);"></span></div>
+        <div class="lb-points">50<span class="lb-delta">+2</span></div>
+      </div>
+
+      <div class="lb-row qualifying">
+        <span class="lb-rank">3</span>
+        <div class="lb-name-wrap"><span class="lb-name">Reynolds, Jim</span><span class="lb-source wait">waitlist 2025 &middot; 22 yrs</span></div>
+        <div class="lb-bar"><span style="width:35%;background:var(--cat-major);"></span><span style="width:20%;background:var(--cat-premier);"></span><span style="width:25%;background:var(--cat-league);"></span><span style="width:20%;background:var(--ink-soft);"></span></div>
+        <div class="lb-points">40<span class="lb-delta">+2</span></div>
+      </div>
+
+      <div class="lb-row qualifying">
+        <span class="lb-rank">4</span>
+        <div class="lb-name-wrap"><span class="lb-name">Coughlin, John</span><span class="lb-source defer">returned from defer &middot; 14 yrs</span></div>
+        <div class="lb-bar"><span style="width:21%;background:var(--cat-premier);"></span><span style="width:21%;background:var(--cat-premier);"></span><span style="width:3%;background:var(--cat-social);"></span><span style="width:36%;background:var(--cat-league);"></span><span style="width:19%;background:var(--ink-soft);"></span></div>
+        <div class="lb-points">39</div>
+      </div>
+
+      <div class="lb-row qualifying">
+        <span class="lb-rank">5</span>
+        <div class="lb-name-wrap"><span class="lb-name">Chryssis, Alex</span><span class="lb-source wait">waitlist 2025 &middot; 9 yrs</span></div>
+        <div class="lb-bar"><span style="width:13%;background:var(--cat-tournament);"></span><span style="width:21%;background:var(--cat-premier);"></span><span style="width:21%;background:var(--cat-premier);"></span><span style="width:20%;background:var(--cat-league);"></span><span style="width:17%;background:var(--ink-soft);"></span><span style="width:8%;background:var(--cat-discretionary);"></span></div>
+        <div class="lb-points">39</div>
+      </div>
+
+      <div class="lb-row qualifying">
+        <span class="lb-rank">6</span>
+        <div class="lb-name-wrap"><span class="lb-name">Donovan, Pat</span><span class="lb-source new">new &middot; first-timer &middot; 4 yrs</span></div>
+        <div class="lb-bar"><span style="width:23%;background:var(--cat-premier);"></span><span style="width:23%;background:var(--cat-premier);"></span><span style="width:28%;background:var(--cat-league);"></span><span style="width:12%;background:var(--ink-soft);"></span><span style="width:14%;background:var(--amber);"></span></div>
+        <div class="lb-points">35<span class="lb-delta">+2</span></div>
+      </div>
+
+      <div class="lb-row qualifying changed">
+        <span class="lb-rank">7</span>
+        <div class="lb-name-wrap"><span class="lb-name">Battista, Mike</span><span class="lb-source defer">returned from defer &middot; 6 yrs</span></div>
+        <div class="lb-bar"><span style="width:40%;background:var(--cat-major);"></span><span style="width:14%;background:var(--cat-tournament);"></span><span style="width:34%;background:var(--cat-league);"></span><span style="width:12%;background:var(--ink-soft);"></span></div>
+        <div class="lb-points">35<span class="lb-delta">+2</span></div>
+      </div>
+
+      <div class="lb-row qualifying">
+        <span class="lb-rank">8</span>
+        <div class="lb-name-wrap"><span class="lb-name">Sullivan, Tom</span><span class="lb-source wait">waitlist 2025 &middot; 7 yrs</span></div>
+        <div class="lb-bar"><span style="width:16%;background:var(--cat-tournament);"></span><span style="width:25%;background:var(--cat-premier);"></span><span style="width:37%;background:var(--cat-league);"></span><span style="width:22%;background:var(--ink-soft);"></span></div>
+        <div class="lb-points">32</div>
+      </div>
+
+      <div class="lb-row qualifying">
+        <span class="lb-rank">9</span>
+        <div class="lb-name-wrap"><span class="lb-name">Murphy, Sean</span><span class="lb-source defer">returned from defer &middot; 5 yrs</span></div>
+        <div class="lb-bar"><span style="width:39%;background:var(--cat-major);"></span><span style="width:26%;background:var(--cat-premier);"></span><span style="width:19%;background:var(--cat-league);"></span><span style="width:16%;background:var(--ink-soft);"></span></div>
+        <div class="lb-points">31<span class="lb-delta">+2</span></div>
+      </div>
+
+      <div class="lb-row qualifying">
+        <span class="lb-rank">10</span>
+        <div class="lb-name-wrap"><span class="lb-name">O'Brien, Kevin</span><span class="lb-source new">new &middot; first-timer &middot; 3 yrs</span></div>
+        <div class="lb-bar"><span style="width:27%;background:var(--cat-premier);"></span><span style="width:17%;background:var(--cat-tournament);"></span><span style="width:40%;background:var(--cat-league);"></span><span style="width:10%;background:var(--ink-soft);"></span><span style="width:17%;background:var(--amber);"></span></div>
+        <div class="lb-points">30</div>
+      </div>
+
+      <!-- CUT LINE -->
+      <div class="cut-line">
+        <span class="line"></span>
+        <span>Cut line &middot; slot 10 of 10</span>
+        <span class="line"></span>
+      </div>
+
+      <!-- Below cut — waitlist -->
+      <div class="lb-row below-cut">
+        <span class="lb-rank">11</span>
+        <div class="lb-name-wrap"><span class="lb-name">Carter, Bill</span><span class="lb-source wait">waitlist 2025 &middot; 8 yrs</span></div>
+        <div class="lb-bar"><span style="width:28%;background:var(--cat-premier);"></span><span style="width:17%;background:var(--cat-tournament);"></span><span style="width:28%;background:var(--cat-league);"></span><span style="width:27%;background:var(--ink-soft);"></span></div>
+        <div class="lb-points">29</div>
+      </div>
+
+      <div class="lb-row below-cut">
+        <span class="lb-rank">12</span>
+        <div class="lb-name-wrap"><span class="lb-name">Harrison, Frank</span><span class="lb-source wait">waitlist 2025 &middot; 3 yrs</span></div>
+        <div class="lb-bar"><span style="width:29%;background:var(--cat-premier);"></span><span style="width:18%;background:var(--cat-tournament);"></span><span style="width:42%;background:var(--cat-league);"></span><span style="width:11%;background:var(--ink-soft);"></span></div>
+        <div class="lb-points">28</div>
+      </div>
+
+      <div class="lb-row below-cut">
+        <span class="lb-rank">13</span>
+        <div class="lb-name-wrap"><span class="lb-name">McKenna, Brian</span><span class="lb-source new">new &middot; first-timer &middot; 4 yrs</span></div>
+        <div class="lb-bar"><span style="width:18%;background:var(--cat-tournament);"></span><span style="width:29%;background:var(--cat-premier);"></span><span style="width:21%;background:var(--cat-league);"></span><span style="width:14%;background:var(--ink-soft);"></span><span style="width:18%;background:var(--amber);"></span></div>
+        <div class="lb-points">28</div>
+      </div>
+
+      <div class="lb-row below-cut">
+        <span class="lb-rank">14</span>
+        <div class="lb-name-wrap"><span class="lb-name">Lawless, Dan</span><span class="lb-source new">new &middot; first-timer &middot; 3 yrs</span></div>
+        <div class="lb-bar"><span style="width:31%;background:var(--cat-premier);"></span><span style="width:38%;background:var(--cat-league);"></span><span style="width:12%;background:var(--ink-soft);"></span><span style="width:19%;background:var(--amber);"></span></div>
+        <div class="lb-points">26</div>
+      </div>
+
+      <div class="lb-row below-cut">
+        <span class="lb-rank">15</span>
+        <div class="lb-name-wrap"><span class="lb-name">Quinn, Robert</span><span class="lb-source wait">waitlist 2025 &middot; 11 yrs</span></div>
+        <div class="lb-bar"><span style="width:21%;background:var(--cat-tournament);"></span><span style="width:42%;background:var(--cat-league);"></span><span style="width:37%;background:var(--ink-soft);"></span></div>
+        <div class="lb-points">24</div>
+      </div>
+
+      <div class="lb-row below-cut">
+        <span class="lb-rank">16</span>
+        <div class="lb-name-wrap"><span class="lb-name">Nardone, Joe</span><span class="lb-source new">new &middot; first-timer &middot; 4 yrs</span></div>
+        <div class="lb-bar"><span style="width:23%;background:var(--cat-tournament);"></span><span style="width:36%;background:var(--cat-league);"></span><span style="width:18%;background:var(--ink-soft);"></span><span style="width:23%;background:var(--amber);"></span></div>
+        <div class="lb-points">22</div>
+      </div>
+
+      <div class="lb-row below-cut">
+        <span class="lb-rank">17</span>
+        <div class="lb-name-wrap"><span class="lb-name">Foster, Greg</span><span class="lb-source new">new &middot; first-timer &middot; 2 yrs</span></div>
+        <div class="lb-bar"><span style="width:38%;background:var(--cat-premier);"></span><span style="width:29%;background:var(--cat-league);"></span><span style="width:10%;background:var(--ink-soft);"></span><span style="width:24%;background:var(--amber);"></span></div>
+        <div class="lb-points">21</div>
+      </div>
+
+      <div class="lb-row below-cut">
+        <span class="lb-rank">18</span>
+        <div class="lb-name-wrap"><span class="lb-name">McCarthy, Pete</span><span class="lb-source new">new &middot; first-timer &middot; 3 yrs</span></div>
+        <div class="lb-bar"><span style="width:40%;background:var(--cat-premier);"></span><span style="width:20%;background:var(--cat-league);"></span><span style="width:15%;background:var(--ink-soft);"></span><span style="width:25%;background:var(--amber);"></span></div>
+        <div class="lb-points">20</div>
+      </div>
+
+      <div class="lb-row below-cut">
+        <span class="lb-rank">19</span>
+        <div class="lb-name-wrap"><span class="lb-name">Russo, Tony</span><span class="lb-source wait">waitlist 2025 &middot; 6 yrs</span></div>
+        <div class="lb-bar"><span style="width:53%;background:var(--cat-league);"></span><span style="width:31%;background:var(--ink-soft);"></span><span style="width:16%;background:var(--cat-discretionary);"></span></div>
+        <div class="lb-points">19</div>
+      </div>
+
+      <div class="lb-row below-cut">
+        <span class="lb-rank">20</span>
+        <div class="lb-name-wrap"><span class="lb-name">Lopez, Carlos</span><span class="lb-source new">new &middot; first-timer &middot; 3 yrs</span></div>
+        <div class="lb-bar"><span style="width:50%;background:var(--cat-league);"></span><span style="width:19%;background:var(--ink-soft);"></span><span style="width:31%;background:var(--amber);"></span></div>
+        <div class="lb-points">16</div>
+      </div>
+
+      <div class="lb-row below-cut">
+        <span class="lb-rank">21</span>
+        <div class="lb-name-wrap"><span class="lb-name">Walsh, Tim</span><span class="lb-source new">new &middot; first-timer &middot; 4 yrs</span></div>
+        <div class="lb-bar"><span style="width:6%;background:var(--cat-social);"></span><span style="width:38%;background:var(--cat-league);"></span><span style="width:25%;background:var(--ink-soft);"></span><span style="width:31%;background:var(--amber);"></span></div>
+        <div class="lb-points">16</div>
+      </div>
+
+      <div class="lb-row below-cut">
+        <span class="lb-rank">22</span>
+        <div class="lb-name-wrap"><span class="lb-name">Park, James</span><span class="lb-source new">new &middot; first-timer &middot; 1 yr</span></div>
+        <div class="lb-bar"><span style="width:50%;background:var(--cat-league);"></span><span style="width:8%;background:var(--ink-soft);"></span><span style="width:42%;background:var(--amber);"></span></div>
+        <div class="lb-points">12</div>
+      </div>
+
+      <div class="lb-row below-cut">
+        <span class="lb-rank">23</span>
+        <div class="lb-name-wrap"><span class="lb-name">Connolly, Mike</span><span class="lb-source new">new &middot; first-timer &middot; 2 yrs</span></div>
+        <div class="lb-bar"><span style="width:8%;background:var(--cat-social);"></span><span style="width:34%;background:var(--cat-league);"></span><span style="width:17%;background:var(--ink-soft);"></span><span style="width:41%;background:var(--amber);"></span></div>
+        <div class="lb-points">12</div>
+      </div>
+
+      <div class="lb-row below-cut">
+        <span class="lb-rank">24</span>
+        <div class="lb-name-wrap"><span class="lb-name">Reed, Steve</span><span class="lb-source new">new &middot; first-timer &middot; 1 yr</span></div>
+        <div class="lb-bar"><span style="width:40%;background:var(--cat-league);"></span><span style="width:10%;background:var(--ink-soft);"></span><span style="width:50%;background:var(--amber);"></span></div>
+        <div class="lb-points">10</div>
+      </div>
+
+    </div>
+
+    <div class="lb-legend">
+      <span class="dot major">Major</span>
+      <span class="dot premier">Premier</span>
+      <span class="dot tournament">Tournament</span>
+      <span class="dot league">League</span>
+      <span class="dot senior">Seniority</span>
+      <span class="dot discretionary">Discretionary</span>
+      <span class="dot" style="color: var(--amber);">
+        <span style="width:8px;height:8px;border-radius:2px;background:var(--amber);display:inline-block;margin-right:5px;"></span>First-timer bonus
+      </span>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>

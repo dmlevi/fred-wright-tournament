@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fred Wright &mdash; Engagement (Participation Matrix)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #fbfaf6;
+    --surface: #ffffff;
+    --surface-warm: #f7f4ec;
+    --surface-hover: #f3efe4;
+    --ink: #17150f;
+    --ink-soft: #4a463e;
+    --ink-muted: #847c6d;
+    --ink-dim: #b5ad9d;
+    --border: #e3ddca;
+    --border-soft: #eeead9;
+    --forest: #1a5033;
+    --forest-dark: #13401f;
+    --forest-soft: #e4ede7;
+    --amber: #a85d1e;
+    --amber-soft: #f3e5cf;
+    --red: #a33030;
+    --red-soft: #f5e0e0;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+
+    --cat-major: #a33030;
+    --cat-major-soft: #f5e0e0;
+    --cat-premier: #a85d1e;
+    --cat-premier-soft: #f3e5cf;
+    --cat-tournament: #1a5033;
+    --cat-tournament-soft: #e4ede7;
+    --cat-league: #5a5a8a;
+    --cat-league-soft: #e8e8f0;
+    --cat-social: #847c6d;
+    --cat-social-soft: #f0ede4;
+    --cat-discretionary: #6b3e8a;
+    --cat-discretionary-soft: #efe7f4;
+  }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    font-size: 13px;
+    line-height: 1.4;
+    font-feature-settings: "cv11", "ss03";
+    min-height: 100vh;
+  }
+
+  /* Header */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 18px;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+  }
+  header h1 {
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  header h1::before {
+    content: "";
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--forest);
+  }
+  header h1 .title-sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+    padding-left: 10px;
+    margin-left: 4px;
+    border-left: 1px solid var(--border);
+    font-weight: 400;
+  }
+  header .spacer { flex: 1; }
+
+  .nav-tabs {
+    display: inline-flex;
+    background: var(--surface-warm);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px;
+  }
+  .nav-tab {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 0;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 3px;
+    font-family: var(--sans);
+  }
+  .nav-tab.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+
+  .header-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+    background: var(--surface-warm);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    font-feature-settings: "tnum" 1;
+  }
+  .header-badge strong { color: var(--forest); font-weight: 700; }
+
+  .btn {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    cursor: pointer;
+    height: 32px;
+    font-family: var(--sans);
+  }
+  .btn:hover { color: var(--ink); background: var(--surface-warm); }
+  .btn.primary { background: var(--forest); color: white; border-color: var(--forest); font-weight: 600; }
+  .btn.primary:hover { background: var(--forest-dark); }
+
+  /* Toolbar */
+  .matrix-toolbar {
+    padding: 10px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 12px;
+  }
+  .toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-right: 14px;
+    border-right: 1px solid var(--border);
+  }
+  .toolbar-group:last-of-type { border-right: 0; }
+  .toolbar-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    font-weight: 600;
+  }
+  .toolbar-stat {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    font-feature-settings: "tnum" 1;
+    color: var(--ink);
+  }
+  .toolbar-stat.forest { color: var(--forest); }
+  .toolbar-stat.amber { color: var(--amber); }
+  .toolbar-spacer { flex: 1; }
+
+  .seg {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .seg button {
+    background: transparent;
+    border: 0;
+    padding: 4px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    font-family: var(--sans);
+  }
+  .seg button.active { background: var(--forest-soft); color: var(--forest); font-weight: 600; }
+  .seg button:not(:last-child) { border-right: 1px solid var(--border-soft); }
+
+  /* Layout: matrix left, player detail right */
+  main {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 14px;
+    padding: 14px 20px 28px;
+    min-height: calc(100vh - 100px);
+  }
+
+  /* Matrix grid */
+  .matrix-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 130px);
+  }
+  .matrix-scroll {
+    overflow: auto;
+    flex: 1;
+  }
+  .matrix {
+    display: grid;
+    /* name | 8 tournaments | sen | disc | bonus | total | source */
+    grid-template-columns:
+      180px
+      repeat(8, 60px)
+      48px 48px 48px
+      72px
+      92px;
+    font-size: 12px;
+  }
+
+  /* Top-left corner cell */
+  .corner {
+    position: sticky;
+    top: 0; left: 0;
+    z-index: 4;
+    background: var(--surface-warm);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 12px;
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    font-weight: 600;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  /* Column headers (tournaments) */
+  .col-head {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: var(--surface);
+    border-right: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border);
+    padding: 6px 4px 7px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: center;
+    justify-content: flex-end;
+    text-align: center;
+    cursor: pointer;
+  }
+  .col-head.editing { background: var(--forest-soft); }
+  .col-head .cat-tag {
+    font-family: var(--mono);
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    padding: 0 3px;
+    border-radius: 2px;
+  }
+  .col-head.major .cat-tag { background: var(--cat-major-soft); color: var(--cat-major); }
+  .col-head.premier .cat-tag { background: var(--cat-premier-soft); color: var(--cat-premier); }
+  .col-head.tournament .cat-tag { background: var(--cat-tournament-soft); color: var(--cat-tournament); }
+  .col-head.league .cat-tag { background: var(--cat-league-soft); color: var(--cat-league); }
+  .col-head.social .cat-tag { background: var(--cat-social-soft); color: var(--cat-social); }
+  .col-head .ev-name {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.15;
+    word-break: break-word;
+  }
+  .col-head .ev-date {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--ink-muted);
+    font-feature-settings: "tnum" 1;
+  }
+  .col-head .ev-weight {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    font-feature-settings: "tnum" 1;
+    background: var(--surface-warm);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0 4px;
+    margin-top: 2px;
+    min-width: 26px;
+    text-align: center;
+  }
+  .col-head.editing .ev-weight {
+    background: var(--surface);
+    border-color: var(--forest);
+    color: var(--forest);
+  }
+  .col-head.override .ev-weight { color: var(--amber); border-color: var(--amber-soft); }
+
+  .col-head-summary {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: var(--surface-warm);
+    border-right: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border);
+    padding: 6px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: center;
+    justify-content: flex-end;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .col-head-summary.total { background: var(--forest-soft); color: var(--forest); }
+  .col-head-summary.source-col { text-align: left; padding-left: 10px; align-items: flex-start; }
+
+  /* Sticky first column (player name) */
+  .row-head {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--surface);
+    padding: 8px 12px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .row-head:hover { background: var(--surface-warm); }
+  .row-head.selected { background: var(--forest-soft); border-left: 2px solid var(--forest); padding-left: 10px; }
+  .row-head.qualifying { border-left: 2px solid var(--forest); padding-left: 10px; }
+  .row-name { font-size: 13px; font-weight: 600; color: var(--ink); letter-spacing: -0.005em; }
+  .row-sub { font-size: 10px; color: var(--ink-muted); font-family: var(--mono); font-feature-settings: "tnum" 1; }
+
+  /* Matrix cell */
+  .cell {
+    border-right: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 4px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-dim);
+    font-feature-settings: "tnum" 1;
+  }
+  .cell.played {
+    background: var(--forest-soft);
+    color: var(--forest);
+    font-weight: 700;
+  }
+  .cell.no-show {
+    background: var(--red-soft);
+    color: var(--red);
+    font-weight: 700;
+  }
+  .cell.discretionary {
+    background: var(--cat-discretionary-soft);
+    color: var(--cat-discretionary);
+    font-weight: 700;
+  }
+  .cell.empty::before { content: "\00b7"; color: var(--ink-dim); font-size: 16px; }
+  .cell.senior { color: var(--ink-soft); font-weight: 600; background: var(--surface-warm); }
+  .cell.disc { color: var(--cat-discretionary); font-weight: 700; background: var(--cat-discretionary-soft); }
+  .cell.bonus { color: var(--amber); font-weight: 700; background: var(--amber-soft); }
+  .cell.total {
+    background: var(--forest-soft);
+    color: var(--forest);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .row-source {
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    padding: 6px 10px;
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+  .row-source.defer { color: var(--amber); }
+  .row-source.wait { color: var(--ink-soft); }
+  .row-source.new { color: var(--forest); }
+
+  /* Cut line row */
+  .cutline-row {
+    grid-column: 1 / -1;
+    padding: 6px 12px;
+    background: var(--bg);
+    border-top: 1px dashed var(--amber);
+    border-bottom: 1px dashed var(--amber);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--amber);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    left: 0;
+  }
+  .cutline-row .line { flex: 1; height: 1px; background: var(--amber-soft); max-width: 200px; }
+
+  /* Matrix footer with legend */
+  .matrix-footer {
+    padding: 9px 14px;
+    border-top: 1px solid var(--border);
+    background: var(--surface-warm);
+    display: flex;
+    gap: 16px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-muted);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .legend-item { display: inline-flex; align-items: center; gap: 5px; }
+  .legend-cell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 18px;
+    border-radius: 3px;
+    font-weight: 700;
+    font-size: 11px;
+  }
+  .legend-cell.played { background: var(--forest-soft); color: var(--forest); }
+  .legend-cell.no-show { background: var(--red-soft); color: var(--red); }
+  .legend-cell.disc { background: var(--cat-discretionary-soft); color: var(--cat-discretionary); }
+  .legend-cell.empty { background: var(--surface); border: 1px solid var(--border-soft); color: var(--ink-dim); }
+
+  /* Right-side: selected player detail */
+  .detail {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    overflow: hidden;
+    position: sticky;
+    top: 70px;
+    max-height: calc(100vh - 90px);
+    display: flex;
+    flex-direction: column;
+  }
+  .detail-header {
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: var(--forest-soft);
+  }
+  .detail-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--forest);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    border: 1px solid #b9d3bf;
+    flex-shrink: 0;
+  }
+  .detail-name { font-size: 14px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
+  .detail-sub { font-size: 11px; color: var(--ink-soft); margin-top: 2px; font-family: var(--mono); }
+
+  .detail-rank {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  .detail-rank-num {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--forest);
+    font-feature-settings: "tnum" 1;
+  }
+  .detail-rank-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    font-weight: 600;
+  }
+  .detail-rank-total { font-family: var(--sans); font-size: 13px; color: var(--ink-soft); font-weight: 500; margin-left: auto; }
+  .detail-rank-total strong { color: var(--forest); font-family: var(--mono); font-size: 18px; font-weight: 700; font-feature-settings: "tnum" 1; }
+
+  .detail-body {
+    overflow-y: auto;
+    flex: 1;
+    padding: 14px 16px;
+  }
+  .detail-section-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    font-weight: 600;
+    margin-bottom: 8px;
+    margin-top: 14px;
+  }
+  .detail-section-title:first-child { margin-top: 0; }
+
+  .detail-line {
+    display: grid;
+    grid-template-columns: 10px 1fr auto;
+    gap: 10px;
+    align-items: baseline;
+    padding: 5px 0;
+    font-size: 12px;
+    border-bottom: 1px dashed var(--border-soft);
+  }
+  .detail-line:last-child { border-bottom: 0; }
+  .detail-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; }
+  .detail-dot.major { background: var(--cat-major); }
+  .detail-dot.premier { background: var(--cat-premier); }
+  .detail-dot.tournament { background: var(--cat-tournament); }
+  .detail-dot.league { background: var(--cat-league); }
+  .detail-dot.social { background: var(--cat-social); }
+  .detail-dot.discretionary { background: var(--cat-discretionary); }
+  .detail-dot.senior { background: var(--ink-soft); }
+  .detail-dot.first { background: var(--amber); }
+  .detail-label { color: var(--ink); }
+  .detail-label .sub { font-family: var(--mono); font-size: 10px; color: var(--ink-muted); display: block; margin-top: 1px; font-feature-settings: "tnum" 1; }
+  .detail-pts {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    font-feature-settings: "tnum" 1;
+    text-align: right;
+  }
+  .detail-pts.zero { color: var(--ink-dim); font-weight: 500; }
+
+  .detail-footer {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border-soft);
+    background: var(--surface-warm);
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .detail-footer strong { color: var(--ink); }
+  .detail-footer .meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+    display: block;
+  }
+
+  @media (max-width: 1200px) {
+    main { grid-template-columns: 1fr; }
+    .detail { position: static; max-height: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>
+    <span>Fred Wright</span>
+    <span class="title-sub">Engagement</span>
+  </h1>
+  <nav class="nav-tabs">
+    <button class="nav-tab">Management</button>
+    <button class="nav-tab active">Engagement</button>
+    <button class="nav-tab">Players</button>
+    <button class="nav-tab">History</button>
+  </nav>
+  <div class="header-badge">Season <strong>2026</strong></div>
+  <div class="header-badge">Through <strong>Jul 28</strong></div>
+  <div class="spacer"></div>
+  <button class="btn">Export CSV</button>
+  <button class="btn primary">Publish Standings</button>
+</header>
+
+<div class="matrix-toolbar">
+  <div class="toolbar-group">
+    <span class="toolbar-label">Open slots</span>
+    <span class="toolbar-stat forest">10</span>
+  </div>
+  <div class="toolbar-group">
+    <span class="toolbar-label">Pool</span>
+    <span class="toolbar-stat">24</span>
+  </div>
+  <div class="toolbar-group">
+    <span class="toolbar-label">Cut line</span>
+    <span class="toolbar-stat amber">30</span>
+    <span style="color: var(--ink-muted); font-size: 11px;">pts</span>
+  </div>
+  <div class="toolbar-group">
+    <span class="toolbar-label">Sort</span>
+    <div class="seg">
+      <button class="active">Total</button>
+      <button>Name</button>
+      <button>Source</button>
+    </div>
+  </div>
+  <div class="toolbar-group">
+    <span class="toolbar-label">Show</span>
+    <div class="seg">
+      <button class="active">All</button>
+      <button>Above cut</button>
+      <button>Below cut</button>
+    </div>
+  </div>
+  <div class="toolbar-spacer"></div>
+  <span style="color: var(--ink-muted); font-size: 11px; font-family: var(--mono);">click a row to see details &middot; click a column header to edit weight</span>
+</div>
+
+<main>
+  <!-- Matrix -->
+  <section class="matrix-panel">
+    <div class="matrix-scroll">
+      <div class="matrix">
+        <!-- Header row -->
+        <div class="corner">Eligible Pool &times; Events</div>
+
+        <div class="col-head tournament">
+          <span class="cat-tag">TRN</span>
+          <span class="ev-name">Spring Opener</span>
+          <span class="ev-date">Apr 18</span>
+          <span class="ev-weight">5</span>
+        </div>
+        <div class="col-head premier">
+          <span class="cat-tag">PRM</span>
+          <span class="ev-name">Member Guest</span>
+          <span class="ev-date">May 16</span>
+          <span class="ev-weight">8</span>
+        </div>
+        <div class="col-head league">
+          <span class="cat-tag">LGE</span>
+          <span class="ev-name">Wed League</span>
+          <span class="ev-date">&times;10 wks</span>
+          <span class="ev-weight">2/wk</span>
+        </div>
+        <div class="col-head premier">
+          <span class="cat-tag">PRM</span>
+          <span class="ev-name">Senior Champ</span>
+          <span class="ev-date">Jun 13</span>
+          <span class="ev-weight">8</span>
+        </div>
+        <div class="col-head major editing override">
+          <span class="cat-tag">MAJ</span>
+          <span class="ev-name">Member Member</span>
+          <span class="ev-date">Jul 11</span>
+          <span class="ev-weight">14</span>
+        </div>
+        <div class="col-head social">
+          <span class="cat-tag">SOC</span>
+          <span class="ev-name">Charity</span>
+          <span class="ev-date">Jul 25</span>
+          <span class="ev-weight">1</span>
+        </div>
+        <div class="col-head major" style="opacity: 0.55;">
+          <span class="cat-tag">MAJ</span>
+          <span class="ev-name">Club Champ</span>
+          <span class="ev-date">Aug 15</span>
+          <span class="ev-weight">12</span>
+        </div>
+        <div class="col-head tournament" style="opacity: 0.55;">
+          <span class="cat-tag">TRN</span>
+          <span class="ev-name">Fall Classic</span>
+          <span class="ev-date">Sep 12</span>
+          <span class="ev-weight">5</span>
+        </div>
+
+        <div class="col-head-summary">Sen</div>
+        <div class="col-head-summary">Disc</div>
+        <div class="col-head-summary">1st</div>
+        <div class="col-head-summary total">Total</div>
+        <div class="col-head-summary source-col">Source</div>
+
+        <!-- Row 1 -->
+        <div class="row-head qualifying">
+          <span class="row-name">1. Amico, Angelo</span>
+          <span class="row-sub">12 yrs &middot; returned</span>
+        </div>
+        <div class="cell played">5</div>
+        <div class="cell played">8</div>
+        <div class="cell played">16</div>
+        <div class="cell played">8</div>
+        <div class="cell played">14</div>
+        <div class="cell empty"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell senior">+8</div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell total">59</div>
+        <div class="row-source defer">Returned</div>
+
+        <!-- Row 2: Burke -->
+        <div class="row-head qualifying">
+          <span class="row-name">2. Burke, Mike</span>
+          <span class="row-sub">18 yrs &middot; returned</span>
+        </div>
+        <div class="cell played">5</div>
+        <div class="cell empty"></div>
+        <div class="cell played">12</div>
+        <div class="cell played">8</div>
+        <div class="cell played">14</div>
+        <div class="cell empty"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell senior">+8</div>
+        <div class="cell disc">+3</div>
+        <div class="cell"></div>
+        <div class="cell total">50</div>
+        <div class="row-source defer">Returned</div>
+
+        <!-- Row 3: Reynolds — SELECTED -->
+        <div class="row-head qualifying selected">
+          <span class="row-name">3. Reynolds, Jim</span>
+          <span class="row-sub">22 yrs &middot; waitlist</span>
+        </div>
+        <div class="cell empty"></div>
+        <div class="cell played">8</div>
+        <div class="cell played">10</div>
+        <div class="cell empty"></div>
+        <div class="cell played">14</div>
+        <div class="cell empty"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell senior">+8</div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell total">40</div>
+        <div class="row-source wait">Waitlist</div>
+
+        <!-- Row 4: Coughlin -->
+        <div class="row-head qualifying">
+          <span class="row-name">4. Coughlin, John</span>
+          <span class="row-sub">14 yrs &middot; returned</span>
+        </div>
+        <div class="cell empty"></div>
+        <div class="cell played">8</div>
+        <div class="cell played">14</div>
+        <div class="cell played">8</div>
+        <div class="cell empty"></div>
+        <div class="cell played">1</div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell senior">+8</div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell total">39</div>
+        <div class="row-source defer">Returned</div>
+
+        <!-- Row 5: Chryssis -->
+        <div class="row-head qualifying">
+          <span class="row-name">5. Chryssis, Alex</span>
+          <span class="row-sub">9 yrs &middot; waitlist</span>
+        </div>
+        <div class="cell played">5</div>
+        <div class="cell played">8</div>
+        <div class="cell played">8</div>
+        <div class="cell played">8</div>
+        <div class="cell empty"></div>
+        <div class="cell empty"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell senior">+7</div>
+        <div class="cell disc">+3</div>
+        <div class="cell"></div>
+        <div class="cell total">39</div>
+        <div class="row-source wait">Waitlist</div>
+
+        <!-- Row 6: Donovan -->
+        <div class="row-head qualifying">
+          <span class="row-name">6. Donovan, Pat</span>
+          <span class="row-sub">4 yrs &middot; first-timer</span>
+        </div>
+        <div class="cell empty"></div>
+        <div class="cell played">8</div>
+        <div class="cell played">10</div>
+        <div class="cell played">8</div>
+        <div class="cell empty"></div>
+        <div class="cell empty"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell senior">+4</div>
+        <div class="cell"></div>
+        <div class="cell bonus">+5</div>
+        <div class="cell total">35</div>
+        <div class="row-source new">New</div>
+
+        <!-- Row 7: Battista -->
+        <div class="row-head qualifying">
+          <span class="row-name">7. Battista, Mike</span>
+          <span class="row-sub">6 yrs &middot; returned</span>
+        </div>
+        <div class="cell played">5</div>
+        <div class="cell empty"></div>
+        <div class="cell played">12</div>
+        <div class="cell empty"></div>
+        <div class="cell played">14</div>
+        <div class="cell empty"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell senior">+4</div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell total">35</div>
+        <div class="row-source defer">Returned</div>
+
+        <!-- Row 8: Sullivan -->
+        <div class="row-head qualifying">
+          <span class="row-name">8. Sullivan, Tom</span>
+          <span class="row-sub">7 yrs &middot; waitlist</span>
+        </div>
+        <div class="cell played">5</div>
+        <div class="cell empty"></div>
+        <div class="cell played">12</div>
+        <div class="cell played">8</div>
+        <div class="cell empty"></div>
+        <div class="cell empty"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell senior">+7</div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell total">32</div>
+        <div class="row-source wait">Waitlist</div>
+
+        <!-- Row 9: Murphy -->
+        <div class="row-head qualifying">
+          <span class="row-name">9. Murphy, Sean</span>
+          <span class="row-sub">5 yrs &middot; returned</span>
+        </div>
+        <div class="cell empty"></div>
+        <div class="cell played">8</div>
+        <div class="cell played">6</div>
+        <div class="cell empty"></div>
+        <div class="cell played">12</div>
+        <div class="cell empty"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell senior">+5</div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell total">31</div>
+        <div class="row-source defer">Returned</div>
+
+        <!-- Row 10: O'Brien -->
+        <div class="row-head qualifying">
+          <span class="row-name">10. O'Brien, Kevin</span>
+          <span class="row-sub">3 yrs &middot; first-timer</span>
+        </div>
+        <div class="cell played">5</div>
+        <div class="cell empty"></div>
+        <div class="cell played">12</div>
+        <div class="cell played">8</div>
+        <div class="cell empty"></div>
+        <div class="cell empty"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell empty" style="opacity: 0.5;"></div>
+        <div class="cell senior">+3</div>
+        <div class="cell"></div>
+        <div class="cell bonus">+5</div>
+        <div class="cell total">30</div>
+        <div class="row-source new">New</div>
+
+        <!-- CUT LINE -->
+        <div class="cutline-row">
+          <span>Cut line &middot; 10 of 10 slots filled</span>
+          <span class="line"></span>
+        </div>
+
+        <!-- Below cut rows (compact) -->
+        <div class="row-head" style="opacity: 0.55;">
+          <span class="row-name">11. Carter, Bill</span>
+          <span class="row-sub">8 yrs &middot; waitlist</span>
+        </div>
+        <div class="cell played" style="opacity: 0.55;">5</div>
+        <div class="cell played" style="opacity: 0.55;">8</div>
+        <div class="cell played" style="opacity: 0.55;">8</div>
+        <div class="cell empty" style="opacity: 0.55;"></div>
+        <div class="cell empty" style="opacity: 0.55;"></div>
+        <div class="cell empty" style="opacity: 0.55;"></div>
+        <div class="cell empty" style="opacity: 0.3;"></div>
+        <div class="cell empty" style="opacity: 0.3;"></div>
+        <div class="cell senior" style="opacity: 0.55;">+8</div>
+        <div class="cell" style="opacity: 0.55;"></div>
+        <div class="cell" style="opacity: 0.55;"></div>
+        <div class="cell total" style="opacity: 0.55; background: var(--surface-warm); color: var(--ink-soft);">29</div>
+        <div class="row-source wait" style="opacity: 0.55;">Waitlist</div>
+
+        <div class="row-head" style="opacity: 0.55;">
+          <span class="row-name">12. Harrison, Frank</span>
+          <span class="row-sub">3 yrs &middot; waitlist</span>
+        </div>
+        <div class="cell played" style="opacity: 0.55;">5</div>
+        <div class="cell played" style="opacity: 0.55;">8</div>
+        <div class="cell played" style="opacity: 0.55;">12</div>
+        <div class="cell empty" style="opacity: 0.55;"></div>
+        <div class="cell empty" style="opacity: 0.55;"></div>
+        <div class="cell empty" style="opacity: 0.55;"></div>
+        <div class="cell empty" style="opacity: 0.3;"></div>
+        <div class="cell empty" style="opacity: 0.3;"></div>
+        <div class="cell senior" style="opacity: 0.55;">+3</div>
+        <div class="cell" style="opacity: 0.55;"></div>
+        <div class="cell" style="opacity: 0.55;"></div>
+        <div class="cell total" style="opacity: 0.55; background: var(--surface-warm); color: var(--ink-soft);">28</div>
+        <div class="row-source wait" style="opacity: 0.55;">Waitlist</div>
+
+        <div class="row-head" style="opacity: 0.55;">
+          <span class="row-name">13. McKenna, Brian</span>
+          <span class="row-sub">4 yrs &middot; first-timer</span>
+        </div>
+        <div class="cell played" style="opacity: 0.55;">5</div>
+        <div class="cell empty" style="opacity: 0.55;"></div>
+        <div class="cell played" style="opacity: 0.55;">6</div>
+        <div class="cell played" style="opacity: 0.55;">8</div>
+        <div class="cell empty" style="opacity: 0.55;"></div>
+        <div class="cell empty" style="opacity: 0.55;"></div>
+        <div class="cell empty" style="opacity: 0.3;"></div>
+        <div class="cell empty" style="opacity: 0.3;"></div>
+        <div class="cell senior" style="opacity: 0.55;">+4</div>
+        <div class="cell" style="opacity: 0.55;"></div>
+        <div class="cell bonus" style="opacity: 0.55;">+5</div>
+        <div class="cell total" style="opacity: 0.55; background: var(--surface-warm); color: var(--ink-soft);">28</div>
+        <div class="row-source new" style="opacity: 0.55;">New</div>
+
+        <div class="row-head" style="opacity: 0.55;">
+          <span class="row-name">14. Lawless, Dan</span>
+          <span class="row-sub">3 yrs &middot; first-timer</span>
+        </div>
+        <div class="cell empty" style="opacity: 0.55;"></div>
+        <div class="cell played" style="opacity: 0.55;">8</div>
+        <div class="cell played" style="opacity: 0.55;">10</div>
+        <div class="cell empty" style="opacity: 0.55;"></div>
+        <div class="cell empty" style="opacity: 0.55;"></div>
+        <div class="cell empty" style="opacity: 0.55;"></div>
+        <div class="cell empty" style="opacity: 0.3;"></div>
+        <div class="cell empty" style="opacity: 0.3;"></div>
+        <div class="cell senior" style="opacity: 0.55;">+3</div>
+        <div class="cell" style="opacity: 0.55;"></div>
+        <div class="cell bonus" style="opacity: 0.55;">+5</div>
+        <div class="cell total" style="opacity: 0.55; background: var(--surface-warm); color: var(--ink-soft);">26</div>
+        <div class="row-source new" style="opacity: 0.55;">New</div>
+
+        <div class="row-head" style="opacity: 0.55;">
+          <span class="row-name">15. Quinn, Robert</span>
+          <span class="row-sub">11 yrs &middot; waitlist</span>
+        </div>
+        <div class="cell played" style="opacity: 0.55;">5</div>
+        <div class="cell empty" style="opacity: 0.55;"></div>
+        <div class="cell played" style="opacity: 0.55;">10</div>
+        <div class="cell empty" style="opacity: 0.55;"></div>
+        <div class="cell empty" style="opacity: 0.55;"></div>
+        <div class="cell empty" style="opacity: 0.55;"></div>
+        <div class="cell empty" style="opacity: 0.3;"></div>
+        <div class="cell empty" style="opacity: 0.3;"></div>
+        <div class="cell senior" style="opacity: 0.55;">+9</div>
+        <div class="cell" style="opacity: 0.55;"></div>
+        <div class="cell" style="opacity: 0.55;"></div>
+        <div class="cell total" style="opacity: 0.55; background: var(--surface-warm); color: var(--ink-soft);">24</div>
+        <div class="row-source wait" style="opacity: 0.55;">Waitlist</div>
+
+        <!-- More below cut -->
+        <div class="row-head" style="opacity: 0.4; font-style: italic; cursor: pointer; background: var(--surface-warm);">
+          <span class="row-name" style="font-size: 11px; font-weight: 500; color: var(--ink-muted);">9 more &middot; show all</span>
+        </div>
+        <div class="cell" style="grid-column: 2 / 14; background: var(--surface-warm); border-right: 0;"></div>
+
+      </div>
+    </div>
+
+    <div class="matrix-footer">
+      <span class="legend-item"><span class="legend-cell played">5</span> Played (weight earned)</span>
+      <span class="legend-item"><span class="legend-cell no-show">&times;</span> No-show (&minus;2)</span>
+      <span class="legend-item"><span class="legend-cell disc">+3</span> Discretionary</span>
+      <span class="legend-item"><span class="legend-cell empty">&middot;</span> Not played</span>
+      <span style="margin-left: auto; font-feature-settings: 'tnum' 1;">Last edit: Member&#8209;Member weight &rarr; 14 (override) &middot; 2m ago</span>
+    </div>
+  </section>
+
+  <!-- Detail Panel: selected player -->
+  <aside class="detail">
+    <div class="detail-header">
+      <div class="detail-avatar">RJ</div>
+      <div>
+        <div class="detail-name">Reynolds, Jim</div>
+        <div class="detail-sub">22 yrs &middot; waitlisted 2025</div>
+      </div>
+    </div>
+
+    <div class="detail-rank">
+      <span class="detail-rank-num">#3</span>
+      <span class="detail-rank-label">of 24 in pool</span>
+      <span class="detail-rank-total"><strong>40</strong> pts</span>
+    </div>
+
+    <div class="detail-body">
+      <div class="detail-section-title">Tournament Participation</div>
+
+      <div class="detail-line">
+        <span class="detail-dot major"></span>
+        <span class="detail-label">Member&#8209;Member<span class="sub">Jul 11 &middot; weight 14 (override)</span></span>
+        <span class="detail-pts">14</span>
+      </div>
+      <div class="detail-line">
+        <span class="detail-dot premier"></span>
+        <span class="detail-label">Member&#8209;Guest<span class="sub">May 16 &middot; weight 8</span></span>
+        <span class="detail-pts">8</span>
+      </div>
+      <div class="detail-line">
+        <span class="detail-dot league"></span>
+        <span class="detail-label">Wednesday League &times;5<span class="sub">Apr&ndash;Jul &middot; 2 pts each</span></span>
+        <span class="detail-pts">10</span>
+      </div>
+      <div class="detail-line">
+        <span class="detail-dot tournament" style="background: var(--border);"></span>
+        <span class="detail-label" style="color: var(--ink-muted);">Spring Opener<span class="sub">Apr 18 &middot; did not play</span></span>
+        <span class="detail-pts zero">&mdash;</span>
+      </div>
+      <div class="detail-line">
+        <span class="detail-dot premier" style="background: var(--border);"></span>
+        <span class="detail-label" style="color: var(--ink-muted);">Senior Championship<span class="sub">Jun 13 &middot; did not play</span></span>
+        <span class="detail-pts zero">&mdash;</span>
+      </div>
+
+      <div class="detail-section-title">Bonuses</div>
+
+      <div class="detail-line">
+        <span class="detail-dot senior"></span>
+        <span class="detail-label">Seniority bonus<span class="sub">22 yrs &middot; capped at 10, earned 8</span></span>
+        <span class="detail-pts">8</span>
+      </div>
+      <div class="detail-line">
+        <span class="detail-dot first"></span>
+        <span class="detail-label" style="color: var(--ink-muted);">First-timer bonus<span class="sub">not applicable</span></span>
+        <span class="detail-pts zero">&mdash;</span>
+      </div>
+      <div class="detail-line">
+        <span class="detail-dot discretionary"></span>
+        <span class="detail-label" style="color: var(--ink-muted);">Discretionary<span class="sub">none awarded</span></span>
+        <span class="detail-pts zero">&mdash;</span>
+      </div>
+    </div>
+
+    <div class="detail-footer">
+      <strong>Why he's in the pool:</strong> Reynolds was a 2025 participant who missed the click-race window. Per the no-consecutive-defer rule, he can't defer 2026. His engagement puts him 10 pts above the cut.
+      <span class="meta">Last activity: Wed League, Jul 22 &middot; Next: Club Champ, Aug 15</span>
+    </div>
+  </aside>
+</main>
+
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fred Wright &mdash; Back Office</title>
+<title>Fred Wright &mdash; Tournament Builder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -39,6 +39,194 @@
     line-height: 1.4;
     font-feature-settings: "cv11", "ss03";
     min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+  }
+  .app-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ========== SIDEBAR ========== */
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 220px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    z-index: 30;
+  }
+  .sidebar-brand {
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .brand-mark {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--forest);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+  }
+  .brand-text {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .brand-sub {
+    display: block;
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .sidebar-nav {
+    flex: 1;
+    padding: 10px 8px;
+    overflow-y: auto;
+  }
+  .nav-section-label {
+    padding: 10px 10px 5px;
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    font-weight: 600;
+  }
+  .nav-section-label:first-child { padding-top: 4px; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: 5px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+    position: relative;
+    letter-spacing: -0.005em;
+  }
+  .nav-item:hover { background: var(--surface-warm); color: var(--ink); }
+  .nav-item.active {
+    background: var(--forest-soft);
+    color: var(--forest);
+    font-weight: 600;
+  }
+  .nav-item.active::before {
+    content: "";
+    position: absolute;
+    left: -8px; top: 6px; bottom: 6px;
+    width: 2px;
+    background: var(--forest);
+    border-radius: 0 1px 1px 0;
+  }
+  .nav-item.disabled {
+    color: var(--ink-dim);
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .nav-item-label { flex: 1; }
+  .nav-item-soon {
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-dim);
+    background: var(--surface-warm);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+  .nav-item-ext {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+    font-weight: 600;
+    line-height: 1;
+  }
+  .nav-item:hover .nav-item-ext { color: var(--forest); }
+  .sidebar-foot {
+    border-top: 1px solid var(--border-soft);
+    padding: 10px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .sidebar-foot-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 2px;
+  }
+  .sidebar-foot-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  /* When the season switcher lives in the sidebar foot, open its panel UPWARD */
+  .sidebar .season-panel {
+    top: auto;
+    bottom: calc(100% + 5px);
+    left: auto;
+    right: 0;
+    min-width: 200px;
+  }
+  .sidebar-action {
+    background: transparent;
+    border: 0;
+    color: var(--ink-muted);
+    font-size: 11px;
+    font-family: var(--sans);
+    padding: 5px 8px;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  .sidebar-action:hover { color: var(--red); background: var(--red-soft); }
+
+  @media (max-width: 900px) {
+    body { flex-direction: column; }
+    .sidebar {
+      position: static;
+      width: 100%;
+      height: auto;
+      border-right: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-nav { display: flex; flex-wrap: wrap; padding: 6px 10px; }
+    .sidebar-nav .nav-section-label { display: none; }
+    .nav-item.active::before { display: none; }
+    .sidebar-foot { flex-direction: row; align-items: center; }
   }
 
   /* ========== TOP BAR ========== */
@@ -1247,31 +1435,74 @@
 </head>
 <body>
 
-<header>
-  <h1>
-    <span class="title-main">Fred Wright</span>
-    <span class="title-sub">back office</span>
-  </h1>
-  <div class="spacer"></div>
-  <div class="season-switcher" id="season-switcher"></div>
-  <div class="slot-meter" id="slot-meter"></div>
-  <button class="cmdk-launcher" id="cmdk-launcher" title="Command palette (⌘K)">
-    <span class="cmdk-launcher-label">Search &amp; commands</span>
-    <span class="kbd">⌘K</span>
-  </button>
-  <div class="view-toggle">
-    <button data-view="internal" class="active">Board</button>
-    <button data-view="public">Roster</button>
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <span class="brand-mark">FW</span>
+    <div>
+      <div class="brand-text">Fred Wright</div>
+      <div class="brand-sub">Tournament</div>
+    </div>
   </div>
-  <button class="btn-print" id="btn-print">Print</button>
-  <button class="btn-reset" id="btn-reset">Reset</button>
-</header>
 
-<!-- Quick-stat strip (internal view only; populated by script) -->
-<div class="stat-strip" id="stat-strip"></div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Tournament</div>
+    <a class="nav-item active" href="index.html">
+      <span class="nav-item-label">Tournament Builder</span>
+    </a>
+    <a class="nav-item" href="standings.html">
+      <span class="nav-item-label">Standings</span>
+    </a>
 
-<div id="banner-area"></div>
-<main id="main-view">Loading&hellip;</main>
+    <div class="nav-section-label">Club</div>
+    <a class="nav-item disabled" aria-disabled="true">
+      <span class="nav-item-label">Players</span>
+      <span class="nav-item-soon">soon</span>
+    </a>
+    <a class="nav-item disabled" aria-disabled="true">
+      <span class="nav-item-label">History</span>
+      <span class="nav-item-soon">soon</span>
+    </a>
+
+    <div class="nav-section-label">Resources</div>
+    <a class="nav-item" href="the-program.html" target="_blank" rel="noopener" title="Opens the member-facing tournament site in a new tab">
+      <span class="nav-item-label">Members website</span>
+      <span class="nav-item-ext">&#8599;</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-foot">
+    <div class="sidebar-foot-row">
+      <span class="sidebar-foot-label">Season</span>
+      <div class="season-switcher" id="season-switcher"></div>
+    </div>
+    <button class="sidebar-action" id="btn-reset">Reset demo data</button>
+  </div>
+</aside>
+
+<div class="app-main">
+  <header>
+    <h1>
+      <span class="title-main">Tournament Builder</span>
+    </h1>
+    <div class="spacer"></div>
+    <div class="slot-meter" id="slot-meter"></div>
+    <button class="cmdk-launcher" id="cmdk-launcher" title="Command palette (⌘K)">
+      <span class="cmdk-launcher-label">Search &amp; commands</span>
+      <span class="kbd">⌘K</span>
+    </button>
+    <div class="view-toggle">
+      <button data-view="internal" class="active">Board</button>
+      <button data-view="public">Roster</button>
+    </div>
+    <button class="btn-print" id="btn-print">Print</button>
+  </header>
+
+  <!-- Quick-stat strip (internal view only; populated by script) -->
+  <div class="stat-strip" id="stat-strip"></div>
+
+  <div id="banner-area"></div>
+  <main id="main-view">Loading&hellip;</main>
+</div>
 
 <div id="print-view"></div>
 <div class="overlay hidden" id="modal-overlay"></div>
@@ -1294,7 +1525,7 @@
 
 <script src="shared.js?v=5"></script>
 <script>
-  // ========== Back Office layer ==========
+  // ========== Tournament Builder layer ==========
   // Three pieces on top of shared.js:
   //   1) Friendly column names (from variant C) — clearer at a glance than "2026 Participants"
   //   2) ⌘K command palette (from variant B) — fuzzy search across players + actions
@@ -1307,7 +1538,7 @@
     /* ---------- 1. Friendly column renames ---------- */
     const mainEl = document.getElementById('main-view');
 
-    // Single source of truth for the back-office's warm list-name vocabulary.
+    // Single source of truth for the Tournament Builder's warm list-name vocabulary.
     // Used by warmTitle (kanban headers), cmdk player-result meta, and Jump actions.
     // Edit copy here once instead of chasing four call sites.
     const LIST_LABELS = {

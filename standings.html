@@ -1,0 +1,2261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fred Wright &mdash; Standings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #fbfaf6;
+    --surface: #ffffff;
+    --surface-warm: #f7f4ec;
+    --surface-hover: #f3efe4;
+    --ink: #17150f;
+    --ink-soft: #4a463e;
+    --ink-muted: #847c6d;
+    --ink-dim: #b5ad9d;
+    --border: #e3ddca;
+    --border-soft: #eeead9;
+    --forest: #1a5033;
+    --forest-dark: #13401f;
+    --forest-soft: #e4ede7;
+    --amber: #a85d1e;
+    --amber-soft: #f3e5cf;
+    --red: #a33030;
+    --red-soft: #f5e0e0;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+
+    --cat-major: #a33030;
+    --cat-premier: #a85d1e;
+    --cat-tournament: #1a5033;
+    --cat-league: #5a5a8a;
+    --cat-social: #847c6d;
+    --cat-discretionary: #6b3e8a;
+  }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    font-size: 13px;
+    line-height: 1.4;
+    font-feature-settings: "cv11", "ss03";
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+  }
+  .app-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ========== SIDEBAR ========== */
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 220px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    z-index: 30;
+  }
+  .sidebar-brand {
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .brand-mark {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--forest);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+  }
+  .brand-text {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .brand-sub {
+    display: block;
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .sidebar-nav {
+    flex: 1;
+    padding: 10px 8px;
+    overflow-y: auto;
+  }
+  .nav-section-label {
+    padding: 10px 10px 5px;
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    font-weight: 600;
+  }
+  .nav-section-label:first-child { padding-top: 4px; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: 5px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+    position: relative;
+    letter-spacing: -0.005em;
+  }
+  .nav-item:hover { background: var(--surface-warm); color: var(--ink); }
+  .nav-item.active {
+    background: var(--forest-soft);
+    color: var(--forest);
+    font-weight: 600;
+  }
+  .nav-item.active::before {
+    content: "";
+    position: absolute;
+    left: -8px; top: 6px; bottom: 6px;
+    width: 2px;
+    background: var(--forest);
+    border-radius: 0 1px 1px 0;
+  }
+  .nav-item.disabled {
+    color: var(--ink-dim);
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .nav-item-label { flex: 1; }
+  .nav-item-soon {
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-dim);
+    background: var(--surface-warm);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+  .nav-item-ext {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+    font-weight: 600;
+    line-height: 1;
+  }
+  .nav-item:hover .nav-item-ext { color: var(--forest); }
+  .sidebar-foot {
+    border-top: 1px solid var(--border-soft);
+    padding: 10px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .sidebar-foot-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 2px;
+  }
+  .sidebar-foot-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .sidebar-season-static {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    font-feature-settings: "tnum" 1;
+    background: var(--surface-warm);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px 10px;
+  }
+
+  @media (max-width: 900px) {
+    body { flex-direction: column; }
+    .sidebar {
+      position: static;
+      width: 100%;
+      height: auto;
+      border-right: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-nav { display: flex; flex-wrap: wrap; padding: 6px 10px; }
+    .sidebar-nav .nav-section-label { display: none; }
+    .nav-item.active::before { display: none; }
+    .sidebar-foot { flex-direction: row; align-items: center; }
+  }
+
+  /* Header */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 18px;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  header h1 {
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  header h1::before {
+    content: "";
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--forest);
+  }
+  header h1 .title-sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+    padding-left: 10px;
+    margin-left: 4px;
+    border-left: 1px solid var(--border);
+    font-weight: 400;
+  }
+  header .spacer { flex: 1; }
+
+
+  .header-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+    background: var(--surface-warm);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    font-feature-settings: "tnum" 1;
+  }
+  .header-badge strong { color: var(--forest); font-weight: 700; }
+
+  .btn {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    cursor: pointer;
+    height: 32px;
+    font-family: var(--sans);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn:hover { color: var(--ink); background: var(--surface-warm); }
+  .btn.primary { background: var(--forest); color: white; border-color: var(--forest); font-weight: 600; }
+  .btn.primary:hover { background: var(--forest-dark); }
+  .btn-settings {
+    border-color: var(--forest);
+    color: var(--forest);
+    font-weight: 600;
+  }
+  .btn-settings::before {
+    content: "";
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--forest);
+    border-radius: 50%;
+  }
+
+  /* Stat strip */
+  .stat-strip {
+    padding: 10px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    gap: 0;
+    font-size: 12px;
+  }
+  .stat-item {
+    padding: 0 18px;
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    border-right: 1px solid var(--border);
+  }
+  .stat-item:first-child { padding-left: 0; }
+  .stat-item:last-child { border-right: 0; padding-right: 0; }
+  .stat-num {
+    font-weight: 700;
+    font-size: 16px;
+    font-feature-settings: "tnum" 1;
+    font-family: var(--mono);
+  }
+  .stat-num.forest { color: var(--forest); }
+  .stat-num.amber { color: var(--amber); }
+  .stat-label { color: var(--ink-muted); font-weight: 500; }
+
+  /* Main content layout */
+  main {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 22px 28px 60px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .standings-hero h2 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .standings-hero .lede {
+    font-size: 13px;
+    color: var(--ink-muted);
+    max-width: 60ch;
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+  .standings-hero .lede strong { color: var(--ink); font-weight: 600; }
+
+  .hero-filters {
+    display: flex;
+    gap: 6px;
+    margin-top: 18px;
+    align-items: center;
+  }
+  .chip {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    color: var(--ink-soft);
+    font-size: 11px;
+    font-family: var(--sans);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* ===== What-if panel ===== */
+  .what-if {
+    margin-top: 16px;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
+  .what-if-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    font-weight: 700;
+    padding-right: 4px;
+    border-right: 1px solid var(--border);
+    margin-right: 4px;
+  }
+  .what-if-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--ink-soft);
+  }
+  .what-if-control label {
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-family: var(--sans);
+  }
+  .what-if-control input[type="range"] {
+    width: 110px;
+    accent-color: var(--forest);
+  }
+  .what-if-control input[type="date"] {
+    font-family: var(--sans);
+    font-size: 12px;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface-warm);
+    color: var(--ink);
+  }
+  .what-if-out {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--forest);
+    font-feature-settings: "tnum" 1;
+    min-width: 22px;
+    text-align: center;
+  }
+  .what-if-reset {
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--ink-muted);
+    padding: 4px 10px;
+    font-size: 11px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--sans);
+  }
+  .what-if-reset:hover { color: var(--ink); border-color: var(--forest); background: var(--surface-warm); }
+  .what-if-reset.dirty { color: var(--amber); border-color: var(--amber-soft); }
+  .what-if-reset.dirty:hover { background: var(--amber-soft); }
+
+  /* ===== Category stepper (drawer) ===== */
+  .cat-stepper {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+    overflow: hidden;
+    height: 24px;
+  }
+  .cat-stepper button {
+    background: transparent;
+    border: 0;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    color: var(--ink-muted);
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0;
+  }
+  .cat-stepper button:hover { color: var(--forest); background: var(--surface-warm); }
+  .cat-stepper input {
+    width: 30px;
+    text-align: center;
+    border: 0;
+    border-left: 1px solid var(--border-soft);
+    border-right: 1px solid var(--border-soft);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    background: transparent;
+    outline: none;
+    height: 22px;
+    font-feature-settings: "tnum" 1;
+  }
+  .cat-stepper input::-webkit-inner-spin-button,
+  .cat-stepper input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .cat-list-item.changed {
+    background: var(--forest-soft);
+    transition: background 0.6s ease-out;
+  }
+  .std-row.changed {
+    background: var(--forest-soft);
+    transition: background 0.6s ease-out;
+  }
+  .std-points-delta {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--forest);
+    margin-left: 3px;
+    vertical-align: super;
+  }
+  .std-points-delta.down { color: var(--amber); }
+  .std-row { cursor: pointer; }
+  .std-row.expanded .std-expand { color: var(--forest); transform: rotate(90deg); display: inline-block; }
+  .std-expand { transition: transform 0.15s; }
+
+  /* Muted breakdown line — used when a bonus doesn't apply to a player */
+  .bd-line.muted .bd-label { color: var(--ink-muted); }
+  .bd-line.muted .bd-pts   { color: var(--ink-dim); }
+  /* The std-breakdown wrapper row's chrome */
+  .std-row.std-row-breakdown {
+    padding: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--forest-soft);
+  }
+
+  /* ===== Discretionary tab ===== */
+  .disc-pool {
+    padding: 4px 10px 10px;
+  }
+  .disc-pool-bar {
+    height: 6px;
+    background: var(--surface-warm);
+    border: 1px solid var(--border-soft);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .disc-pool-fill {
+    height: 100%;
+    background: var(--cat-discretionary);
+    transition: width 0.25s ease-out, background 0.15s;
+  }
+  .disc-pool-fill.high { background: var(--amber); }
+  .disc-pool-fill.full { background: var(--red); }
+  .disc-pool-stats {
+    font-size: 11px;
+    color: var(--ink-soft);
+    font-family: var(--mono);
+    font-feature-settings: "tnum" 1;
+    display: flex;
+    justify-content: space-between;
+  }
+  .disc-pool-stats strong { color: var(--ink); font-weight: 700; }
+
+  .disc-form {
+    padding: 8px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--surface-warm);
+    border: 1px solid var(--border-soft);
+    border-radius: 5px;
+    margin: 0 0 6px;
+  }
+  .disc-form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-size: 11px;
+  }
+  .disc-form-row .disc-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    font-weight: 600;
+  }
+  .disc-form-row select,
+  .disc-form-row input[type="text"],
+  .disc-form-row input[type="number"] {
+    font-family: var(--sans);
+    font-size: 12px;
+    padding: 5px 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+    color: var(--ink);
+    width: 100%;
+  }
+  .disc-form-row select:focus,
+  .disc-form-row input:focus {
+    outline: none;
+    border-color: var(--forest);
+    box-shadow: 0 0 0 2px var(--forest-soft);
+  }
+  .disc-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .disc-award-btn {
+    background: var(--forest);
+    color: white;
+    border: 0;
+    padding: 7px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--sans);
+    margin-top: 2px;
+  }
+  .disc-award-btn:hover { background: var(--forest-dark); }
+  .disc-award-btn:disabled { background: var(--ink-dim); cursor: not-allowed; }
+
+  .disc-award {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 8px;
+    padding: 7px 10px;
+    border-bottom: 1px dashed var(--border-soft);
+    align-items: baseline;
+    font-size: 11px;
+  }
+  .disc-award:last-child { border-bottom: 0; }
+  .disc-award-main { min-width: 0; }
+  .disc-award-name { font-weight: 600; color: var(--ink); font-size: 12px; display: block; }
+  .disc-award-meta {
+    color: var(--ink-muted);
+    font-family: var(--mono);
+    font-size: 10px;
+    display: block;
+    margin-top: 1px;
+  }
+  .disc-award-reason { color: var(--ink-soft); display: block; margin-top: 1px; font-size: 11px; }
+  .disc-award-pts {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--cat-discretionary);
+    background: var(--cat-discretionary-soft);
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-feature-settings: "tnum" 1;
+  }
+  .disc-award-remove {
+    background: transparent;
+    border: 0;
+    color: var(--ink-dim);
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 2px 4px;
+    border-radius: 3px;
+  }
+  .disc-award-remove:hover { color: var(--red); background: var(--red-soft); }
+  .disc-empty {
+    padding: 14px 10px;
+    text-align: center;
+    color: var(--ink-muted);
+    font-size: 11px;
+    font-style: italic;
+  }
+  .disc-just-awarded { animation: discFlash 0.6s ease-out; }
+  @keyframes discFlash {
+    0%   { background: var(--forest-soft); }
+    100% { background: transparent; }
+  }
+
+  /* Drawer tabs — make them clickable */
+  .drawer-tab { cursor: pointer; }
+
+  /* Tournaments tab placeholder */
+  .pane-empty {
+    padding: 30px 20px;
+    text-align: center;
+    color: var(--ink-muted);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .pane-empty .pane-empty-icon {
+    font-family: var(--mono);
+    font-size: 22px;
+    color: var(--ink-dim);
+    margin-bottom: 10px;
+  }
+  .pane-empty strong { color: var(--ink); display: block; margin-bottom: 4px; font-size: 13px; }
+
+  /* ===== Tournaments tab ===== */
+  .tn-row {
+    display: grid;
+    grid-template-columns: 4px 1fr auto;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border-soft);
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .tn-row:hover { background: var(--surface-warm); }
+  .tn-row.expanded { background: var(--forest-soft); }
+  .tn-row.dim { opacity: 0.45; }
+  .tn-row.dim:hover { background: var(--surface-warm); opacity: 0.7; }
+  .tn-bar {
+    width: 4px;
+    align-self: stretch;
+    border-radius: 2px;
+    min-height: 28px;
+  }
+  .tn-bar.major { background: var(--cat-major); }
+  .tn-bar.premier { background: var(--cat-premier); }
+  .tn-bar.tournament { background: var(--cat-tournament); }
+  .tn-bar.league { background: var(--cat-league); }
+  .tn-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .tn-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .tn-meta {
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    font-feature-settings: "tnum" 1;
+  }
+  .tn-meta .override-flag {
+    color: var(--amber);
+    font-weight: 700;
+  }
+  .tn-meta .noshow-flag {
+    color: var(--red);
+    font-weight: 700;
+  }
+  .tn-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .tn-expanded-body {
+    grid-column: 1 / -1;
+    margin-top: 8px;
+    padding: 10px 0 4px;
+    border-top: 1px dashed var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .tn-expanded-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 11px;
+  }
+  .tn-expanded-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .tn-reset {
+    background: transparent;
+    border: 1px solid var(--amber-soft);
+    color: var(--amber);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .tn-reset:hover { background: var(--amber-soft); }
+  .tn-noshow-add {
+    flex: 1;
+    font-family: var(--sans);
+    font-size: 11px;
+    padding: 4px 6px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--surface);
+    min-width: 0;
+  }
+  .tn-noshow-add:focus { outline: none; border-color: var(--forest); box-shadow: 0 0 0 2px var(--forest-soft); }
+  .tn-noshows-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .tn-noshow-pill {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 8px;
+    background: var(--red-soft);
+    border-radius: 3px;
+    font-size: 11px;
+  }
+  .tn-noshow-pill-name {
+    color: var(--red);
+    font-weight: 600;
+  }
+  .tn-noshow-pill-pts {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--red);
+    font-feature-settings: "tnum" 1;
+    margin-left: 6px;
+    margin-right: 6px;
+  }
+  .tn-noshow-pill-remove {
+    background: transparent;
+    border: 0;
+    color: var(--red);
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1;
+    padding: 0 4px;
+  }
+  .tn-noshow-pill-remove:hover { background: var(--red); color: white; border-radius: 2px; }
+  .tn-summary-stats {
+    padding: 8px 10px;
+    background: var(--surface-warm);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--ink-soft);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .tn-summary-stats strong { color: var(--ink); font-weight: 700; font-family: var(--mono); font-feature-settings: "tnum" 1; }
+  .chip:hover { border-color: var(--forest); color: var(--ink); }
+  .chip.active { background: var(--forest); color: white; border-color: var(--forest); font-weight: 600; }
+  .chip .count {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-muted);
+    font-feature-settings: "tnum" 1;
+  }
+  .chip.active .count { color: #d2e4d7; }
+
+  /* Standings table */
+  .standings {
+    margin-top: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    overflow: hidden;
+  }
+  .std-head {
+    display: grid;
+    grid-template-columns: 48px 1fr 120px 180px 80px 28px;
+    gap: 14px;
+    padding: 10px 16px;
+    background: var(--surface-warm);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    font-weight: 600;
+  }
+  .std-head .right { text-align: right; }
+
+  .std-row {
+    display: grid;
+    grid-template-columns: 48px 1fr 120px 180px 80px 28px;
+    gap: 14px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border-soft);
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .std-row:hover { background: var(--surface-warm); }
+  .std-row.qualifying::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 6px; bottom: 6px;
+    width: 2px;
+    background: var(--forest);
+  }
+  .std-row.below-cut { opacity: 0.6; }
+  .std-row.expanded { background: var(--forest-soft); }
+  .std-row.expanded::before { top: 0; bottom: 0; }
+
+  .std-rank {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-muted);
+    font-feature-settings: "tnum" 1;
+  }
+  .std-row.qualifying .std-rank { color: var(--forest); }
+
+  .std-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .std-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--surface-warm);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--ink-soft);
+    font-family: var(--sans);
+    flex-shrink: 0;
+  }
+  .std-row.qualifying .std-avatar {
+    background: var(--forest-soft);
+    color: var(--forest);
+    border-color: #b9d3bf;
+  }
+  .std-name-wrap { display: flex; flex-direction: column; gap: 1px; }
+  .std-name { font-size: 13px; font-weight: 600; color: var(--ink); letter-spacing: -0.005em; }
+  .std-sub { font-size: 11px; color: var(--ink-muted); }
+
+  .std-source {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 10px;
+    justify-self: start;
+  }
+  .std-source.defer { background: var(--amber-soft); color: var(--amber); }
+  .std-source.wait { background: var(--surface-warm); color: var(--ink-soft); border: 1px solid var(--border); }
+  .std-source.new { background: var(--forest-soft); color: var(--forest); }
+
+  .std-bar {
+    height: 10px;
+    border-radius: 3px;
+    display: flex;
+    overflow: hidden;
+    background: var(--surface-warm);
+    border: 1px solid var(--border-soft);
+  }
+  .std-bar > span { height: 100%; display: block; }
+
+  .std-points {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+    font-feature-settings: "tnum" 1;
+    text-align: right;
+  }
+  .std-row.below-cut .std-points { color: var(--ink-soft); }
+
+  .std-expand {
+    color: var(--ink-dim);
+    font-family: var(--mono);
+    font-size: 12px;
+    text-align: center;
+    transition: transform 0.15s;
+  }
+  .std-row.expanded .std-expand { transform: rotate(90deg); color: var(--forest); }
+
+  /* Expanded breakdown */
+  .std-breakdown {
+    grid-column: 1 / -1;
+    padding: 4px 16px 18px 78px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .bd-section-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    font-weight: 600;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .bd-line {
+    display: grid;
+    grid-template-columns: 8px 1fr auto auto;
+    gap: 10px;
+    align-items: baseline;
+    padding: 4px 0;
+    font-size: 12px;
+  }
+  .bd-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; }
+  .bd-dot.major { background: var(--cat-major); }
+  .bd-dot.premier { background: var(--cat-premier); }
+  .bd-dot.tournament { background: var(--cat-tournament); }
+  .bd-dot.league { background: var(--cat-league); }
+  .bd-dot.social { background: var(--cat-social); }
+  .bd-dot.discretionary { background: var(--cat-discretionary); }
+  .bd-dot.senior { background: var(--ink-soft); }
+  .bd-dot.first { background: var(--amber); }
+  .bd-label { color: var(--ink); }
+  .bd-label-sub { font-family: var(--mono); font-size: 10px; color: var(--ink-muted); font-feature-settings: "tnum" 1; }
+  .bd-pts {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    font-feature-settings: "tnum" 1;
+    text-align: right;
+  }
+  .bd-total {
+    grid-column: 1 / -1;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .bd-total .total-pts {
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--forest);
+    font-feature-settings: "tnum" 1;
+  }
+  .bd-notes {
+    grid-column: 1 / -1;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-left: 3px solid var(--forest);
+    border-radius: 4px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .bd-notes strong { color: var(--ink); font-weight: 600; }
+
+  /* Cut line */
+  .cut-line {
+    padding: 9px 16px;
+    background: var(--bg);
+    border-top: 1px dashed var(--amber);
+    border-bottom: 1px dashed var(--amber);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--amber);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .cut-line .line { flex: 1; height: 1px; background: var(--amber-soft); }
+
+  /* Drawer */
+  .drawer {
+    width: 280px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    position: sticky;
+    top: 72px;
+    max-height: calc(100vh - 88px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .drawer-header {
+    padding: 12px 14px 11px;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .drawer-title { font-size: 12px; font-weight: 600; flex: 1; }
+  .drawer-close {
+    background: transparent;
+    border: 0;
+    color: var(--ink-muted);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    padding: 0 4px;
+  }
+  .drawer-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--surface-warm);
+  }
+  .drawer-tab {
+    flex: 1;
+    background: transparent;
+    border: 0;
+    padding: 8px;
+    font-size: 11px;
+    cursor: pointer;
+    color: var(--ink-muted);
+    font-family: var(--sans);
+    font-weight: 500;
+    position: relative;
+  }
+  .drawer-tab.active { color: var(--forest); font-weight: 600; background: var(--surface); }
+  .drawer-tab.active::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 2px;
+    background: var(--forest);
+  }
+
+  .drawer-body {
+    padding: 12px 14px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .drawer-section-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    font-weight: 600;
+    margin-bottom: 8px;
+    margin-top: 12px;
+  }
+  .drawer-section-title:first-child { margin-top: 0; }
+
+  .cat-list-item {
+    display: grid;
+    grid-template-columns: 10px 1fr auto;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .cat-list-item:hover { background: var(--surface-warm); }
+  .cat-dot { width: 8px; height: 8px; border-radius: 2px; }
+  .cat-dot.major { background: var(--cat-major); }
+  .cat-dot.premier { background: var(--cat-premier); }
+  .cat-dot.tournament { background: var(--cat-tournament); }
+  .cat-dot.league { background: var(--cat-league); }
+  .cat-dot.social { background: var(--cat-social); }
+  .cat-dot.discretionary { background: var(--cat-discretionary); }
+  .cat-name { color: var(--ink); font-weight: 500; }
+  .cat-events-mini { display: block; font-size: 10px; color: var(--ink-muted); margin-top: 1px; }
+  .cat-weight {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    font-feature-settings: "tnum" 1;
+    background: var(--surface-warm);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 6px;
+    min-width: 30px;
+    text-align: center;
+  }
+
+  .drawer-footer {
+    padding: 10px 14px;
+    border-top: 1px solid var(--border-soft);
+    background: var(--surface-warm);
+    font-size: 11px;
+    color: var(--ink-muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+  }
+  .drawer-footer .saved { color: var(--forest); font-weight: 600; }
+
+  @media (max-width: 1050px) {
+    main { grid-template-columns: 1fr; }
+    .drawer { position: static; max-height: none; }
+  }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <span class="brand-mark">FW</span>
+    <div>
+      <div class="brand-text">Fred Wright</div>
+      <div class="brand-sub">Tournament</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Tournament</div>
+    <a class="nav-item" href="index.html">
+      <span class="nav-item-label">Tournament Builder</span>
+    </a>
+    <a class="nav-item active" href="standings.html">
+      <span class="nav-item-label">Standings</span>
+    </a>
+
+    <div class="nav-section-label">Club</div>
+    <a class="nav-item disabled" aria-disabled="true">
+      <span class="nav-item-label">Players</span>
+      <span class="nav-item-soon">soon</span>
+    </a>
+    <a class="nav-item disabled" aria-disabled="true">
+      <span class="nav-item-label">History</span>
+      <span class="nav-item-soon">soon</span>
+    </a>
+
+    <div class="nav-section-label">Resources</div>
+    <a class="nav-item" href="the-program.html" target="_blank" rel="noopener" title="Opens the member-facing tournament site in a new tab">
+      <span class="nav-item-label">Members website</span>
+      <span class="nav-item-ext">&#8599;</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-foot">
+    <div class="sidebar-foot-row">
+      <span class="sidebar-foot-label">Season</span>
+      <span class="sidebar-season-static">2026</span>
+    </div>
+  </div>
+</aside>
+
+<div class="app-main">
+<header>
+  <h1>
+    <span class="title-main">Standings</span>
+  </h1>
+  <div class="header-badge" id="cutoff-badge">Through <strong>Jun 21</strong></div>
+  <div class="header-badge" id="days-badge">App. closes <strong>57 days</strong></div>
+  <div class="spacer"></div>
+  <button class="btn" id="btn-export">Export CSV</button>
+  <button class="btn btn-settings">Settings</button>
+  <button class="btn primary">Publish</button>
+</header>
+
+<div class="stat-strip">
+  <div class="stat-item"><span class="stat-num forest" id="stat-slots">10</span><span class="stat-label">open slots</span></div>
+  <div class="stat-item"><span class="stat-num" id="stat-pool">24</span><span class="stat-label">eligible pool</span></div>
+  <div class="stat-item"><span class="stat-num" id="stat-top">108</span><span class="stat-label">top score</span></div>
+  <div class="stat-item"><span class="stat-num" id="stat-median">40</span><span class="stat-label">median</span></div>
+  <div class="stat-item"><span class="stat-num amber" id="stat-cut">50</span><span class="stat-label" id="stat-cut-label">cut line (#10)</span></div>
+</div>
+
+<main>
+  <div>
+    <section class="standings-hero">
+      <h2>2026 Fred Wright Jr. Standings</h2>
+      <p class="lede" id="hero-lede"></p>
+      <div class="hero-filters" id="hero-filters"></div>
+
+      <div class="what-if">
+        <span class="what-if-title">What if?</span>
+        <div class="what-if-control">
+          <label for="whatif-slots">Open slots</label>
+          <input type="range" min="1" max="20" value="10" id="whatif-slots">
+          <span class="what-if-out" id="whatif-slots-out">10</span>
+        </div>
+        <div class="what-if-control">
+          <label for="whatif-cutoff">Cutoff</label>
+          <input type="date" id="whatif-cutoff" value="2026-06-21" min="2026-04-01" max="2026-08-06">
+        </div>
+        <button class="what-if-reset" id="whatif-reset">Reset to defaults</button>
+      </div>
+    </section>
+
+    <section class="standings">
+      <div class="std-head">
+        <span>#</span>
+        <span>Player</span>
+        <span>Source</span>
+        <span>Points by category</span>
+        <span class="right">Total</span>
+        <span></span>
+      </div>
+
+      <div id="standings-rows"></div>
+
+    </section>
+  </div>
+
+  <!-- Drawer (shown in mockup as open to demonstrate pattern) -->
+  <aside class="drawer">
+    <div class="drawer-header">
+      <span class="drawer-title">Engagement Settings</span>
+      <button class="drawer-close">&times;</button>
+    </div>
+    <div class="drawer-tabs" id="drawer-tabs">
+      <button class="drawer-tab" data-tab="categories">Categories</button>
+      <button class="drawer-tab" data-tab="tournaments">Tournaments</button>
+      <button class="drawer-tab" data-tab="discretionary">Discretionary</button>
+    </div>
+    <div class="drawer-body" id="drawer-pane"></div>
+    <div class="drawer-footer">
+      <span class="saved">Saved 2m ago</span>
+      <span>auto-save</span>
+    </div>
+  </aside>
+</main>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ========== TOURNAMENT DATA ==========
+  const TOURNAMENTS = [
+    { id: 'spring-mm',        name: 'Cat 1 Spring Member-Member',           date: '2026-05-15', label: 'May 15-16', categoryId: 'champ', weightOverride: 14 },
+    { id: 'two-day-mg',       name: 'Cat 1 Two-Day Member-Guest',           date: '2026-05-29', label: 'May 29-30', categoryId: 'champ' },
+    { id: 'mass-golf-1',      name: 'Mass Golf Spring Teams',               date: '2026-05-07', label: 'May 7',     categoryId: 'tourn' },
+    { id: 'mg-may',           name: 'Cat 1 Member-Guest',                   date: '2026-05-08', label: 'May 8',     categoryId: 'tourn' },
+    { id: 'mass-golf-2',      name: 'Mass Golf Spring Teams',               date: '2026-05-21', label: 'May 21',    categoryId: 'tourn' },
+    { id: 'cat2-mm-1',        name: 'Cat 2 Spring Member-Member',           date: '2026-06-05', label: 'Jun 5',     categoryId: 'tourn' },
+    { id: 'cat2-mm-2',        name: 'Cat 2 Spring Member-Member',           date: '2026-06-06', label: 'Jun 6',     categoryId: 'tourn' },
+    { id: 'mg-june',          name: 'Cat 1 Member-Guest',                   date: '2026-06-12', label: 'Jun 12',    categoryId: 'tourn' },
+    { id: 'cat2-mm-3',        name: 'Cat 2 Spring Member-Member',           date: '2026-06-16', label: 'Jun 16',    categoryId: 'tourn' },
+    { id: 'opening-cat1',     name: 'Cat 1 Opening Day',                    date: '2026-05-02', label: 'May 2',     categoryId: 'club' },
+    { id: 'opening-cat2',     name: 'Cat 2 Opening Day',                    date: '2026-05-03', label: 'May 3',     categoryId: 'club' },
+    { id: 'cat2-memorial-gt', name: 'Cat 2 Memorial Get Together',          date: '2026-05-19', label: 'May 19',    categoryId: 'club' },
+    { id: 'mixed-may',        name: 'Mixed Golf',                           date: '2026-05-22', label: 'May 22',    categoryId: 'club' },
+    { id: 'memorial-shootout',name: 'Memorial Day Shootout',                date: '2026-05-25', label: 'May 25',    categoryId: 'club' },
+    { id: 'parent-offspring', name: 'Parent-Offspring',                     date: '2026-06-20', label: 'Jun 20',    categoryId: 'club' },
+    { id: 'wsl-may05',        name: 'WSL',                                  date: '2026-05-05', label: 'May 5',     categoryId: 'league' },
+    { id: 'wsl-may12',        name: 'WSL',                                  date: '2026-05-12', label: 'May 12',    categoryId: 'league' },
+    { id: 'wsl-may19',        name: 'WSL',                                  date: '2026-05-19', label: 'May 19',    categoryId: 'league' },
+    { id: 'wsl-jun02',        name: 'WSL',                                  date: '2026-06-02', label: 'Jun 2',     categoryId: 'league' },
+    { id: 'wsl-jun09',        name: 'WSL',                                  date: '2026-06-09', label: 'Jun 9',     categoryId: 'league' },
+    { id: 'wsl-jun16',        name: 'WSL',                                  date: '2026-06-16', label: 'Jun 16',    categoryId: 'league' },
+    { id: 'ntwi-may01',       name: 'Northern Twilight vs Meadowbrook',     date: '2026-05-01', label: 'May 1',     categoryId: 'league' },
+    { id: 'ntwi-may14',       name: 'Northern Twilight vs Charles River',   date: '2026-05-14', label: 'May 14',    categoryId: 'league' },
+    { id: 'ntwi-may27',       name: 'Northern Twilight vs Woodland',        date: '2026-05-27', label: 'May 27',    categoryId: 'league' },
+    { id: 'ntwi-jun10',       name: 'Northern Twilight vs Vesper',          date: '2026-06-10', label: 'Jun 10',    categoryId: 'league' },
+    { id: 'stwi-may28',       name: 'Summer Twilight vs Wellesley',         date: '2026-05-28', label: 'May 28',    categoryId: 'league' },
+    { id: 'stwi-jun11',       name: 'Summer Twilight vs Woodland',          date: '2026-06-11', label: 'Jun 11',    categoryId: 'league' },
+    { id: 'stwi-jun18',       name: 'Summer Twilight vs Charles River',     date: '2026-06-18', label: 'Jun 18',    categoryId: 'league' },
+    { id: 'met-may07',        name: 'Met League vs Woodland',               date: '2026-05-07', label: 'May 7',     categoryId: 'league' },
+    { id: 'met-jun04',        name: 'Met League vs Wellesley',              date: '2026-06-04', label: 'Jun 4',     categoryId: 'league' },
+    { id: 'met-jun11',        name: 'Met League vs Salem',                  date: '2026-06-11', label: 'Jun 11',    categoryId: 'league' },
+    { id: 'exchange',         name: 'Exchange League',                      date: '2026-06-18', label: 'Jun 18',    categoryId: 'league' }
+  ];
+
+  // ========== PLAYER DATA ==========
+  const PLAYERS = [
+    { id:'amico',    name:'Amico, Angelo',   initials:'AA', years:12, source:'defer', sourceLabel:'Returned',  sub:'returned from defer 2025',           firstTimer:false,
+      played:['spring-mm','two-day-mg','mass-golf-1','mg-may','mass-golf-2','mg-june','opening-cat1','mixed-may','memorial-shootout','parent-offspring','wsl-may05','wsl-may12','wsl-may19','wsl-jun02','wsl-jun09','wsl-jun16','met-may07','met-jun04','met-jun11','ntwi-may01','ntwi-may14'],
+      discretionary:[] },
+    { id:'burke',    name:'Burke, Mike',     initials:'BM', years:18, source:'defer', sourceLabel:'Returned',  sub:'returned from defer 2025',           firstTimer:false,
+      played:['spring-mm','mass-golf-1','mg-may','mg-june','opening-cat1','memorial-shootout','wsl-may05','wsl-may12','wsl-may19','wsl-jun02','wsl-jun09','wsl-jun16','met-may07','met-jun04','met-jun11','stwi-may28','stwi-jun11'],
+      discretionary:[{ pts:4, reason:'Member-Member starter duty', date:'2026-05-15', awardedBy:'pro' }] },
+    { id:'coughlin', name:'Coughlin, John',  initials:'CJ', years:14, source:'defer', sourceLabel:'Returned',  sub:'returned from defer 2025',           firstTimer:false,
+      played:['two-day-mg','mass-golf-1','mg-may','mg-june','memorial-shootout','mixed-may','parent-offspring','wsl-may05','wsl-may12','wsl-may19','wsl-jun02','wsl-jun09','ntwi-may01','ntwi-may14','ntwi-may27','stwi-may28'],
+      discretionary:[] },
+    { id:'chryssis', name:'Chryssis, Alex',  initials:'CA', years:9,  source:'wait',  sourceLabel:'Waitlist',  sub:'ran Junior Day · waitlisted 2025',  firstTimer:false,
+      played:['two-day-mg','mg-may','mg-june','opening-cat1','memorial-shootout','parent-offspring','wsl-may05','wsl-may12','wsl-jun02','wsl-jun09','met-may07','met-jun04'],
+      discretionary:[{ pts:4, reason:'Ran Junior Day clinic', date:'2026-06-20', awardedBy:'chair' }] },
+    { id:'reynolds', name:'Reynolds, Jim',   initials:'RJ', years:22, source:'wait',  sourceLabel:'Waitlist',  sub:'waitlisted 2025',                   firstTimer:false,
+      played:['spring-mm','two-day-mg','mg-may','memorial-shootout','mixed-may','wsl-may05','wsl-may12','wsl-jun02','wsl-jun09','ntwi-may01','ntwi-may14','ntwi-may27'],
+      discretionary:[] },
+    { id:'battista', name:'Battista, Mike',  initials:'BT', years:6,  source:'defer', sourceLabel:'Returned',  sub:'returned from defer 2025',           firstTimer:false,
+      played:['spring-mm','mass-golf-1','mg-may','opening-cat1','memorial-shootout','wsl-may05','wsl-may12','wsl-may19','wsl-jun02','wsl-jun09','wsl-jun16','met-may07','met-jun04','met-jun11'],
+      discretionary:[] },
+    { id:'donovan',  name:'Donovan, Pat',    initials:'DP', years:4,  source:'new',   sourceLabel:'New',       sub:'new signup · first-timer',          firstTimer:true,
+      played:['two-day-mg','mg-may','mg-june','mixed-may','memorial-shootout','parent-offspring','wsl-jun02','wsl-jun09','met-jun04','stwi-jun11'],
+      discretionary:[] },
+    { id:'murphy',   name:'Murphy, Sean',    initials:'MS', years:5,  source:'defer', sourceLabel:'Returned',  sub:'returned from defer 2025',           firstTimer:false,
+      played:['spring-mm','mg-may','memorial-shootout','wsl-may05','wsl-may12','wsl-may19','wsl-jun02','wsl-jun09','wsl-jun16','ntwi-may01','ntwi-may14','ntwi-may27'],
+      noShows:['mg-june'],
+      discretionary:[] },
+    { id:'sullivan', name:'Sullivan, Tom',   initials:'ST', years:7,  source:'wait',  sourceLabel:'Waitlist',  sub:'waitlisted 2025',                   firstTimer:false,
+      played:['spring-mm','mass-golf-1','opening-cat1','memorial-shootout','parent-offspring','wsl-may05','wsl-may12','wsl-jun02','wsl-jun09','wsl-jun16'],
+      discretionary:[] },
+    { id:'obrien',   name:"O'Brien, Kevin",  initials:'OK', years:3,  source:'new',   sourceLabel:'New',       sub:'new signup · first-timer',          firstTimer:true,
+      played:['spring-mm','mg-may','memorial-shootout','parent-offspring','wsl-may05','wsl-may12','wsl-may19','wsl-jun02','wsl-jun09','wsl-jun16'],
+      discretionary:[] },
+    { id:'carter',   name:'Carter, Bill',    initials:'CB', years:8,  source:'wait',  sourceLabel:'Waitlist',  sub:'waitlisted 2025',                   firstTimer:false,
+      played:['mg-june','memorial-shootout','mixed-may','wsl-may05','wsl-may12','wsl-jun02','wsl-jun09','met-may07','met-jun04'],
+      noShows:['mg-may'],
+      discretionary:[] },
+    { id:'harrison', name:'Harrison, Frank', initials:'HF', years:3,  source:'wait',  sourceLabel:'Waitlist',  sub:'waitlisted 2025',                   firstTimer:false,
+      played:['mg-may','mass-golf-1','memorial-shootout','wsl-may05','wsl-may12','wsl-may19','wsl-jun02','wsl-jun09','wsl-jun16','ntwi-may01','ntwi-may14','ntwi-may27'],
+      discretionary:[] },
+    { id:'mckenna',  name:'McKenna, Brian',  initials:'MK', years:4,  source:'new',   sourceLabel:'New',       sub:'new signup · first-timer',          firstTimer:true,
+      played:['mg-may','memorial-shootout','parent-offspring','wsl-may05','wsl-may12','wsl-jun02','wsl-jun09','wsl-jun16','met-may07'],
+      discretionary:[] },
+    { id:'lawless',  name:'Lawless, Dan',    initials:'LD', years:3,  source:'new',   sourceLabel:'New',       sub:'new signup · first-timer',          firstTimer:true,
+      played:['mg-may','memorial-shootout','wsl-may05','wsl-may12','wsl-may19','wsl-jun02','wsl-jun09','met-may07','ntwi-may01'],
+      discretionary:[] },
+    { id:'quinn',    name:'Quinn, Robert',   initials:'QR', years:11, source:'wait',  sourceLabel:'Waitlist',  sub:'waitlisted 2025',                   firstTimer:false,
+      played:['mass-golf-1','wsl-may05','wsl-may12','wsl-may19','wsl-jun02','wsl-jun09','wsl-jun16','met-may07'],
+      discretionary:[] },
+    { id:'nardone',  name:'Nardone, Joe',    initials:'NJ', years:4,  source:'new',   sourceLabel:'New',       sub:'new signup · first-timer',          firstTimer:true,
+      played:['mg-may','wsl-may05','wsl-may12','wsl-jun02','wsl-jun09','met-may07'],
+      discretionary:[] },
+    { id:'foster',   name:'Foster, Greg',    initials:'FG', years:2,  source:'new',   sourceLabel:'New',       sub:'new signup · first-timer',          firstTimer:true,
+      played:['mg-may','wsl-may05','wsl-may12','wsl-jun02','met-may07'],
+      discretionary:[] },
+    { id:'mccarthy', name:'McCarthy, Pete',  initials:'MC', years:3,  source:'new',   sourceLabel:'New',       sub:'new signup · first-timer',          firstTimer:true,
+      played:['mg-may','wsl-may05','wsl-may12','wsl-jun02'],
+      discretionary:[] },
+    { id:'russo',    name:'Russo, Tony',     initials:'RT', years:6,  source:'wait',  sourceLabel:'Waitlist',  sub:'cart fleet help · waitlisted 2025',firstTimer:false,
+      played:['wsl-may05','wsl-may12','wsl-jun02','wsl-jun09'],
+      discretionary:[{ pts:4, reason:'Cart fleet help, post-storm', date:'2026-06-08', awardedBy:'pro' }] },
+    { id:'lopez',    name:'Lopez, Carlos',   initials:'LC', years:3,  source:'new',   sourceLabel:'New',       sub:'new signup · first-timer',          firstTimer:true,
+      played:['wsl-may05','wsl-may12','wsl-jun02','wsl-jun09'],
+      discretionary:[] },
+    { id:'walsh',    name:'Walsh, Tim',      initials:'WT', years:4,  source:'new',   sourceLabel:'New',       sub:'new signup · first-timer',          firstTimer:true,
+      played:['wsl-may05','wsl-may12'],
+      discretionary:[] },
+    { id:'park',     name:'Park, James',     initials:'PJ', years:1,  source:'new',   sourceLabel:'New',       sub:'new signup · first-timer',          firstTimer:true,
+      played:['wsl-may05','wsl-may12'],
+      discretionary:[] },
+    { id:'connolly', name:'Connolly, Mike',  initials:'CM', years:2,  source:'new',   sourceLabel:'New',       sub:'new signup · first-timer',          firstTimer:true,
+      played:[],
+      discretionary:[] },
+    { id:'reed',     name:'Reed, Steve',     initials:'RS', years:1,  source:'new',   sourceLabel:'New',       sub:'new signup · first-timer',          firstTimer:true,
+      played:[],
+      discretionary:[] }
+  ];
+
+  // ========== DEFAULTS ==========
+  const DEFAULT_CATEGORIES = [
+    { id:'champ',  name:'Championship',  weight:12, color:'major',
+      events:'Member-Member, Two-Day Member-Guest, Club Championship, Senior Championship' },
+    { id:'tourn',  name:'Tournament',    weight:8,  color:'premier',
+      events:'Monthly Member-Guest, Mass Golf Spring Teams, Cat 2 Member-Member, Cup rounds' },
+    { id:'club',   name:'Club Event',    weight:5,  color:'tournament',
+      events:'Memorial Day Shootout, Mixed Golf, Opening Day, Parent-Offspring, Get-Togethers' },
+    { id:'league', name:'League Match',  weight:2,  color:'league',
+      events:'WSL (Tuesdays), Northern/Summer Twilight, Met League, Exchange League' }
+  ];
+  const DEFAULT_BONUSES = { seniorityCap:10, firstTimer:5, noShow:-2 };
+  const DEFAULT_CONFIG  = { openSlots:10, cutoffDate:'2026-06-21' };
+  const MAX_CAT_WEIGHT = 50;
+  const DEMO_TODAY = '2026-04-25';
+  const DISCRETIONARY_BUDGET = 60;
+
+  // Filter chips drive both applyFilter and renderHeroFilters.
+  const FILTERS = [
+    { key:'all',   label:'All',          match: () => true },
+    { key:'defer', label:'Returned',     match: p => p.source === 'defer' },
+    { key:'wait',  label:'Waitlist',     match: p => p.source === 'wait' },
+    { key:'new',   label:'New',          match: p => p.source === 'new' },
+    { key:'first', label:'First-timers', match: p => p.firstTimer }
+  ];
+  // Filter counts only depend on PLAYERS (which is fixed) — compute once.
+  const FILTER_COUNTS = {};
+  FILTERS.forEach(f => { FILTER_COUNTS[f.key] = PLAYERS.filter(f.match).length; });
+
+  // O(1) tournament lookups by id (vs scanning TOURNAMENTS per event per player per render).
+  const tournamentsById = new Map(TOURNAMENTS.map(t => [t.id, t]));
+
+  // ========== STATE ==========
+  // Tab keys live in one place so refactors stop us before typos do.
+  const TABS = { CATEGORIES: 'categories', TOURNAMENTS: 'tournaments', DISCRETIONARY: 'discretionary' };
+
+  let state = {
+    categories: JSON.parse(JSON.stringify(DEFAULT_CATEGORIES)),
+    bonuses:    Object.assign({}, DEFAULT_BONUSES),
+    config:     Object.assign({}, DEFAULT_CONFIG),
+    ui:         { expandedPlayerId:'reynolds', activeFilter:'all', activeTab: TABS.CATEGORIES, expandedTournamentId: null }
+  };
+  let prevTotals = {};
+
+  // Stable monotonic id for discretionary awards (replaces the playerId|date#N parser).
+  let awardSeq = 0;
+  PLAYERS.forEach(p => {
+    (p.discretionary || []).forEach(d => { d.id = ++awardSeq; });
+    p.noShows = p.noShows || [];
+  });
+
+  // Player options never change — precompute the dropdown HTML once.
+  const PLAYER_OPTIONS_HTML = PLAYERS.map(p =>
+    '<option value="' + p.id + '">' + escapeHtml(p.name) + '</option>'
+  ).join('');
+
+  function categoriesById() {
+    return Object.fromEntries(state.categories.map(c => [c.id, c]));
+  }
+  function getCategory(id) { return state.categories.find(c => c.id === id); }
+
+  function isDirty() {
+    if (state.config.openSlots !== DEFAULT_CONFIG.openSlots) return true;
+    if (state.config.cutoffDate !== DEFAULT_CONFIG.cutoffDate) return true;
+    if (state.categories.some((c, i) => c.weight !== DEFAULT_CATEGORIES[i].weight)) return true;
+    if (TOURNAMENTS.some(t => t.weightOverride !== undefined)) return true;
+    if (PLAYERS.some(p => (p.noShows || []).length > 0)) return true;
+    return false;
+  }
+
+  // ========== COMPUTE ==========
+  function effectiveWeight(t, cat) {
+    return t.weightOverride !== undefined ? t.weightOverride : cat.weight;
+  }
+
+  function computePlayer(p, catById) {
+    const cutoff = state.config.cutoffDate;
+    const eligible = [];
+    const byCategory = {};
+    let catTotal = 0;
+    for (const tid of p.played) {
+      const t = tournamentsById.get(tid);
+      if (!t || t.date > cutoff) continue;
+      eligible.push(t);
+      const cat = catById[t.categoryId];
+      if (!cat) continue;
+      const w = effectiveWeight(t, cat);
+      byCategory[cat.id] = (byCategory[cat.id] || 0) + w;
+      catTotal += w;
+    }
+    // No-show penalties only count for tournaments on or before the cutoff.
+    const noShowEvents = (p.noShows || [])
+      .map(tid => tournamentsById.get(tid))
+      .filter(t => t && t.date <= cutoff);
+    const noShowPenalty = noShowEvents.length * state.bonuses.noShow;
+    const seniority = Math.min(p.years, state.bonuses.seniorityCap);
+    const firstTimer = p.firstTimer ? state.bonuses.firstTimer : 0;
+    const discretionary = (p.discretionary || []).reduce((s, d) => s + d.pts, 0);
+    const total = catTotal + seniority + firstTimer + discretionary + noShowPenalty;
+    return { byCategory, seniority, firstTimer, discretionary, noShowEvents, noShowPenalty, total, eligible };
+  }
+
+  function rankedPlayers() {
+    const catById = categoriesById();
+    return PLAYERS
+      .map(p => Object.assign({ player:p }, computePlayer(p, catById)))
+      .sort((a, b) => (b.total - a.total) || a.player.name.localeCompare(b.player.name));
+  }
+
+  function applyFilter(ranked) {
+    const f = FILTERS.find(x => x.key === state.ui.activeFilter);
+    return f ? ranked.filter(r => f.match(r.player)) : ranked;
+  }
+
+  // ========== UTIL ==========
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function formatDate(iso) {
+    const d = new Date(iso + 'T12:00:00');
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return months[d.getMonth()] + ' ' + d.getDate();
+  }
+  function daysUntil(iso) {
+    const today = new Date(DEMO_TODAY + 'T12:00:00');
+    const target = new Date(iso + 'T12:00:00');
+    return Math.max(0, Math.round((target - today) / 86400000));
+  }
+
+  // ========== RENDER ==========
+  function render() {
+    const ranked = rankedPlayers();
+    const cutoffLabel = formatDate(state.config.cutoffDate);
+
+    // Header
+    document.getElementById('cutoff-badge').innerHTML = 'Through <strong>' + cutoffLabel + '</strong>';
+    document.getElementById('days-badge').innerHTML  = 'App. closes <strong>' + daysUntil(state.config.cutoffDate) + ' days</strong>';
+
+    // Stat strip
+    const medianIdx = Math.floor(ranked.length / 2);
+    const top    = ranked[0]?.total ?? 0;
+    const median = ranked[medianIdx]?.total ?? 0;
+    const cut    = ranked[state.config.openSlots - 1]?.total ?? 0;
+    document.getElementById('stat-slots').textContent      = state.config.openSlots;
+    document.getElementById('stat-pool').textContent       = PLAYERS.length;
+    document.getElementById('stat-top').textContent        = top;
+    document.getElementById('stat-median').textContent     = median;
+    document.getElementById('stat-cut').textContent        = cut;
+    document.getElementById('stat-cut-label').textContent  = 'cut line (#' + state.config.openSlots + ')';
+
+    // Hero lede
+    document.getElementById('hero-lede').innerHTML =
+      'Engagement points lock at the application deadline &mdash; <strong>' + cutoffLabel +
+      '</strong>. The top <strong>' + state.config.openSlots + ' of ' + PLAYERS.length +
+      '</strong> eligible pool members currently qualify; the rest fill the waitlist. <strong>48</strong> returning participants have confirmed carryover; points only rank the remaining pool.';
+
+    renderHeroFilters();
+
+    // What-if
+    document.getElementById('whatif-slots').value         = state.config.openSlots;
+    document.getElementById('whatif-slots-out').textContent = state.config.openSlots;
+    document.getElementById('whatif-cutoff').value        = state.config.cutoffDate;
+    document.getElementById('whatif-reset').classList.toggle('dirty', isDirty());
+
+    renderRows(ranked);
+    renderDrawerTabs();
+    renderDrawerPane();
+
+    // remember for delta on next render
+    prevTotals = {};
+    ranked.forEach(r => { prevTotals[r.player.id] = r.total; });
+  }
+
+  function renderHeroFilters() {
+    const html = FILTERS.map(f =>
+      '<button class="chip ' + (state.ui.activeFilter === f.key ? 'active' : '') + '" data-filter="' + f.key + '">' +
+      f.label + ' <span class="count">' + FILTER_COUNTS[f.key] + '</span></button>'
+    ).join('');
+    document.getElementById('hero-filters').innerHTML = html;
+  }
+
+  function renderRows(ranked) {
+    const cutIdx = state.config.openSlots;
+    const filtered = applyFilter(ranked);
+    // O(1) rank lookup so the inner loop doesn't degrade to O(n²) via indexOf.
+    const rankByPlayer = new Map(ranked.map((r, i) => [r.player.id, i + 1]));
+    let html = '';
+    let cutInserted = false;
+    filtered.forEach(entry => {
+      const rank = rankByPlayer.get(entry.player.id);
+      if (!cutInserted && rank > cutIdx) {
+        html += renderCutLine();
+        cutInserted = true;
+      }
+      const isQualifying = rank <= cutIdx;
+      const isExpanded   = state.ui.expandedPlayerId === entry.player.id;
+      html += renderRow(entry, rank, isQualifying, isExpanded);
+    });
+    if (!cutInserted) html += renderCutLine();
+    document.getElementById('standings-rows').innerHTML = html;
+  }
+
+  function renderRow(entry, rank, isQualifying, isExpanded) {
+    const p = entry.player;
+    const cls = ['std-row', isQualifying ? 'qualifying' : 'below-cut'];
+    if (isExpanded) cls.push('expanded');
+
+    // Build all bar segments uniformly. Categories use --cat-{color}; bonuses use direct vars.
+    // Bar percentages are over the SUM of positive segments (not entry.total), so a player with
+    // a no-show penalty doesn't make the bar over-fill — the penalty shows up in the total + breakdown.
+    const segments = [];
+    state.categories.forEach(c => {
+      const pts = entry.byCategory[c.id];
+      if (pts) segments.push({ pts, bg: 'var(--cat-' + c.color + ')' });
+    });
+    if (entry.seniority)     segments.push({ pts: entry.seniority,     bg: 'var(--ink-soft)' });
+    if (entry.firstTimer)    segments.push({ pts: entry.firstTimer,    bg: 'var(--amber)' });
+    if (entry.discretionary) segments.push({ pts: entry.discretionary, bg: 'var(--cat-discretionary)' });
+    const positiveTotal = segments.reduce((s, x) => s + x.pts, 0) || 1;
+    const seg = segments.map(s =>
+      '<span style="width:' + (s.pts / positiveTotal * 100).toFixed(1) + '%;background:' + s.bg + ';"></span>'
+    );
+
+    const prev = prevTotals[p.id];
+    let delta = '';
+    if (prev !== undefined && prev !== entry.total) {
+      const diff = entry.total - prev;
+      delta = '<span class="std-points-delta ' + (diff < 0 ? 'down' : '') + '">' + (diff > 0 ? '+' : '') + diff + '</span>';
+    }
+
+    let html = '<div class="' + cls.join(' ') + '" data-player="' + p.id + '">' +
+      '<span class="std-rank">' + rank + '</span>' +
+      '<div class="std-name-cell">' +
+        '<div class="std-avatar">' + p.initials + '</div>' +
+        '<div class="std-name-wrap"><span class="std-name">' + escapeHtml(p.name) + '</span><span class="std-sub">' + p.years + ' yrs &middot; ' + escapeHtml(p.sub) + '</span></div>' +
+      '</div>' +
+      '<span class="std-source ' + p.source + '">' + p.sourceLabel + '</span>' +
+      '<div class="std-bar">' + seg.join('') + '</div>' +
+      '<span class="std-points">' + entry.total + delta + '</span>' +
+      '<span class="std-expand">›</span>' +
+    '</div>';
+
+    if (isExpanded) html += renderBreakdown(entry);
+    return html;
+  }
+
+  function bdLine({ dotClass, label, sub, pts, muted }) {
+    return '<div class="bd-line' + (muted ? ' muted' : '') + '">' +
+      '<span class="bd-dot ' + dotClass + '"></span>' +
+      '<span class="bd-label">' + label + '</span>' +
+      '<span class="bd-label-sub">' + sub + '</span>' +
+      '<span class="bd-pts">' + pts + '</span>' +
+    '</div>';
+  }
+
+  function renderBreakdown(entry) {
+    const p = entry.player;
+    const byCat = {};
+    entry.eligible.forEach(t => { (byCat[t.categoryId] = byCat[t.categoryId] || []).push(t); });
+
+    const lines = [];
+    state.categories.forEach(c => {
+      const events = byCat[c.id];
+      if (!events || events.length === 0) return;
+      if (c.id === 'league' && events.length > 2) {
+        // Collapse repeat league matches into one line per league (e.g., "WSL × 4, Northern Twilight × 3").
+        // Sum effective weights so per-event overrides flow through.
+        const groups = {};
+        events.forEach(e => {
+          const name = e.name.split(' vs ')[0];
+          groups[name] = (groups[name] || 0) + 1;
+        });
+        const desc = Object.keys(groups).map(n => n + (groups[n] > 1 ? ' &times; ' + groups[n] : '')).join(', ');
+        const totalPts = events.reduce((s, t) => s + effectiveWeight(t, c), 0);
+        const hasOverride = events.some(t => t.weightOverride !== undefined);
+        lines.push(bdLine({
+          dotClass: c.color,
+          label: desc + (hasOverride ? ' <span style="color: var(--amber); font-size: 10px; font-weight: 600;">override</span>' : ''),
+          sub: events.length + ' matches',
+          pts: totalPts
+        }));
+      } else {
+        events.forEach(t => {
+          const w = effectiveWeight(t, c);
+          const overrideTag = t.weightOverride !== undefined
+            ? ' <span style="color: var(--amber); font-size: 10px; font-weight: 600;">override</span>'
+            : '';
+          lines.push(bdLine({
+            dotClass: c.color,
+            label: escapeHtml(t.name) + overrideTag,
+            sub: t.label + ' &middot; ' + c.name,
+            pts: w
+          }));
+        });
+      }
+    });
+    if (lines.length === 0) {
+      lines.push(bdLine({
+        dotClass: '', label: 'No tournament participation in this window.',
+        sub: '', pts: '0', muted: true
+      }));
+    }
+    // No-show entries (always at the bottom of Tournament Play, in red).
+    (entry.noShowEvents || []).forEach(t => {
+      lines.push(bdLine({
+        dotClass: '', label: '<span style="color: var(--red);">' + escapeHtml(t.name) + ' &mdash; no-show</span>',
+        sub: t.label + ' &middot; penalty',
+        pts: state.bonuses.noShow
+      }));
+    });
+
+    const bonuses = [bdLine({
+      dotClass: 'senior', label: 'Seniority bonus',
+      sub: p.years + ' yrs' + (p.years > state.bonuses.seniorityCap ? ', capped at ' + state.bonuses.seniorityCap : ''),
+      pts: entry.seniority
+    })];
+    bonuses.push(p.firstTimer
+      ? bdLine({ dotClass:'first', label:'First-timer bonus', sub:'never played Fred Wright Jr.', pts:entry.firstTimer })
+      : bdLine({ dotClass:'first', label:'First-timer bonus', sub:'not applicable', pts:'&mdash;', muted:true }));
+    if (p.discretionary && p.discretionary.length > 0) {
+      p.discretionary.forEach(d => bonuses.push(bdLine({
+        dotClass:'discretionary', label:'Discretionary', sub:escapeHtml(d.reason), pts:d.pts
+      })));
+    } else {
+      bonuses.push(bdLine({ dotClass:'discretionary', label:'Discretionary', sub:'none awarded', pts:'&mdash;', muted:true }));
+    }
+
+    return '<div class="std-row std-row-breakdown">' +
+      '<div class="std-breakdown">' +
+        '<div><div class="bd-section-title">Tournament Play</div>' + lines.join('') + '</div>' +
+        '<div><div class="bd-section-title">Bonuses &amp; Seniority</div>' + bonuses.join('') + '</div>' +
+        '<div class="bd-total"><span>Season total through ' + formatDate(state.config.cutoffDate) + '</span><span class="total-pts">' + entry.total + ' points</span></div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderCutLine() {
+    const cutIdx = state.config.openSlots;
+    return '<div class="cut-line">' +
+      '<span class="line"></span>' +
+      '<span>Cut line &middot; ' + cutIdx + ' of ' + cutIdx + ' slots filled</span>' +
+      '<span class="line"></span>' +
+    '</div>';
+  }
+
+  function renderDrawerTabs() {
+    document.querySelectorAll('#drawer-tabs .drawer-tab').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === state.ui.activeTab);
+    });
+  }
+
+  // Pane lookup — adding a new tab is a one-line registration here.
+  const PANES = {
+    [TABS.CATEGORIES]:    renderCategoriesPane,
+    [TABS.TOURNAMENTS]:   renderTournamentsPane,
+    [TABS.DISCRETIONARY]: renderDiscretionaryPane
+  };
+
+  function renderDrawerPane() {
+    const renderer = PANES[state.ui.activeTab] || PANES[TABS.CATEGORIES];
+    document.getElementById('drawer-pane').innerHTML = renderer();
+  }
+
+  // One template for every drawer category/bonus row. Right side varies (stepper vs static badge);
+  // pass it pre-rendered as `right`.
+  function catListItem({ dotClass, dotStyle, name, sub, right, dataCat }) {
+    return '<div class="cat-list-item"' + (dataCat ? ' data-cat="' + dataCat + '"' : '') + '>' +
+      '<span class="cat-dot' + (dotClass ? ' ' + dotClass : '') + '"' + (dotStyle ? ' style="' + dotStyle + '"' : '') + '></span>' +
+      '<div>' +
+        '<span class="cat-name">' + name + '</span>' +
+        '<span class="cat-events-mini">' + sub + '</span>' +
+      '</div>' +
+      right +
+    '</div>';
+  }
+
+  function weightBadge(text, style) {
+    return '<span class="cat-weight"' + (style ? ' style="' + style + '"' : '') + '>' + text + '</span>';
+  }
+
+  function stepper(catId, weight) {
+    return '<div class="cat-stepper">' +
+      '<button data-cat-step="-1" data-cat="' + catId + '" aria-label="Decrease">&minus;</button>' +
+      '<input type="number" min="0" max="' + MAX_CAT_WEIGHT + '" value="' + weight + '" data-cat-input="' + catId + '">' +
+      '<button data-cat-step="1" data-cat="' + catId + '" aria-label="Increase">+</button>' +
+    '</div>';
+  }
+
+  function bonusRow({ dotClass, name, sub, badge, dotBg, badgeColor }) {
+    return catListItem({
+      dotStyle: 'background: ' + dotBg + ';',
+      name, sub,
+      right: weightBadge(badge, badgeColor ? 'color: ' + badgeColor + ';' : null)
+    });
+  }
+
+  function renderCategoriesPane() {
+    const cutoffYear = state.config.cutoffDate.slice(0, 4);
+    const cutoffLabel = formatDate(state.config.cutoffDate);
+    const catItems = state.categories.map(c => catListItem({
+      dotClass: c.color, dataCat: c.id,
+      name: c.name, sub: c.events,
+      right: stepper(c.id, c.weight)
+    })).join('');
+    return (
+      '<div class="drawer-section-title">Category weights &middot; <span style="text-transform: none; letter-spacing: 0; color: var(--forest); font-weight: 600;">drag to tune</span></div>' +
+      '<div id="cat-list">' + catItems + '</div>' +
+      catListItem({
+        dotClass: 'discretionary',
+        name: 'Discretionary',
+        sub: 'Pro &amp; chair awards &middot; managed in the Discretionary tab',
+        right: weightBadge('var')
+      }) +
+      '<div class="drawer-section-title">Bonuses</div>' +
+      bonusRow({ dotClass:'senior', name:'Seniority',   sub:'per year, capped at ' + state.bonuses.seniorityCap, badge:'+1',                              dotBg:'var(--ink-soft)' }) +
+      bonusRow({ dotClass:'first',  name:'First-timer', sub:'never played Fred Wright Jr.',                      badge:'+' + state.bonuses.firstTimer,    dotBg:'var(--amber)' }) +
+      bonusRow({ dotClass:'noshow', name:'No-show',     sub:'signed up, didn\'t play',                           badge:state.bonuses.noShow,              dotBg:'var(--red)', badgeColor:'var(--red)' }) +
+      '<div class="drawer-section-title">Cutoff</div>' +
+      catListItem({
+        dotStyle: 'background: var(--forest);',
+        name: 'Lock date',
+        sub:  'application deadline &middot; ' + cutoffLabel + ', ' + cutoffYear,
+        right: weightBadge(cutoffLabel, 'background: var(--forest-soft); color: var(--forest); border-color: #b9d3bf;')
+      })
+    );
+  }
+
+  function renderTournamentsPane() {
+    const cutoff = state.config.cutoffDate;
+    const catById = categoriesById();
+    // Sort by date ascending. Show all events; dim those after the cutoff (they don't count yet).
+    const sorted = TOURNAMENTS.slice().sort((a, b) => a.date.localeCompare(b.date));
+
+    // Stats for the top of the pane.
+    const overriddenCount = sorted.filter(t => t.weightOverride !== undefined).length;
+    const noShowCount = PLAYERS.reduce((s, p) => s + (p.noShows || []).length, 0);
+    const playedThroughCutoff = sorted.filter(t => t.date <= cutoff).length;
+
+    const summary =
+      '<div class="tn-summary-stats">' +
+        '<span><strong>' + playedThroughCutoff + '</strong> events through ' + formatDate(cutoff) + '</span>' +
+        '<span><strong>' + overriddenCount + '</strong> overridden &middot; <strong>' + noShowCount + '</strong> no-shows</span>' +
+      '</div>';
+
+    const rowsHtml = sorted.map(t => {
+      const cat = catById[t.categoryId];
+      if (!cat) return '';
+      const w = effectiveWeight(t, cat);
+      const isOverridden = t.weightOverride !== undefined;
+      const playedCount = PLAYERS.reduce((s, p) => s + (p.played.includes(t.id) ? 1 : 0), 0);
+      const tNoShows = PLAYERS
+        .filter(p => (p.noShows || []).includes(t.id))
+        .map(p => ({ id: p.id, name: p.name }));
+      const isPast = t.date <= cutoff;
+      const isExpanded = state.ui.expandedTournamentId === t.id;
+
+      const metaParts = [
+        formatDate(t.date),
+        cat.name,
+        playedCount + ' played'
+      ];
+      if (isOverridden) metaParts.push('<span class="override-flag">override ' + (t.weightOverride > cat.weight ? '+' : '') + (t.weightOverride - cat.weight) + '</span>');
+      if (tNoShows.length > 0) metaParts.push('<span class="noshow-flag">' + tNoShows.length + ' no-show' + (tNoShows.length === 1 ? '' : 's') + '</span>');
+
+      const stepperHtml =
+        '<div class="cat-stepper">' +
+          '<button data-tn-step="-1" data-tn="' + t.id + '" aria-label="Decrease">&minus;</button>' +
+          '<input type="number" min="0" max="' + MAX_CAT_WEIGHT + '" value="' + w + '" data-tn-input="' + t.id + '">' +
+          '<button data-tn-step="1" data-tn="' + t.id + '" aria-label="Increase">+</button>' +
+        '</div>';
+
+      // Player options for the no-show picker — exclude players already marked no-show for this event.
+      const noShowSet = new Set(tNoShows.map(n => n.id));
+      const pickerOptions = '<option value="">Mark a no-show…</option>' + PLAYERS
+        .filter(p => !noShowSet.has(p.id))
+        .map(p => '<option value="' + p.id + '">' + escapeHtml(p.name) + '</option>')
+        .join('');
+
+      const noShowPills = tNoShows.map(n =>
+        '<div class="tn-noshow-pill">' +
+          '<span class="tn-noshow-pill-name">' + escapeHtml(n.name) + '</span>' +
+          '<span class="tn-noshow-pill-pts">' + state.bonuses.noShow + ' pts</span>' +
+          '<button class="tn-noshow-pill-remove" data-tn-noshow-remove data-tn="' + t.id + '" data-player="' + n.id + '" title="Restore">&times;</button>' +
+        '</div>'
+      ).join('');
+
+      const expandedBody = isExpanded ? (
+        '<div class="tn-expanded-body">' +
+          '<div class="tn-expanded-row">' +
+            '<span class="tn-expanded-label">Weight</span>' +
+            '<span style="color: var(--ink-muted); font-family: var(--mono); font-size: 11px;">default ' + cat.weight + '</span>' +
+            (isOverridden ? '<button class="tn-reset" data-tn-reset="' + t.id + '">↺ reset</button>' : '') +
+          '</div>' +
+          '<div class="tn-expanded-row">' +
+            '<span class="tn-expanded-label">No-show</span>' +
+            '<select class="tn-noshow-add" data-tn-noshow-pick="' + t.id + '">' + pickerOptions + '</select>' +
+          '</div>' +
+          (tNoShows.length > 0 ? '<div class="tn-noshows-list">' + noShowPills + '</div>' : '') +
+        '</div>'
+      ) : '';
+
+      return (
+        '<div class="tn-row' + (isExpanded ? ' expanded' : '') + (isPast ? '' : ' dim') + '" data-tn="' + t.id + '">' +
+          '<span class="tn-bar ' + cat.color + '"></span>' +
+          '<div class="tn-info">' +
+            '<span class="tn-name">' + escapeHtml(t.name) + '</span>' +
+            '<span class="tn-meta">' + metaParts.join(' &middot; ') + '</span>' +
+          '</div>' +
+          '<div class="tn-controls">' +
+            stepperHtml +
+          '</div>' +
+          expandedBody +
+        '</div>'
+      );
+    }).join('');
+
+    return (
+      '<div class="drawer-section-title">Tournaments &middot; ' +
+        '<span style="text-transform: none; letter-spacing: 0; color: var(--forest); font-weight: 600;">click a row to expand</span>' +
+      '</div>' +
+      summary +
+      rowsHtml
+    );
+  }
+
+  function formField(id, label, controlHtml) {
+    return '<div class="disc-form-row">' +
+      '<label class="disc-label" for="' + id + '">' + label + '</label>' +
+      controlHtml +
+    '</div>';
+  }
+
+  function renderDiscretionaryPane() {
+    // Single pass: pool usage + award list, sorted newest-first (larger pts wins ties).
+    let used = 0;
+    const allAwards = [];
+    PLAYERS.forEach(p => {
+      (p.discretionary || []).forEach(d => {
+        used += d.pts;
+        allAwards.push({ playerName: p.name, pts: d.pts, reason: d.reason, date: d.date, awardedBy: d.awardedBy, id: d.id });
+      });
+    });
+    allAwards.sort((a, b) => b.date.localeCompare(a.date) || b.pts - a.pts);
+
+    const remaining = DISCRETIONARY_BUDGET - used;
+    const pct = Math.min(100, (used / DISCRETIONARY_BUDGET) * 100);
+    const fillCls = pct >= 100 ? 'full' : pct >= 75 ? 'high' : '';
+    const exhausted = remaining <= 0;
+
+    const awardsHtml = allAwards.length === 0
+      ? '<div class="disc-empty">No awards yet this season &mdash; award the first one above.</div>'
+      : allAwards.map(a =>
+          '<div class="disc-award" data-award-id="' + a.id + '">' +
+            '<div class="disc-award-main">' +
+              '<span class="disc-award-name">' + escapeHtml(a.playerName) + '</span>' +
+              '<span class="disc-award-reason">' + escapeHtml(a.reason) + '</span>' +
+              '<span class="disc-award-meta">' + formatDate(a.date) + ' &middot; ' + escapeHtml(a.awardedBy) + '</span>' +
+            '</div>' +
+            '<span class="disc-award-pts">+' + a.pts + '</span>' +
+            '<button class="disc-award-remove" title="Remove award">&times;</button>' +
+          '</div>'
+        ).join('');
+
+    return (
+      '<div class="drawer-section-title">Pool budget</div>' +
+      '<div class="disc-pool">' +
+        '<div class="disc-pool-bar"><div class="disc-pool-fill ' + fillCls + '" style="width: ' + pct.toFixed(1) + '%;"></div></div>' +
+        '<div class="disc-pool-stats">' +
+          '<span><strong>' + used + '</strong> / ' + DISCRETIONARY_BUDGET + ' pts used</span>' +
+          '<span>' + remaining + ' remaining</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="drawer-section-title">Award points</div>' +
+      '<form class="disc-form" id="disc-form" autocomplete="off">' +
+        formField('disc-player', 'Player', '<select id="disc-player" name="player">' + PLAYER_OPTIONS_HTML + '</select>') +
+        '<div class="disc-form-grid">' +
+          formField('disc-points', 'Points', '<input type="number" id="disc-points" name="points" min="1" max="10" value="3">') +
+          formField('disc-by',     'Awarded by', '<select id="disc-by" name="by"><option value="pro">Pro</option><option value="chair">Chair</option></select>') +
+        '</div>' +
+        formField('disc-reason', 'Reason', '<input type="text" id="disc-reason" name="reason" placeholder="e.g., volunteered at Junior Day clinic" required>') +
+        '<button type="submit" class="disc-award-btn"' + (exhausted ? ' disabled' : '') + '>' +
+          (exhausted ? 'Pool exhausted' : 'Award points') +
+        '</button>' +
+      '</form>' +
+      '<div class="drawer-section-title">Recent awards</div>' +
+      awardsHtml
+    );
+  }
+
+  // ========== EVENT HANDLERS ==========
+  function attachHandlers() {
+    document.getElementById('hero-filters').addEventListener('click', e => {
+      const btn = e.target.closest('.chip');
+      if (!btn) return;
+      state.ui.activeFilter = btn.dataset.filter;
+      render();
+    });
+    document.getElementById('standings-rows').addEventListener('click', e => {
+      const row = e.target.closest('.std-row');
+      if (!row || !row.dataset.player) return;
+      state.ui.expandedPlayerId = state.ui.expandedPlayerId === row.dataset.player ? null : row.dataset.player;
+      render();
+    });
+    document.getElementById('whatif-slots').addEventListener('input', e => {
+      state.config.openSlots = parseInt(e.target.value, 10);
+      render();
+    });
+    document.getElementById('whatif-cutoff').addEventListener('change', e => {
+      state.config.cutoffDate = e.target.value;
+      render();
+    });
+    document.getElementById('whatif-reset').addEventListener('click', () => {
+      state.categories = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
+      state.config = Object.assign({}, DEFAULT_CONFIG);
+      // Clear per-tournament overrides + no-shows so "Reset" really means "back to defaults".
+      TOURNAMENTS.forEach(t => { delete t.weightOverride; });
+      PLAYERS.forEach(p => { p.noShows = []; });
+      render();
+    });
+    // Tab switcher
+    document.getElementById('drawer-tabs').addEventListener('click', e => {
+      const btn = e.target.closest('.drawer-tab');
+      if (!btn) return;
+      state.ui.activeTab = btn.dataset.tab;
+      render();
+    });
+
+    // Drawer pane is stable; delegate everything inside it (cat-stepper, award form, tournament controls)
+    const pane = document.getElementById('drawer-pane');
+    pane.addEventListener('click', e => {
+      const stepBtn = e.target.closest('[data-cat-step]');
+      if (stepBtn) {
+        const cat = getCategory(stepBtn.dataset.cat);
+        cat.weight = Math.max(0, Math.min(MAX_CAT_WEIGHT, cat.weight + parseInt(stepBtn.dataset.catStep, 10)));
+        render();
+        return;
+      }
+      const tnStepBtn = e.target.closest('[data-tn-step]');
+      if (tnStepBtn) {
+        e.stopPropagation();
+        const t = tournamentsById.get(tnStepBtn.dataset.tn);
+        const cat = getCategory(t.categoryId);
+        const cur = effectiveWeight(t, cat);
+        t.weightOverride = Math.max(0, Math.min(MAX_CAT_WEIGHT, cur + parseInt(tnStepBtn.dataset.tnStep, 10)));
+        render();
+        return;
+      }
+      const tnReset = e.target.closest('[data-tn-reset]');
+      if (tnReset) {
+        e.stopPropagation();
+        const t = tournamentsById.get(tnReset.dataset.tnReset);
+        delete t.weightOverride;
+        render();
+        return;
+      }
+      const tnNoShowRemove = e.target.closest('[data-tn-noshow-remove]');
+      if (tnNoShowRemove) {
+        e.stopPropagation();
+        const player = PLAYERS.find(p => p.id === tnNoShowRemove.dataset.player);
+        if (player) player.noShows = (player.noShows || []).filter(tid => tid !== tnNoShowRemove.dataset.tn);
+        render();
+        return;
+      }
+      const removeBtn = e.target.closest('.disc-award-remove');
+      if (removeBtn) {
+        const row = removeBtn.closest('.disc-award');
+        if (row) removeAward(parseInt(row.dataset.awardId, 10));
+        return;
+      }
+      // Tournament row: click anywhere except its inner controls toggles expansion.
+      const tnRow = e.target.closest('[data-tn]');
+      if (tnRow && !e.target.closest('.cat-stepper, [data-tn-noshow-pick]')) {
+        const tid = tnRow.dataset.tn;
+        state.ui.expandedTournamentId = state.ui.expandedTournamentId === tid ? null : tid;
+        render();
+        return;
+      }
+    });
+    pane.addEventListener('input', e => {
+      const inp = e.target.closest('[data-cat-input]');
+      if (inp) {
+        const cat = getCategory(inp.dataset.catInput);
+        const v = parseInt(inp.value, 10);
+        if (!isNaN(v)) {
+          cat.weight = Math.max(0, Math.min(MAX_CAT_WEIGHT, v));
+          render();
+        }
+        return;
+      }
+      const tnInp = e.target.closest('[data-tn-input]');
+      if (tnInp) {
+        const t = tournamentsById.get(tnInp.dataset.tnInput);
+        const v = parseInt(tnInp.value, 10);
+        if (!isNaN(v)) {
+          t.weightOverride = Math.max(0, Math.min(MAX_CAT_WEIGHT, v));
+          render();
+        }
+        return;
+      }
+    });
+    pane.addEventListener('change', e => {
+      const picker = e.target.closest('[data-tn-noshow-pick]');
+      if (!picker || !picker.value) return;
+      const tournamentId = picker.dataset.tnNoShowPick;
+      const player = PLAYERS.find(p => p.id === picker.value);
+      if (player) {
+        // No-show means "did not play this event". If they were in the played list, take them out;
+        // they lose the weight AND get the penalty. Cleaner than additive (where they'd get both).
+        player.played = player.played.filter(tid => tid !== tournamentId);
+        player.noShows = player.noShows || [];
+        if (!player.noShows.includes(tournamentId)) player.noShows.push(tournamentId);
+        // Auto-expand the player's leaderboard row so the new red no-show line in their breakdown
+        // is visible immediately ("did that work?" feedback during demo).
+        state.ui.expandedPlayerId = player.id;
+      }
+      render();
+    });
+    pane.addEventListener('submit', e => {
+      const form = e.target.closest('#disc-form');
+      if (!form) return;
+      e.preventDefault();
+      submitAward(form);
+    });
+
+    document.getElementById('btn-export').addEventListener('click', exportCSV);
+  }
+
+  function submitAward(form) {
+    const playerId = form.querySelector('#disc-player').value;
+    const pts = parseInt(form.querySelector('#disc-points').value, 10);
+    const reason = form.querySelector('#disc-reason').value.trim();
+    const awardedBy = form.querySelector('#disc-by').value;
+    if (!playerId || !pts || !reason) return;
+    const player = PLAYERS.find(p => p.id === playerId);
+    if (!player) return;
+    const id = ++awardSeq;
+    (player.discretionary = player.discretionary || []).push({ id, pts, reason, date: DEMO_TODAY, awardedBy });
+    render();
+    // One-shot flash on the new row. Done via DOM rather than state so unrelated re-renders
+    // don't replay the animation.
+    requestAnimationFrame(() => {
+      const row = document.querySelector('.disc-award[data-award-id="' + id + '"]');
+      if (!row) return;
+      row.classList.add('disc-just-awarded');
+      setTimeout(() => row.classList.remove('disc-just-awarded'), 700);
+    });
+  }
+
+  function removeAward(id) {
+    for (const p of PLAYERS) {
+      if (!p.discretionary) continue;
+      const idx = p.discretionary.findIndex(d => d.id === id);
+      if (idx >= 0) {
+        p.discretionary.splice(idx, 1);
+        render();
+        return;
+      }
+    }
+  }
+
+  function exportCSV() {
+    const ranked = rankedPlayers();
+    const header = ['Rank','Name','Years','Source','First-timer','Championship','Tournament','Club Event','League','Seniority','First-timer Bonus','Discretionary','Total'];
+    const lines = [header.join(',')];
+    ranked.forEach((r, i) => {
+      lines.push([
+        i + 1,
+        '"' + r.player.name.replace(/"/g, '""') + '"',
+        r.player.years,
+        r.player.sourceLabel,
+        r.player.firstTimer ? 'yes' : 'no',
+        r.byCategory.champ  || 0,
+        r.byCategory.tourn  || 0,
+        r.byCategory.club   || 0,
+        r.byCategory.league || 0,
+        r.seniority,
+        r.firstTimer,
+        r.discretionary,
+        r.total
+      ].join(','));
+    });
+    const csv = lines.join('\n');
+    const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'fred-wright-standings-' + state.config.cutoffDate + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // ========== INIT ==========
+  render();
+  attachHandlers();
+})();
+</script>
+
+</body>
+</html>

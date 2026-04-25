@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fred Wright &mdash; Engagement Design Comparison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f1115;
+    --panel: #181b22;
+    --panel-2: #21252e;
+    --border: #2a2f3a;
+    --ink: #e8ecf2;
+    --ink-soft: #a5adbc;
+    --ink-muted: #6f788a;
+    --accent: #7ee5b9;
+    --amber: #f2b170;
+    --coral: #ff8a6d;
+    --violet: #b89dff;
+    --cream: #faf6ed;
+  }
+  html, body { height: 100%; }
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "cv11";
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .board-header {
+    padding: 18px 28px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    background: var(--panel);
+  }
+  .board-title {
+    font-family: "Inter", sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .board-title .accent {
+    background: linear-gradient(120deg, var(--accent), var(--violet));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .board-sub {
+    color: var(--ink-soft);
+    font-size: 12px;
+    line-height: 1.5;
+    max-width: 60ch;
+  }
+  .board-sub code {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    color: var(--accent);
+  }
+  .board-spacer { flex: 1; }
+  .board-mode {
+    display: inline-flex;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px;
+  }
+  .board-mode button {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 0;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+  }
+  .board-mode button.active {
+    background: var(--bg);
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .board-legend {
+    display: flex;
+    gap: 14px;
+    font-size: 11px;
+    color: var(--ink-muted);
+    font-family: "JetBrains Mono", monospace;
+  }
+  .board-legend .k { color: var(--accent); }
+
+  /* Triptych layout */
+  main {
+    flex: 1;
+    padding: 18px 22px 22px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    min-height: 0;
+  }
+  main.stacked { grid-template-columns: 1fr; }
+  main.focus-A { grid-template-columns: 2fr 1fr 1fr; }
+  main.focus-B { grid-template-columns: 1fr 2fr 1fr; }
+  main.focus-C { grid-template-columns: 1fr 1fr 2fr; }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+    min-height: 0;
+  }
+  .card:hover { border-color: var(--accent); }
+  .card-head {
+    padding: 14px 18px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: linear-gradient(180deg, var(--panel-2) 0%, var(--panel) 100%);
+  }
+  .card-letter {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-letter .letter {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+    font-size: 11px;
+    background: var(--accent);
+    color: #0b0e10;
+    padding: 2px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.02em;
+  }
+  .card-letter .title {
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.015em;
+  }
+  .card-pitch {
+    color: var(--ink-soft);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .card-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .card-tag::before {
+    content: "";
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--amber);
+  }
+
+  .card-frame {
+    flex: 1;
+    min-height: 560px;
+    position: relative;
+    background: #fbfaf6;
+  }
+  .card-frame iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+  .card-foot {
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    background: var(--panel-2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--ink-muted);
+    font-family: "JetBrains Mono", monospace;
+  }
+  .card-foot a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .card-foot a:hover { text-decoration: underline; }
+  .card-foot-actions { display: flex; gap: 10px; }
+
+  /* Notes panel (collapsible) */
+  .notes {
+    padding: 10px 16px;
+    background: rgba(126, 229, 185, 0.06);
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .notes strong { color: var(--accent); font-weight: 600; }
+  .notes ul { margin: 4px 0 0 16px; padding: 0; }
+  .notes li { margin-bottom: 2px; }
+
+  footer {
+    padding: 14px 28px;
+    border-top: 1px solid var(--border);
+    color: var(--ink-muted);
+    font-size: 11px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    background: var(--panel);
+    font-family: "JetBrains Mono", monospace;
+  }
+  footer strong { color: var(--ink-soft); }
+  footer .spacer { flex: 1; }
+
+  @media (max-width: 1200px) {
+    main, main.focus-A, main.focus-B, main.focus-C { grid-template-columns: 1fr; }
+    .card-frame { min-height: 720px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="board-header">
+  <div>
+    <div class="board-title">Engagement &mdash; <span class="accent">design comparison</span></div>
+    <div class="board-sub">Three directions for the points-based eligibility view inside the <code>back-office</code> admin tool. Same data across all three (24 eligible players, 8 tournaments, 10 open slots) so you're comparing layouts, not scenarios.</div>
+  </div>
+  <div class="board-spacer"></div>
+  <div class="board-legend">
+    <span><span class="k">click</span> iframe to interact</span>
+    <span><span class="k">open</span> for full-window</span>
+  </div>
+  <div class="board-mode" role="tablist">
+    <button class="active" data-mode="triptych">Triptych</button>
+    <button data-mode="focus-A">Focus A</button>
+    <button data-mode="focus-B">Focus B</button>
+    <button data-mode="focus-C">Focus C</button>
+    <button data-mode="stacked">Stacked</button>
+  </div>
+</div>
+
+<main id="grid">
+
+  <article class="card">
+    <div class="card-head">
+      <div class="card-letter">
+        <span class="letter">A</span>
+        <span class="title">Live Editor</span>
+      </div>
+      <div class="card-pitch">Config on the left, live leaderboard on the right. Tune a weight &mdash; watch names trade places in real time. Mental model: audio mixer.</div>
+      <div class="card-tag">Best for: tuning the system</div>
+    </div>
+    <div class="card-frame">
+      <iframe src="engagement-A.html" title="Variant A — Live Editor" loading="lazy"></iframe>
+    </div>
+    <div class="notes">
+      <strong>What to notice:</strong>
+      <ul>
+        <li>The Member&#8209;Member row is <em>editing</em> (green); the leaderboard shows four names with <code>+2</code> deltas next to their totals</li>
+        <li>Discretionary budget gauge at the bottom-left caps political spend</li>
+        <li>Stacked bars on each leaderboard row show points sourced by category</li>
+      </ul>
+    </div>
+    <div class="card-foot">
+      <span>engagement-A.html</span>
+      <div class="card-foot-actions">
+        <a href="engagement-A.html" target="_blank" rel="noopener">open &rarr;</a>
+      </div>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="card-head">
+      <div class="card-letter">
+        <span class="letter">B</span>
+        <span class="title">Standings Hub</span>
+      </div>
+      <div class="card-pitch">Leaderboard is the hero; config lives in a settings drawer. Click a row to see the points breakdown inline. Mental model: sports standings page.</div>
+      <div class="card-tag">Best for: daily &ldquo;who's eligible&rdquo; check</div>
+    </div>
+    <div class="card-frame">
+      <iframe src="engagement-B.html" title="Variant B — Standings Hub" loading="lazy"></iframe>
+    </div>
+    <div class="notes">
+      <strong>What to notice:</strong>
+      <ul>
+        <li>Row #3 (Reynolds) is expanded inline with the full breakdown &mdash; Major, Premier, League, Seniority</li>
+        <li>The &ldquo;Why he's in the pool&rdquo; note at the bottom of the expanded row is the defensibility lever</li>
+        <li>Settings drawer on the right is the secondary task &mdash; collapsible in real use</li>
+      </ul>
+    </div>
+    <div class="card-foot">
+      <span>engagement-B.html</span>
+      <div class="card-foot-actions">
+        <a href="engagement-B.html" target="_blank" rel="noopener">open &rarr;</a>
+      </div>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="card-head">
+      <div class="card-letter">
+        <span class="letter">C</span>
+        <span class="title">Participation Matrix</span>
+      </div>
+      <div class="card-pitch">Players &times; tournaments as a spreadsheet. Rows are players, columns are events, cells show what they scored. Mental model: Google Sheets.</div>
+      <div class="card-tag">Best for: audit, &ldquo;show the work&rdquo;</div>
+    </div>
+    <div class="card-frame">
+      <iframe src="engagement-C.html" title="Variant C — Participation Matrix" loading="lazy"></iframe>
+    </div>
+    <div class="notes">
+      <strong>What to notice:</strong>
+      <ul>
+        <li>Member&#8209;Member column is highlighted (editing) with the override weight of 14</li>
+        <li>Row 3 (Reynolds) is selected &mdash; detail panel on the right mirrors the cell data</li>
+        <li>Below-cut rows are dimmed but still in view &mdash; no hiding the work</li>
+      </ul>
+    </div>
+    <div class="card-foot">
+      <span>engagement-C.html</span>
+      <div class="card-foot-actions">
+        <a href="engagement-C.html" target="_blank" rel="noopener">open &rarr;</a>
+      </div>
+    </div>
+  </article>
+
+</main>
+
+<footer>
+  <strong>Same data across all three:</strong>
+  <span>24 eligible players</span>
+  <span>&bull;</span>
+  <span>8 tournaments (7 played, 2 upcoming)</span>
+  <span>&bull;</span>
+  <span>10 open slots &middot; cut line at 30 pts</span>
+  <div class="spacer"></div>
+  <span>back-office aesthetic &middot; Inter + JetBrains Mono &middot; forest/amber palette</span>
+</footer>
+
+<script>
+  const grid = document.getElementById('grid');
+  document.querySelectorAll('.board-mode button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.board-mode button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      grid.className = '';
+      const mode = btn.dataset.mode;
+      if (mode === 'stacked') grid.classList.add('stacked');
+      else if (mode === 'focus-A') grid.classList.add('focus-A');
+      else if (mode === 'focus-B') grid.classList.add('focus-B');
+      else if (mode === 'focus-C') grid.classList.add('focus-C');
+    });
+  });
+</script>
+
+</body>
+</html>
