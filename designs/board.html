@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fred Wright &mdash; Design Shotgun Comparison Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,700;9..144,900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0b0e10;
+    --panel: #141920;
+    --panel-2: #1c222c;
+    --border: #262d39;
+    --ink: #e6ebf2;
+    --ink-soft: #9aa5b4;
+    --ink-muted: #6b7687;
+    --accent: #7ee5b9;
+    --violet: #b89dff;
+    --coral: #ff8a6d;
+    --cream: #faf6ed;
+  }
+  html, body { height: 100%; }
+  body {
+    font-family: "Inter", -apple-system, sans-serif;
+    background: radial-gradient(at 0% 0%, #1a2230 0%, transparent 50%),
+                radial-gradient(at 100% 100%, #1e1830 0%, transparent 50%),
+                var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "cv11";
+  }
+
+  .board-header {
+    padding: 28px 36px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .board-title {
+    font-family: "Fraunces", serif;
+    font-weight: 900;
+    font-size: 30px;
+    letter-spacing: -0.025em;
+    line-height: 1;
+  }
+  .board-title em {
+    font-style: italic;
+    background: linear-gradient(135deg, var(--accent), var(--violet));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 400;
+  }
+  .board-sub {
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.5;
+    max-width: 60ch;
+  }
+  .board-sub code {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--accent);
+  }
+  .board-spacer { flex: 1; }
+  .board-legend {
+    display: flex;
+    gap: 14px;
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+  .board-legend .kbd {
+    display: inline-block;
+    padding: 1px 6px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin: 0 2px;
+  }
+
+  .layout-controls {
+    padding: 14px 36px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    background: rgba(20, 25, 32, 0.5);
+  }
+  .layout-btn {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--ink-soft);
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .layout-btn.active { background: var(--panel-2); color: var(--ink); border-color: var(--accent); }
+  .layout-btn:hover:not(.active) { color: var(--ink); }
+  .layout-sep { color: var(--ink-muted); margin: 0 4px; }
+
+  .grid {
+    padding: 22px 30px 40px;
+    display: grid;
+    gap: 22px;
+  }
+  .grid.view-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .grid.view-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid.view-1 {
+    grid-template-columns: 1fr;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  @media (max-width: 1400px) { .grid.view-3 { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 900px) { .grid.view-3, .grid.view-2 { grid-template-columns: 1fr; } }
+
+  .variant {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .variant:hover { border-color: var(--accent); }
+  .variant.picked { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent), 0 16px 40px rgba(126, 229, 185, 0.15); }
+
+  .variant-header {
+    padding: 14px 18px 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  }
+  .variant-letter {
+    font-family: "Fraunces", serif;
+    font-weight: 900;
+    font-size: 28px;
+    line-height: 1;
+    min-width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+  }
+  .variant.a .variant-letter { background: rgba(201, 65, 43, 0.12); color: var(--coral); border-color: rgba(201, 65, 43, 0.3); }
+  .variant.b .variant-letter { background: rgba(98, 217, 165, 0.12); color: var(--accent); border-color: rgba(98, 217, 165, 0.3); }
+  .variant.c .variant-letter { background: rgba(184, 157, 255, 0.12); color: var(--violet); border-color: rgba(184, 157, 255, 0.3); }
+
+  .variant-title {
+    flex: 1;
+  }
+  .variant-name {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 2px;
+  }
+  .variant-tag {
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--ink-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .variant-actions {
+    display: flex;
+    gap: 4px;
+  }
+  .variant-actions button {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--ink-soft);
+    padding: 4px 9px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 11px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .variant-actions button:hover { color: var(--ink); border-color: var(--accent); }
+  .variant-actions button.pick { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 600; }
+  .variant-actions button.pick.is-picked { background: transparent; color: var(--accent); }
+
+  .variant-meta {
+    padding: 10px 18px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    background: rgba(0,0,0,0.2);
+    border-bottom: 1px solid var(--border);
+  }
+  .variant-meta .pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .variant-meta .pill {
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    padding: 1px 7px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--ink-soft);
+  }
+
+  .variant-frame {
+    position: relative;
+    flex: 1;
+    background: #f4f1ea;
+    min-height: 520px;
+    overflow: hidden;
+  }
+  .variant.b .variant-frame { background: #0a0e0c; }
+  .variant-frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    /* Scale the iframe content slightly so the 1400px desktop layout fits */
+    transform-origin: top left;
+  }
+  .variant-frame.zoomed iframe {
+    width: 1400px;
+    height: 1800px;
+    transform: scale(calc(var(--cardW, 420) / 1400));
+  }
+  .variant-frame.raw iframe { width: 100%; height: 100%; transform: none; }
+
+  .variant-footer {
+    padding: 10px 18px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 11px;
+    color: var(--ink-muted);
+  }
+  .variant-footer a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-family: ui-monospace, monospace;
+  }
+  .variant-footer a:hover { color: var(--accent); }
+
+  /* ===== Notes / feedback drawer ===== */
+  .feedback-fab {
+    position: fixed;
+    right: 24px; bottom: 24px;
+    padding: 12px 20px;
+    background: var(--accent);
+    color: var(--bg);
+    border: 0;
+    border-radius: 999px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(126, 229, 185, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 50;
+  }
+  .feedback-fab:hover { transform: translateY(-1px); }
+  .feedback-pill {
+    background: rgba(11, 14, 16, 0.5);
+    color: var(--bg);
+    padding: 0 8px;
+    border-radius: 999px;
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+  }
+
+  .drawer {
+    position: fixed;
+    right: 0; top: 0; bottom: 0;
+    width: 420px;
+    max-width: 100%;
+    background: var(--panel);
+    border-left: 1px solid var(--border);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    display: flex;
+    flex-direction: column;
+    z-index: 60;
+    box-shadow: -24px 0 60px rgba(0,0,0,0.5);
+  }
+  .drawer.open { transform: translateX(0); }
+  .drawer-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .drawer-header h2 { font-size: 16px; font-weight: 700; flex: 1; letter-spacing: -0.01em; }
+  .drawer-close { background: transparent; border: 0; color: var(--ink-soft); cursor: pointer; font-size: 20px; }
+  .drawer-body { flex: 1; overflow-y: auto; padding: 18px 22px; }
+
+  .drawer-section { margin-bottom: 22px; }
+  .drawer-section h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+    margin-bottom: 10px;
+    font-weight: 600;
+    font-family: ui-monospace, monospace;
+  }
+  .drawer-section textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.45;
+    resize: vertical;
+  }
+  .drawer-section textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(126, 229, 185, 0.15); }
+
+  .pick-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .pick-chip {
+    padding: 5px 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .pick-chip.active { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 600; }
+
+  .drawer-footer {
+    padding: 14px 22px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    background: var(--panel-2);
+  }
+  .drawer-footer button {
+    padding: 9px 14px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--ink);
+  }
+  .drawer-footer button.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); flex: 1; }
+  .drawer-footer button:hover { border-color: var(--accent); }
+
+  .export-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    white-space: pre-wrap;
+    max-height: 160px;
+    overflow-y: auto;
+  }
+
+  /* mini helper legend on open */
+  .hint {
+    padding: 10px 18px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-muted);
+    background: rgba(0,0,0,0.2);
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<div class="board-header">
+  <div>
+    <h1 class="board-title">Design shotgun: <em>3 directions</em></h1>
+    <p class="board-sub">
+      Three distinct takes on Fred Wright. Same app, same data (all three share <code>localStorage</code>) — different design language. Click a variant to open it standalone, pick a favorite, or leave notes for the next round.
+    </p>
+  </div>
+  <div class="board-spacer"></div>
+  <div class="board-legend">
+    <span><span class="kbd">1</span><span class="kbd">2</span><span class="kbd">3</span> fullscreen a variant</span>
+    <span><span class="kbd">P</span> open feedback</span>
+    <span><span class="kbd">esc</span> close drawer</span>
+  </div>
+</div>
+
+<div class="layout-controls">
+  <span style="font-size: 11px; color: var(--ink-muted); font-family: ui-monospace, monospace; text-transform: uppercase; letter-spacing: 0.08em;">Layout</span>
+  <button class="layout-btn active" data-layout="3">Side by side</button>
+  <button class="layout-btn" data-layout="2">Two up</button>
+  <button class="layout-btn" data-layout="1">Deep dive</button>
+  <span class="layout-sep">·</span>
+  <button class="layout-btn active" data-zoom="fit">Fit preview</button>
+  <button class="layout-btn" data-zoom="raw">Responsive</button>
+</div>
+
+<div class="grid view-3" id="grid">
+
+  <div class="variant a" data-id="A">
+    <div class="variant-header">
+      <div class="variant-letter">A</div>
+      <div class="variant-title">
+        <div class="variant-name">Tournament Daily</div>
+        <div class="variant-tag">editorial · briefing-first</div>
+      </div>
+      <div class="variant-actions">
+        <button class="pick" data-pick="A">Pick</button>
+        <button data-open="variant-a.html">Open ↗</button>
+      </div>
+    </div>
+    <div class="variant-meta">
+      A hero &ldquo;Today&rsquo;s Priorities&rdquo; briefing surfaces what the pro must act on <em>right now</em>. Kanban sits below the fold, styled like a magazine department. Cream paper, Fraunces display, brass rules.
+      <div class="pills">
+        <span class="pill">Fraunces</span>
+        <span class="pill">Cream + Brass</span>
+        <span class="pill">Magazine layout</span>
+        <span class="pill">Briefing hero</span>
+      </div>
+    </div>
+    <div class="variant-frame zoomed"><iframe src="variant-a.html" loading="lazy"></iframe></div>
+    <div class="variant-footer">
+      <a href="variant-a.html" target="_blank">variant-a.html ↗</a>
+      <span>~36s to scan, act, done</span>
+    </div>
+  </div>
+
+  <div class="variant b" data-id="B">
+    <div class="variant-header">
+      <div class="variant-letter">B</div>
+      <div class="variant-title">
+        <div class="variant-name">Command Deck</div>
+        <div class="variant-tag">linear-style · ⌘K-driven</div>
+      </div>
+      <div class="variant-actions">
+        <button class="pick" data-pick="B">Pick</button>
+        <button data-open="variant-b.html">Open ↗</button>
+      </div>
+    </div>
+    <div class="variant-meta">
+      Dark, dense, keyboard-first. A ⌘K command palette fuzzy-searches players and global actions. For the pro who wants the field set in 90 seconds and nothing in the way.
+      <div class="pills">
+        <span class="pill">Inter + JetBrains Mono</span>
+        <span class="pill">Dark surfaces</span>
+        <span class="pill">⌘K palette</span>
+        <span class="pill">Dense rows</span>
+      </div>
+    </div>
+    <div class="variant-frame zoomed"><iframe src="variant-b.html" loading="lazy"></iframe></div>
+    <div class="variant-footer">
+      <a href="variant-b.html" target="_blank">variant-b.html ↗</a>
+      <span>Try ⌘K inside</span>
+    </div>
+  </div>
+
+  <div class="variant c" data-id="C">
+    <div class="variant-header">
+      <div class="variant-letter">C</div>
+      <div class="variant-title">
+        <div class="variant-name">Clubhouse Notebook</div>
+        <div class="variant-tag">warm · mobile-first</div>
+      </div>
+      <div class="variant-actions">
+        <button class="pick" data-pick="C">Pick</button>
+        <button data-open="variant-c.html">Open ↗</button>
+      </div>
+    </div>
+    <div class="variant-meta">
+      Friendly. Warm. Lives on the pro&rsquo;s phone. DM Serif Display masthead, sage paper, Caveat script for handwritten grace notes. Column headers read like a conversation: &ldquo;Playing 2026,&rdquo; &ldquo;Sitting Out,&rdquo; &ldquo;On the List.&rdquo;
+      <div class="pills">
+        <span class="pill">DM Serif + Caveat</span>
+        <span class="pill">Sage + Paper</span>
+        <span class="pill">44px targets</span>
+        <span class="pill">Warm microcopy</span>
+      </div>
+    </div>
+    <div class="variant-frame zoomed"><iframe src="variant-c.html" loading="lazy"></iframe></div>
+    <div class="variant-footer">
+      <a href="variant-c.html" target="_blank">variant-c.html ↗</a>
+      <span>Open on a phone for the real effect</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="hint">
+  All three variants share localStorage with your main app — edits here persist and show up across every variant.
+  Reset state from any variant&rsquo;s &ldquo;Reset&rdquo; button.
+</div>
+
+<!-- Feedback drawer -->
+<button class="feedback-fab" id="fab">
+  <span>Leave feedback</span>
+  <span class="feedback-pill" id="pick-count">0 / 3</span>
+</button>
+
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <h2>Round 1 feedback</h2>
+    <button class="drawer-close" id="drawer-close">×</button>
+  </div>
+  <div class="drawer-body">
+    <div class="drawer-section">
+      <h3>Favorites (pick any)</h3>
+      <div class="pick-chips" id="pick-chips">
+        <button class="pick-chip" data-pick-chip="A">A · Tournament Daily</button>
+        <button class="pick-chip" data-pick-chip="B">B · Command Deck</button>
+        <button class="pick-chip" data-pick-chip="C">C · Clubhouse Notebook</button>
+      </div>
+    </div>
+    <div class="drawer-section">
+      <h3>What to keep</h3>
+      <textarea id="keep" placeholder="The briefing idea from A + the microcopy from C…"></textarea>
+    </div>
+    <div class="drawer-section">
+      <h3>What to drop</h3>
+      <textarea id="drop" placeholder="Too dark, too playful, too dense…"></textarea>
+    </div>
+    <div class="drawer-section">
+      <h3>Next round</h3>
+      <textarea id="next" placeholder="Try a 4th that mixes A's briefing with B's keyboard shortcuts, keep cream palette…"></textarea>
+    </div>
+    <div class="drawer-section">
+      <h3>Export for next round</h3>
+      <div class="export-box" id="export-box">Will appear here after you make picks.</div>
+    </div>
+  </div>
+  <div class="drawer-footer">
+    <button id="copy">Copy to clipboard</button>
+    <button class="primary" id="save">Save locally</button>
+  </div>
+</div>
+
+<script>
+  const grid = document.getElementById('grid');
+  const fab = document.getElementById('fab');
+  const drawer = document.getElementById('drawer');
+  const pickChips = document.querySelectorAll('[data-pick-chip]');
+  const pickCount = document.getElementById('pick-count');
+  const exportBox = document.getElementById('export-box');
+  const STORE = 'fw-shotgun-feedback-v1';
+
+  // Restore prior feedback
+  const saved = (() => {
+    try { return JSON.parse(localStorage.getItem(STORE)) || {}; } catch (e) { return {}; }
+  })();
+  const picks = new Set(saved.picks || []);
+  ['keep', 'drop', 'next'].forEach(k => {
+    if (saved[k]) document.getElementById(k).value = saved[k];
+  });
+
+  function refreshPicks() {
+    pickCount.textContent = picks.size + ' / 3';
+    pickChips.forEach(c => c.classList.toggle('active', picks.has(c.dataset.pickChip)));
+    document.querySelectorAll('[data-pick]').forEach(btn => {
+      const active = picks.has(btn.dataset.pick);
+      btn.classList.toggle('is-picked', active);
+      btn.textContent = active ? '✓ Picked' : 'Pick';
+    });
+    document.querySelectorAll('.variant').forEach(v => {
+      v.classList.toggle('picked', picks.has(v.dataset.id));
+    });
+    refreshExport();
+  }
+  function refreshExport() {
+    const payload = {
+      picks: Array.from(picks),
+      keep: document.getElementById('keep').value.trim(),
+      drop: document.getElementById('drop').value.trim(),
+      next: document.getElementById('next').value.trim(),
+      ts: new Date().toISOString()
+    };
+    exportBox.textContent = JSON.stringify(payload, null, 2);
+  }
+  function togglePick(id) {
+    if (picks.has(id)) picks.delete(id); else picks.add(id);
+    refreshPicks();
+  }
+
+  document.addEventListener('click', e => {
+    const pickBtn = e.target.closest('[data-pick]');
+    if (pickBtn) { togglePick(pickBtn.dataset.pick); return; }
+    const pickChip = e.target.closest('[data-pick-chip]');
+    if (pickChip) { togglePick(pickChip.dataset.pickChip); return; }
+    const openBtn = e.target.closest('[data-open]');
+    if (openBtn) { window.open(openBtn.dataset.open, '_blank'); return; }
+    const layoutBtn = e.target.closest('[data-layout]');
+    if (layoutBtn) {
+      document.querySelectorAll('[data-layout]').forEach(b => b.classList.remove('active'));
+      layoutBtn.classList.add('active');
+      grid.className = 'grid view-' + layoutBtn.dataset.layout;
+      return;
+    }
+    const zoomBtn = e.target.closest('[data-zoom]');
+    if (zoomBtn) {
+      document.querySelectorAll('[data-zoom]').forEach(b => b.classList.remove('active'));
+      zoomBtn.classList.add('active');
+      const raw = zoomBtn.dataset.zoom === 'raw';
+      document.querySelectorAll('.variant-frame').forEach(f => {
+        f.classList.toggle('raw', raw);
+        f.classList.toggle('zoomed', !raw);
+      });
+      if (!raw) updateScale();
+      return;
+    }
+  });
+
+  document.getElementById('drawer-close').onclick = () => drawer.classList.remove('open');
+  fab.onclick = () => drawer.classList.toggle('open');
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+    if (e.key === 'Escape') drawer.classList.remove('open');
+    if (e.key === 'p' || e.key === 'P') { e.preventDefault(); drawer.classList.toggle('open'); }
+    if (e.key === '1') window.open('variant-a.html', '_blank');
+    if (e.key === '2') window.open('variant-b.html', '_blank');
+    if (e.key === '3') window.open('variant-c.html', '_blank');
+  });
+
+  ['keep', 'drop', 'next'].forEach(k => {
+    document.getElementById(k).addEventListener('input', refreshExport);
+  });
+
+  document.getElementById('copy').onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(exportBox.textContent);
+      const btn = document.getElementById('copy');
+      const orig = btn.textContent;
+      btn.textContent = '✓ Copied';
+      setTimeout(() => btn.textContent = orig, 1200);
+    } catch (e) {
+      alert('Copy failed: ' + e.message);
+    }
+  };
+
+  document.getElementById('save').onclick = () => {
+    const payload = {
+      picks: Array.from(picks),
+      keep: document.getElementById('keep').value.trim(),
+      drop: document.getElementById('drop').value.trim(),
+      next: document.getElementById('next').value.trim(),
+      ts: new Date().toISOString()
+    };
+    localStorage.setItem(STORE, JSON.stringify(payload));
+    const btn = document.getElementById('save');
+    const orig = btn.textContent;
+    btn.textContent = '✓ Saved';
+    setTimeout(() => btn.textContent = orig, 1200);
+  };
+
+  // Responsive scale: fit iframe into current card width
+  function updateScale() {
+    document.querySelectorAll('.variant-frame.zoomed').forEach(f => {
+      const w = f.clientWidth;
+      f.style.setProperty('--cardW', w);
+    });
+  }
+  window.addEventListener('resize', updateScale);
+  requestAnimationFrame(updateScale);
+  setTimeout(updateScale, 300);
+
+  refreshPicks();
+</script>
+</body>
+</html>

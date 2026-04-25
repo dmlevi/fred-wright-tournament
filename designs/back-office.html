@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fred Wright &mdash; Back Office</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #fbfaf6;
+    --surface: #ffffff;
+    --surface-warm: #f7f4ec;
+    --surface-hover: #f3efe4;
+    --ink: #17150f;
+    --ink-soft: #4a463e;
+    --ink-muted: #847c6d;
+    --ink-dim: #b5ad9d;
+    --border: #e3ddca;
+    --border-soft: #eeead9;
+    --forest: #1a5033;
+    --forest-dark: #13401f;
+    --forest-soft: #e4ede7;
+    --amber: #a85d1e;
+    --amber-soft: #f3e5cf;
+    --red: #a33030;
+    --red-soft: #f5e0e0;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    font-size: 13px;
+    line-height: 1.4;
+    font-feature-settings: "cv11", "ss03";
+    min-height: 100vh;
+  }
+
+  /* ========== TOP BAR ========== */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 18px;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  header h1 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  header h1::before {
+    content: "";
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--forest);
+  }
+  header h1 .title-main { font-weight: 600; }
+  header h1 .title-sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+    padding-left: 10px;
+    margin-left: 4px;
+    border-left: 1px solid var(--border);
+    font-weight: 400;
+  }
+  header .spacer { flex: 1; }
+
+  /* season switcher */
+  .season-switcher {
+    display: inline-flex;
+    background: var(--surface-warm);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px;
+  }
+  .season-btn {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 0;
+    padding: 4px 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 3px;
+    font-feature-settings: "tnum" 1;
+  }
+  .season-btn.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+  .season-btn:hover:not(.active) { color: var(--ink); }
+
+  /* Dropdown overlay (replaces button toggle when JS is active; scales to N seasons). */
+  .season-switcher { position: relative; }
+  .season-switcher.has-dropdown { background: transparent; border: 0; padding: 0; }
+  .season-switcher.has-dropdown .season-btn { display: none !important; }
+  .season-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface-warm);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 5px 10px 5px 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    height: 32px;
+    font-feature-settings: "tnum" 1;
+    white-space: nowrap;
+  }
+  .season-trigger:hover,
+  .season-trigger[aria-expanded="true"] {
+    background: var(--surface);
+    border-color: var(--forest);
+  }
+  .season-trigger-chevron {
+    font-family: var(--sans);
+    font-size: 9px;
+    color: var(--ink-muted);
+    transition: transform 0.15s;
+  }
+  .season-trigger[aria-expanded="true"] .season-trigger-chevron { transform: rotate(180deg); }
+  .season-panel {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    min-width: 240px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(23, 21, 15, 0.1);
+    padding: 4px;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .season-panel.hidden { display: none; }
+  .season-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    background: transparent;
+    border: 0;
+    padding: 8px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--sans);
+    text-align: left;
+    color: var(--ink);
+    width: 100%;
+  }
+  .season-option:hover { background: var(--surface-warm); }
+  .season-option.active { background: var(--forest-soft); }
+  .season-option-year {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    font-feature-settings: "tnum" 1;
+  }
+  .season-option-meta {
+    font-size: 11px;
+    color: var(--ink-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .season-option .check { color: var(--forest); font-weight: 700; }
+  .season-option.active .season-option-meta { color: var(--forest); }
+
+  /* slot meter */
+  .slot-meter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 12px;
+    background: var(--surface-warm);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    height: 32px;
+    /* Lock width so toggling 2026 (with "+pending") ↔ 2025 (no pending) doesn't reflow. */
+    min-width: 290px;
+    justify-content: space-between;
+  }
+  .slot-meter-label {
+    font-family: var(--sans);
+    font-size: 11px;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .slot-meter-label strong {
+    color: var(--forest);
+    font-weight: 700;
+    font-feature-settings: "tnum" 1;
+    font-size: 13px;
+  }
+  .slot-meter-pending { color: var(--amber); font-size: 10px; font-weight: 500; }
+  .slot-meter-bar {
+    width: 72px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .slot-meter-fill {
+    height: 100%;
+    background: var(--forest);
+    transition: width 0.3s, background 0.2s;
+  }
+  .slot-meter-fill.high { background: var(--amber); }
+  .slot-meter-fill.full { background: var(--red); }
+  /* Archived seasons: muted ink — past data, no over-cap warning. */
+  .slot-meter-fill.archived { background: var(--ink-muted); }
+
+  /* view toggle */
+  .view-toggle {
+    display: inline-flex;
+    background: var(--surface-warm);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px;
+  }
+  .view-toggle button {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 0;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 3px;
+    font-family: var(--sans);
+  }
+  .view-toggle button.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+
+  /* ⌘K launcher */
+  .cmdk-launcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    background: var(--surface-warm);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--ink-soft);
+    font-size: 11px;
+    cursor: pointer;
+    height: 32px;
+    font-family: var(--sans);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .cmdk-launcher:hover { border-color: var(--forest); color: var(--ink); background: var(--forest-soft); }
+  .cmdk-launcher .kbd { font-family: var(--mono); color: var(--ink-muted); }
+  /* Hide the verbose label on narrow widths; the ⌘K kbd alone communicates. */
+  @media (max-width: 900px) {
+    .cmdk-launcher .cmdk-launcher-label { display: none; }
+    .cmdk-launcher { padding: 5px 10px; }
+  }
+
+  .btn-print, .btn-reset {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    cursor: pointer;
+    height: 32px;
+    font-family: var(--sans);
+  }
+  .btn-print:hover, .btn-reset:hover { color: var(--ink); background: var(--surface-warm); }
+  .btn-reset { color: var(--ink-muted); }
+
+  .kbd {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 5px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-muted);
+    line-height: 1.4;
+  }
+
+  /* ========== QUICK STATS STRIP ========== */
+  .stat-strip {
+    padding: 10px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    gap: 0;
+    font-size: 12px;
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+  .stat-item {
+    padding: 0 16px;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    border-right: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .stat-item:first-child { padding-left: 0; }
+  .stat-item:last-child { border-right: 0; padding-right: 0; }
+  @media (max-width: 900px) {
+    .stat-strip { padding: 10px 16px; }
+    .stat-item { padding: 0 12px; }
+  }
+  .stat-num {
+    font-weight: 700;
+    font-size: 16px;
+    font-feature-settings: "tnum" 1;
+    color: var(--ink);
+    font-family: var(--mono);
+  }
+  .stat-num.confirmed { color: var(--forest); }
+  .stat-num.pending { color: var(--amber); }
+  .stat-num.new { color: var(--forest); }
+  .stat-num.waitlist { color: var(--ink-soft); }
+  .stat-num.zero { color: var(--ink-dim); }
+  .stat-label { color: var(--ink-muted); font-weight: 500; }
+  .stat-spacer { flex: 1; }
+  .stat-hint {
+    font-size: 11px;
+    color: var(--ink-muted);
+    font-family: var(--mono);
+  }
+
+  #banner-area { padding: 0 20px; }
+  .banner {
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: var(--forest-soft);
+    border: 1px solid #b9d3bf;
+    border-left: 3px solid var(--forest);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+  }
+  .banner .banner-icon { color: var(--forest); font-size: 16px; }
+  .banner .banner-text { flex: 1; color: var(--ink); }
+  .banner .banner-text strong { color: var(--forest-dark); font-weight: 700; }
+  .banner button {
+    background: var(--forest);
+    color: white;
+    border: 0;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--sans);
+  }
+  .banner button:hover { background: var(--forest-dark); }
+
+  /* ========== KANBAN ========== */
+  main { padding: 14px 20px 28px; }
+  .kanban {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    min-height: 520px;
+  }
+  @media (max-width: 1100px) { .kanban { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) { .kanban { grid-template-columns: 1fr; } }
+
+  .column {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 180px);
+    overflow: hidden;
+  }
+  .column.readonly { opacity: 0.75; }
+  .column.col-dragging { opacity: 0.35; }
+  .column.col-drop-before { box-shadow: -3px 0 0 0 var(--forest); }
+  .column.col-drop-after { box-shadow: 3px 0 0 0 var(--forest); }
+
+  .column-header {
+    padding: 10px 12px 9px;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: grab;
+    user-select: none;
+  }
+  .column-header:active { cursor: grabbing; }
+  .col-handle { opacity: 0.3; color: var(--ink-muted); flex-shrink: 0; }
+  .column-header:hover .col-handle { opacity: 0.7; }
+  .column-title {
+    flex: 1;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .count-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+    background: var(--surface-warm);
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-feature-settings: "tnum" 1;
+    font-weight: 500;
+  }
+  .btn-add {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--ink-muted);
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+  }
+  .btn-add:hover { color: var(--forest); border-color: var(--forest); background: var(--forest-soft); }
+
+  .column-search-wrap {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--border-soft);
+    position: relative;
+  }
+  .column-search {
+    width: 100%;
+    padding: 5px 24px 5px 9px;
+    font-size: 12px;
+    font-family: var(--sans);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg);
+    color: var(--ink);
+  }
+  .column-search:focus {
+    outline: none;
+    border-color: var(--forest);
+    box-shadow: 0 0 0 2px var(--forest-soft);
+    background: var(--surface);
+  }
+  .column-search::placeholder { color: var(--ink-dim); }
+  .column-search-clear {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    border: 0;
+    background: transparent;
+    color: var(--ink-muted);
+    cursor: pointer;
+    font-size: 14px;
+    display: none;
+    line-height: 1;
+  }
+  .column-search-clear.visible { display: block; }
+  .search-empty {
+    padding: 14px 8px;
+    font-size: 11px;
+    color: var(--ink-muted);
+    text-align: center;
+    font-style: italic;
+  }
+
+  .cards {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px;
+    min-height: 80px;
+    transition: background 0.15s;
+  }
+  .cards::-webkit-scrollbar { width: 8px; }
+  .cards::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  .cards::-webkit-scrollbar-thumb:hover { background: var(--ink-dim); }
+  .cards::-webkit-scrollbar-track { background: transparent; }
+  .cards.drop-target {
+    background: var(--forest-soft);
+    outline: 1px dashed var(--forest);
+    outline-offset: -3px;
+  }
+
+  .card {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 6px 9px;
+    margin-bottom: 2px;
+    cursor: grab;
+    font-size: 13px;
+    transition: background 0.1s, border-color 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    user-select: none;
+    line-height: 1.35;
+  }
+  .card:hover { background: var(--surface-warm); border-color: var(--border); }
+  .card.dragging { opacity: 0.3; cursor: grabbing; }
+  .card-handle {
+    flex-shrink: 0;
+    opacity: 0;
+    color: var(--ink-dim);
+    transition: opacity 0.1s;
+  }
+  .card:hover .card-handle { opacity: 0.5; }
+  .card-position {
+    flex-shrink: 0;
+    font-size: 10px;
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+    min-width: 20px;
+    text-align: right;
+    font-family: var(--mono);
+    font-weight: 500;
+  }
+  .card-name { flex: 1; color: var(--ink); font-weight: 500; letter-spacing: -0.003em; }
+  .badge {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .badge-deferred { background: var(--amber-soft); color: var(--amber); }
+  .badge-new { background: var(--forest-soft); color: var(--forest); }
+  .badge-confirmed { background: var(--forest-soft); color: var(--forest); }
+  .badge-pending { background: var(--amber-soft); color: var(--amber); }
+  .defer-tag {
+    display: inline-block;
+    padding: 1px 6px;
+    background: transparent;
+    color: var(--ink-muted);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-family: var(--mono);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+  }
+  .card-timestamp {
+    display: inline-flex;
+    gap: 4px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-muted);
+    align-items: center;
+  }
+  .ts-time { color: var(--ink-soft); }
+  .ts-offset { color: var(--forest); font-weight: 500; }
+
+  .import-status {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--surface-warm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--ink-soft);
+    font-family: var(--mono);
+  }
+  .import-status-text strong { color: var(--forest); font-weight: 600; }
+  .btn-clear-import {
+    background: transparent;
+    border: 0;
+    color: var(--ink-muted);
+    font-size: 10px;
+    cursor: pointer;
+    font-family: var(--sans);
+  }
+  .btn-clear-import:hover { color: var(--red); }
+
+  .empty-import { padding: 22px 8px; text-align: center; color: var(--ink-muted); font-size: 12px; }
+  .empty-import-text { margin-bottom: 12px; }
+  .btn-import {
+    background: var(--forest);
+    color: white;
+    border: 0;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 4px;
+    font-family: var(--sans);
+  }
+  .btn-import:hover { background: var(--forest-dark); }
+
+  @keyframes signupEnter {
+    from { opacity: 0; transform: translateY(-2px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .card.signup-stagger {
+    animation: signupEnter 0.3s ease both;
+    animation-delay: calc(var(--stagger-idx, 0) * 40ms);
+  }
+
+  /* ========== MODALS ========== */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(23, 21, 15, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+    backdrop-filter: blur(3px);
+  }
+  .overlay.hidden { display: none; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 16px 40px rgba(23, 21, 15, 0.15);
+    width: 500px;
+    max-width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .modal-header h2 {
+    font-size: 15px;
+    font-weight: 600;
+    flex: 1;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .modal-header .close {
+    background: none;
+    border: 0;
+    font-size: 20px;
+    color: var(--ink-muted);
+    cursor: pointer;
+    line-height: 1;
+  }
+  .modal-header .close:hover { color: var(--ink); }
+  .modal-body { padding: 16px 18px; overflow-y: auto; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 10px;
+    background: var(--surface-warm);
+    border: 1px solid var(--border-soft);
+    border-radius: 5px;
+    margin-bottom: 14px;
+  }
+  .stats-grid .stat-item { padding: 0; border: 0; display: flex; flex-direction: column; gap: 2px; }
+  .stat-label {
+    font-size: 10px;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    font-family: var(--mono);
+  }
+  .stat-value { font-size: 13px; font-weight: 600; color: var(--ink); font-family: var(--sans); }
+
+  .action-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .action-row button {
+    flex: 1;
+    padding: 7px 12px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 4px;
+    font-family: var(--sans);
+  }
+  .action-row button.primary { background: var(--forest); color: white; border-color: var(--forest); font-weight: 600; }
+  .action-row button.primary:hover { background: var(--forest-dark); }
+  .action-row button.warn { color: var(--amber); border-color: var(--amber-soft); background: var(--surface); }
+  .action-row button.warn:hover { background: var(--amber-soft); }
+  .action-row button:hover:not(.primary):not(.warn) { background: var(--surface-warm); }
+
+  .notes-section, .history {
+    margin-top: 14px;
+    border-top: 1px solid var(--border-soft);
+    padding-top: 12px;
+  }
+  .notes-section h3, .history h3 {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-family: var(--mono);
+  }
+  .notes-textarea {
+    width: 100%;
+    min-height: 64px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: var(--sans);
+    font-size: 12px;
+    line-height: 1.45;
+    resize: vertical;
+    background: var(--bg);
+    color: var(--ink);
+  }
+  .notes-textarea:focus {
+    outline: none;
+    border-color: var(--forest);
+    box-shadow: 0 0 0 2px var(--forest-soft);
+    background: var(--surface);
+  }
+  .notes-textarea::placeholder { color: var(--ink-dim); font-style: italic; }
+  .notes-save-btn {
+    margin-top: 8px;
+    padding: 5px 12px;
+    font-size: 11px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--ink-soft);
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    font-family: var(--sans);
+  }
+  .notes-save-btn:not(:disabled):hover { background: var(--forest); color: white; border-color: var(--forest); }
+  .notes-save-btn:disabled { opacity: 0.35; cursor: default; }
+
+  .history-filters { display: flex; gap: 4px; margin: 0 0 10px; flex-wrap: wrap; }
+  .filter-chip {
+    padding: 2px 9px;
+    font-size: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--ink-muted);
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: var(--sans);
+  }
+  .filter-chip:hover { color: var(--ink); }
+  .filter-chip.active { background: var(--forest); color: white; border-color: var(--forest); font-weight: 600; }
+  .history-entry {
+    display: flex;
+    gap: 10px;
+    padding: 5px 0;
+    font-size: 12px;
+    border-bottom: 1px dashed var(--border-soft);
+  }
+  .history-entry:last-child { border-bottom: 0; }
+  .history-entry .h-date {
+    color: var(--ink-muted);
+    width: 80px;
+    flex-shrink: 0;
+    font-family: var(--mono);
+    font-feature-settings: "tnum" 1;
+    font-size: 11px;
+  }
+  .history-entry .h-event { flex: 1; color: var(--ink-soft); }
+  .empty-state {
+    padding: 14px 0;
+    text-align: center;
+    color: var(--ink-muted);
+    font-style: italic;
+    font-size: 11px;
+  }
+
+  .modal-footer {
+    padding: 10px 18px;
+    border-top: 1px solid var(--border-soft);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    background: var(--surface-warm);
+  }
+  /* shared.js injects an empty <div style="flex:1"> as a row-mode spacer.
+     In column mode it'd inject a vertical gap — hide just the empty spacer,
+     not any future div shared.js might add with content. */
+  .modal-footer > div:empty { display: none; }
+  .modal-footer button {
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--ink-soft);
+    font-family: var(--sans);
+    text-align: center;
+  }
+  .modal-footer button:hover { color: var(--ink); border-color: var(--forest); }
+  /* Delete: same size + alignment as the move buttons, just colored destructive. */
+  .modal-footer button.danger {
+    color: var(--red);
+    border-color: var(--red-soft);
+  }
+  .modal-footer button.danger:hover { background: var(--red-soft); border-color: var(--red); }
+
+  .confirm {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    width: 440px;
+    max-width: 100%;
+    padding: 20px;
+    box-shadow: 0 16px 40px rgba(23, 21, 15, 0.15);
+  }
+  .confirm h2 { font-size: 15px; margin-bottom: 8px; color: var(--ink); }
+  .confirm p { font-size: 13px; color: var(--ink-soft); line-height: 1.5; margin-bottom: 14px; }
+  .confirm-actions { display: flex; gap: 6px; justify-content: flex-end; }
+  .confirm-actions button {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--sans);
+  }
+  .confirm-actions button.primary { background: var(--forest); color: white; border-color: var(--forest); font-weight: 600; }
+  .confirm-actions button.warn { color: var(--amber); border-color: var(--amber-soft); }
+  .confirm-actions button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .setup-dialog { width: 460px; }
+  .setup-options { display: flex; flex-direction: column; gap: 3px; margin-bottom: 12px; }
+  .setup-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    cursor: pointer;
+    font-size: 13px;
+    background: var(--surface-warm);
+    border: 1px solid var(--border-soft);
+    border-radius: 5px;
+  }
+  .setup-option:hover:not(.disabled) { border-color: var(--forest); background: var(--forest-soft); }
+  .setup-option.disabled { opacity: 0.4; cursor: not-allowed; }
+  .setup-option input[type="checkbox"] { accent-color: var(--forest); }
+  .setup-count {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 13px;
+    min-width: 28px;
+    text-align: right;
+    color: var(--forest);
+    font-feature-settings: "tnum" 1;
+  }
+  .setup-label { color: var(--ink-soft); flex: 1; }
+  .setup-summary { padding: 10px; font-size: 12px; background: var(--surface-warm); border-radius: 5px; }
+  .setup-summary-empty { color: var(--ink-muted); font-style: italic; }
+  .setup-summary-row { display: flex; justify-content: space-between; padding: 3px 0; color: var(--ink-soft); }
+  .setup-summary-row .value { font-weight: 600; color: var(--ink); font-family: var(--mono); }
+  .setup-summary-row .value.over { color: var(--red); }
+  .setup-summary-warn {
+    margin-top: 6px;
+    padding: 6px 10px;
+    background: var(--red-soft);
+    border-left: 2px solid var(--red);
+    color: var(--red);
+    font-size: 11px;
+    border-radius: 3px;
+  }
+
+  /* ========== COMMAND PALETTE (⌘K) ========== */
+  .cmdk-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(23, 21, 15, 0.3);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 80px 20px 20px;
+  }
+  .cmdk-overlay.hidden { display: none; }
+  .cmdk {
+    width: 560px;
+    max-width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 24px 60px rgba(23, 21, 15, 0.2);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 160px);
+  }
+  .cmdk-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .cmdk-input-wrap::before {
+    content: "›";
+    color: var(--forest);
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .cmdk-input {
+    flex: 1;
+    background: transparent;
+    border: 0;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    outline: none;
+    letter-spacing: -0.01em;
+  }
+  .cmdk-input::placeholder { color: var(--ink-dim); }
+  .cmdk-hint { font-family: var(--mono); font-size: 10px; color: var(--ink-muted); }
+  .cmdk-list { overflow-y: auto; padding: 4px; }
+  .cmdk-section {
+    padding: 6px 10px 4px;
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    font-weight: 600;
+  }
+  .cmdk-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background-color 0.08s ease;
+  }
+  .cmdk-item.active { background: var(--forest-soft); }
+  .cmdk-item-icon {
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono);
+    color: var(--ink-muted);
+    font-size: 12px;
+    background: var(--surface-warm);
+    border-radius: 4px;
+    flex-shrink: 0;
+    font-weight: 600;
+    transition: background-color 0.08s ease, color 0.08s ease;
+  }
+  .cmdk-item.active .cmdk-item-icon { color: var(--forest); background: var(--surface); }
+  .cmdk-item-name { flex: 1; color: var(--ink); }
+  .cmdk-item-meta { color: var(--ink-muted); font-family: var(--mono); font-size: 11px; }
+  .cmdk-empty { padding: 20px; text-align: center; color: var(--ink-muted); font-size: 12px; }
+  .cmdk-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-top: 1px solid var(--border-soft);
+    background: var(--surface-warm);
+    font-size: 10px;
+    color: var(--ink-muted);
+    font-family: var(--mono);
+  }
+  .cmdk-footer .kbd { font-size: 9px; }
+
+  /* ========== PUBLIC VIEW ========== */
+  .player-view { max-width: 900px; margin: 0 auto; padding-top: 4px; }
+  .search-box {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 18px;
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--sans);
+  }
+  .search-box:focus { outline: none; border-color: var(--forest); box-shadow: 0 0 0 2px var(--forest-soft); }
+  .search-box::placeholder { color: var(--ink-dim); }
+  .public-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 760px) { .public-grid { grid-template-columns: 1fr; } }
+  .public-column {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px;
+  }
+  .public-column h2 {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-soft);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .public-count { font-family: var(--mono); font-size: 10px; color: var(--ink-muted); font-weight: 400; text-transform: none; letter-spacing: 0; }
+  .player-row {
+    display: flex;
+    gap: 10px;
+    padding: 4px 0;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .player-row.highlighted {
+    background: var(--forest-soft);
+    padding-left: 6px; margin-left: -6px;
+    padding-right: 6px; margin-right: -6px;
+    border-radius: 3px;
+    border-bottom-color: transparent;
+  }
+  .player-letter { font-weight: 600; font-size: 13px; color: var(--forest); width: 18px; font-family: var(--mono); }
+  .player-name { flex: 1; color: var(--ink); }
+  .rules-note {
+    margin-top: 16px;
+    padding: 10px 14px;
+    background: var(--surface-warm);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--ink-muted);
+    text-align: center;
+  }
+  .rules-note strong { color: var(--ink); }
+
+  /* ========== PLAYER MODAL — design-review enhancements ========== */
+  /* Avatar + status subtitle in header */
+  .modal-header { gap: 12px; align-items: flex-start; padding: 14px 18px 12px; }
+  .modal-header .avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--forest-soft);
+    color: var(--forest);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    flex-shrink: 0;
+    font-family: var(--sans);
+    letter-spacing: -0.01em;
+  }
+  .modal-header .header-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .modal-header .header-text h2 { font-size: 16px; line-height: 1.15; flex: none; }
+  .modal-header .player-status {
+    font-size: 12px;
+    color: var(--ink-muted);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    line-height: 1.2;
+  }
+  .modal-header .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--ink-dim);
+    flex-shrink: 0;
+  }
+  .status-dot.confirmed { background: var(--forest); }
+  .status-dot.pending { background: var(--amber); }
+  .status-dot.waitlist { background: var(--ink-soft); }
+  .status-dot.deferred { background: var(--amber); opacity: 0.55; }
+  .status-dot.new { background: var(--forest); }
+
+  /* Hide zero/em-dash stats for noise reduction */
+  .stat-item.zero { display: none; }
+
+  /* Primary action button at top of modal body (design-review fix #1) */
+  .primary-action-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .primary-action-row button {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 5px;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid var(--forest);
+    background: var(--forest);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    letter-spacing: -0.005em;
+  }
+  .primary-action-row button:hover { background: var(--forest-dark); border-color: var(--forest-dark); }
+  .primary-action-row button.secondary {
+    background: var(--surface);
+    color: var(--ink);
+    border-color: var(--border);
+  }
+  .primary-action-row button.secondary:hover { border-color: var(--forest); color: var(--forest); background: var(--forest-soft); }
+  .primary-action-row .kbd-hint {
+    padding: 1px 5px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+  }
+  .primary-action-row button.secondary .kbd-hint { background: var(--surface-warm); color: var(--ink-muted); }
+
+  /* History filter chips with counts (design-review fix #4) */
+  .filter-chip { display: inline-flex; align-items: center; gap: 5px; }
+  .filter-chip .chip-count {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 500;
+    background: rgba(0,0,0,0.06);
+    padding: 0 5px;
+    border-radius: 8px;
+    line-height: 14px;
+    min-width: 14px;
+    text-align: center;
+  }
+  .filter-chip.active .chip-count { background: rgba(255,255,255,0.22); }
+  .filter-chip.empty {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* History entries with event type indicators (design-review fix #4) */
+  .history-entry {
+    display: grid;
+    grid-template-columns: 12px 80px 1fr;
+    gap: 10px;
+    align-items: baseline;
+    padding: 7px 0;
+  }
+  .history-entry .h-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--ink-dim);
+    align-self: center;
+    transform: translateY(-1px);
+  }
+  .history-entry .h-dot.move,
+  .history-entry .h-dot.add,
+  .history-entry .h-dot.confirm,
+  .history-entry .h-dot.return,
+  .history-entry .h-dot.reorder { background: var(--forest); }
+  .history-entry .h-dot.defer,
+  .history-entry .h-dot.decline { background: var(--amber); }
+  .history-entry .h-dot.note { background: #7a8aa3; }
+
+  /* Notes saved indicator */
+  .notes-section .save-state {
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 11px;
+    color: var(--forest);
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .notes-section .save-state.visible { opacity: 1; }
+  .notes-section .save-state.fading { opacity: 0; transition: opacity 0.6s; }
+
+  /* PRINT (shared keepsake look) */
+  @media print {
+    @page { margin: 0.5in; }
+    body { background: white; color: black; }
+    header, #banner-area, .stat-strip, main, .overlay, #modal-overlay, .cmdk-overlay { display: none !important; }
+    #print-view { display: block; font-family: Georgia, serif; color: black; padding: 0; }
+    #print-view .print-header { border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 18px; }
+    #print-view h1 { font-size: 22pt; margin: 0; font-weight: 600; }
+    #print-view .print-meta { font-size: 10pt; color: #444; margin-top: 4px; }
+    #print-view .print-summary { display: flex; gap: 24px; margin-bottom: 22px; font-size: 11pt; }
+    #print-view .print-section { break-inside: avoid; margin-bottom: 24px; }
+    #print-view h2 { font-size: 14pt; margin: 0 0 10px 0; border-bottom: 1px solid #999; padding-bottom: 4px; font-weight: 600; }
+    #print-view .print-roster { list-style: none; padding: 0; margin: 0; column-count: 2; column-gap: 36px; font-size: 11pt; line-height: 1.65; }
+    #print-view .print-roster li { break-inside: avoid; padding: 1px 0; }
+    #print-view .print-roster li.pending { color: #555; font-style: italic; }
+    #print-view .pending-tag { font-size: 9pt; color: #777; font-style: normal; }
+    #print-view .print-waitlist { margin: 0; padding-left: 28px; font-size: 11pt; line-height: 1.7; }
+    #print-view .print-empty { color: #777; font-style: italic; font-size: 11pt; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>
+    <span class="title-main">Fred Wright</span>
+    <span class="title-sub">back office</span>
+  </h1>
+  <div class="spacer"></div>
+  <div class="season-switcher" id="season-switcher"></div>
+  <div class="slot-meter" id="slot-meter"></div>
+  <button class="cmdk-launcher" id="cmdk-launcher" title="Command palette (⌘K)">
+    <span class="cmdk-launcher-label">Search &amp; commands</span>
+    <span class="kbd">⌘K</span>
+  </button>
+  <div class="view-toggle">
+    <button data-view="internal" class="active">Board</button>
+    <button data-view="public">Roster</button>
+  </div>
+  <button class="btn-print" id="btn-print">Print</button>
+  <button class="btn-reset" id="btn-reset">Reset</button>
+</header>
+
+<!-- Quick-stat strip (internal view only; populated by script) -->
+<div class="stat-strip" id="stat-strip"></div>
+
+<div id="banner-area"></div>
+<main id="main-view">Loading&hellip;</main>
+
+<div id="print-view"></div>
+<div class="overlay hidden" id="modal-overlay"></div>
+
+<!-- Command palette -->
+<div class="cmdk-overlay hidden" id="cmdk-overlay">
+  <div class="cmdk" role="dialog" aria-label="Command palette">
+    <div class="cmdk-input-wrap">
+      <input type="text" class="cmdk-input" id="cmdk-input" placeholder="Jump to a player, run a command&hellip;" autocomplete="off" spellcheck="false">
+      <span class="cmdk-hint">esc to close</span>
+    </div>
+    <div class="cmdk-list" id="cmdk-list"></div>
+    <div class="cmdk-footer">
+      <span><span class="kbd">↑</span> <span class="kbd">↓</span> navigate</span>
+      <span><span class="kbd">↵</span> select</span>
+      <span><span class="kbd">esc</span> close</span>
+    </div>
+  </div>
+</div>
+
+<script src="shared.js?v=5"></script>
+<script>
+  // ========== Back Office layer ==========
+  // Three pieces on top of shared.js:
+  //   1) Friendly column names (from variant C) — clearer at a glance than "2026 Participants"
+  //   2) ⌘K command palette (from variant B) — fuzzy search across players + actions
+  //   3) Quick-stat strip (this file) — at-a-glance metrics before the pro even looks at a column
+  (function() {
+    const FW = window.FW;
+    if (!FW) return; // shared.js failed to load
+    const { CURRENT_SEASON: SEASON_CURRENT, SLOT_CAP: CAP, escapeHtml, HISTORY_CATEGORIES: categoryFor, getState, participantCounts, playersInListForSeason } = FW;
+
+    /* ---------- 1. Friendly column renames ---------- */
+    const mainEl = document.getElementById('main-view');
+
+    // Single source of truth for the back-office's warm list-name vocabulary.
+    // Used by warmTitle (kanban headers), cmdk player-result meta, and Jump actions.
+    // Edit copy here once instead of chasing four call sites.
+    const LIST_LABELS = {
+      participants: 'Playing',
+      waitlist: 'Waitlist',
+      deferred: 'Sitting Out',
+      new: 'New Signups'
+    };
+
+    function warmTitle(listId, year) {
+      if (listId === 'waitlist') return LIST_LABELS.waitlist;
+      if (listId === 'participants' && year !== SEASON_CURRENT) return year + ' Players';
+      return (LIST_LABELS[listId] || listId) + ' ' + year;
+    }
+    function renameColumns() {
+      document.querySelectorAll('.column').forEach(col => {
+        const listId = col.dataset.listId;
+        const year = Number(col.dataset.colYear) || SEASON_CURRENT;
+        const titleEl = col.querySelector('.column-title');
+        if (titleEl && listId) titleEl.textContent = warmTitle(listId, year);
+      });
+    }
+
+    /* ---------- 3. Quick-stat strip ---------- */
+    const stripEl = document.getElementById('stat-strip');
+    function renderStrip() {
+      const state = getState();
+      if (!state) { stripEl.style.display = 'none'; return; }
+      const year = state.activeSeason || SEASON_CURRENT;
+      const internalActive = document.querySelector('.view-toggle button[data-view="internal"]')?.classList.contains('active');
+      if (!internalActive) {
+        stripEl.style.display = 'none';
+        return;
+      }
+      stripEl.style.display = 'flex';
+      const isCurrent = year === SEASON_CURRENT;
+
+      const counts = participantCounts(year);
+      const confirmed = counts.confirmed;
+      const pending = counts.pending;
+      const waitlist = playersInListForSeason(year, 'waitlist').length;
+      const news = playersInListForSeason(year, 'new').length;
+      const openSlots = Math.max(0, CAP - confirmed);
+
+      const cell = (num, label, cls) => {
+        const zero = num === 0 ? ' zero' : '';
+        return '<div class="stat-item"><span class="stat-num ' + cls + zero + '">' + num + '</span><span class="stat-label">' + label + '</span></div>';
+      };
+      // Live season: full live-workflow strip. Archive: drop tautologies (no
+      // pending/open/new in past data), relabel "confirmed" → "played".
+      const cells = isCurrent
+        ? cell(confirmed, 'confirmed / ' + CAP, 'confirmed') +
+          cell(pending, 'pending', 'pending') +
+          cell(openSlots, 'open slot' + (openSlots === 1 ? '' : 's'), 'waitlist') +
+          cell(waitlist, 'waitlist', 'waitlist') +
+          cell(news, 'new signup' + (news === 1 ? '' : 's'), 'new')
+        : cell(confirmed, 'played / ' + CAP, 'confirmed') +
+          cell(waitlist, 'waitlist', 'waitlist');
+      stripEl.innerHTML = cells +
+        '<div class="stat-spacer"></div>' +
+        '<div class="stat-hint"><span class="kbd">⌘K</span> to search</div>';
+    }
+
+    function onMainChange() { renameColumns(); renderStrip(); }
+    onMainChange();
+    new MutationObserver(onMainChange).observe(mainEl, { childList: true, subtree: false });
+    // Also refresh strip when view toggles happen (their listener fires before ours)
+    document.querySelectorAll('.view-toggle button').forEach(b => b.addEventListener('click', () => setTimeout(renderStrip, 20)));
+
+    /* ---------- Season dropdown (replaces button toggle; scales to N seasons) ----------
+       shared.js renders 2 buttons inside #season-switcher and re-renders on every state
+       change. We post-process: hide the buttons via .has-dropdown, append a trigger +
+       panel UI, and delegate option clicks to the underlying (now-hidden) buttons so all
+       state mutation stays in shared.js. */
+    const seasonSwitcher = document.getElementById('season-switcher');
+
+    function buildSeasonDropdown() {
+      const buttons = seasonSwitcher.querySelectorAll('.season-btn');
+      if (buttons.length === 0) return;
+      if (seasonSwitcher.querySelector('.season-trigger')) {
+        syncSeasonDropdown();
+        return;
+      }
+      const years = Array.from(buttons).map(b => Number(b.dataset.year)).sort((a, b) => b - a);
+      const activeBtn = seasonSwitcher.querySelector('.season-btn.active');
+      const activeYear = Number(activeBtn ? activeBtn.dataset.year : SEASON_CURRENT);
+
+      const trigger = document.createElement('button');
+      trigger.type = 'button';
+      trigger.className = 'season-trigger';
+      trigger.setAttribute('aria-haspopup', 'listbox');
+      trigger.setAttribute('aria-expanded', 'false');
+      trigger.innerHTML = '<span class="season-trigger-year">' + activeYear + '</span><span class="season-trigger-chevron" aria-hidden="true">▾</span>';
+
+      const panel = document.createElement('div');
+      panel.className = 'season-panel hidden';
+      panel.setAttribute('role', 'listbox');
+
+      years.forEach(y => {
+        const opt = document.createElement('button');
+        opt.type = 'button';
+        opt.className = 'season-option' + (y === activeYear ? ' active' : '');
+        opt.dataset.year = String(y);
+        opt.setAttribute('role', 'option');
+        const isCurrent = y === SEASON_CURRENT;
+        opt.innerHTML =
+          '<span class="season-option-year">' + y + '</span>' +
+          '<span class="season-option-meta">' +
+            (isCurrent ? '<span class="check">✓</span>Current season' : 'Archive (read-only)') +
+          '</span>';
+        opt.onclick = () => {
+          seasonSwitcher.querySelector('.season-btn[data-year="' + y + '"]')?.click();
+          closePanel();
+        };
+        panel.appendChild(opt);
+      });
+
+      seasonSwitcher.appendChild(trigger);
+      seasonSwitcher.appendChild(panel);
+      seasonSwitcher.classList.add('has-dropdown');
+
+      function openPanel() { panel.classList.remove('hidden'); trigger.setAttribute('aria-expanded', 'true'); }
+      function closePanel() { panel.classList.add('hidden'); trigger.setAttribute('aria-expanded', 'false'); }
+      trigger.onclick = e => {
+        e.stopPropagation();
+        if (panel.classList.contains('hidden')) openPanel();
+        else closePanel();
+      };
+    }
+
+    function syncSeasonDropdown() {
+      const triggerYear = seasonSwitcher.querySelector('.season-trigger-year');
+      const activeBtn = seasonSwitcher.querySelector('.season-btn.active');
+      if (!triggerYear || !activeBtn) return;
+      const newYear = activeBtn.dataset.year;
+      if (triggerYear.textContent === newYear) return; // no change — skip DOM updates
+      triggerYear.textContent = newYear;
+      seasonSwitcher.querySelectorAll('.season-option').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.year === newYear);
+      });
+    }
+
+    // Document-level dismissal — set once.
+    document.addEventListener('click', e => {
+      const panel = seasonSwitcher.querySelector('.season-panel');
+      const trigger = seasonSwitcher.querySelector('.season-trigger');
+      if (!panel || !trigger || panel.classList.contains('hidden')) return;
+      if (!seasonSwitcher.contains(e.target)) {
+        panel.classList.add('hidden');
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Escape') return;
+      const panel = seasonSwitcher.querySelector('.season-panel');
+      const trigger = seasonSwitcher.querySelector('.season-trigger');
+      if (panel && trigger && !panel.classList.contains('hidden')) {
+        panel.classList.add('hidden');
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    buildSeasonDropdown();
+    new MutationObserver(buildSeasonDropdown).observe(seasonSwitcher, { childList: true });
+
+    /* ---------- 2. ⌘K Command palette ---------- */
+    const overlay = document.getElementById('cmdk-overlay');
+    const input = document.getElementById('cmdk-input');
+    const list = document.getElementById('cmdk-list');
+    const launcher = document.getElementById('cmdk-launcher');
+    let activeIdx = 0;
+    let items = [];
+
+    // cmdk player-result meta uses the same warm vocabulary as the kanban headers.
+    const listLabels = LIST_LABELS;
+
+    function jumpCol(listId) {
+      const col = document.querySelector('[data-list-id="' + listId + '"].column');
+      if (col) {
+        col.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        col.animate(
+          [{ boxShadow: '0 0 0 2px #1a5033' }, { boxShadow: '0 0 0 2px transparent' }],
+          { duration: 1100, easing: 'ease-out' }
+        );
+      }
+    }
+
+    const ACTIONS = [
+      { id: 'print', name: 'Print roster', section: 'Actions', icon: 'P', run: () => document.getElementById('btn-print').click() },
+      { id: 'reset', name: 'Reset demo data', section: 'Actions', icon: 'R', run: () => document.getElementById('btn-reset').click() },
+      { id: 'view-internal', name: 'Switch to Board (management)', section: 'Views', icon: 'B', run: () => document.querySelector('.view-toggle button[data-view="internal"]').click() },
+      { id: 'view-public', name: 'Switch to Roster (player-facing)', section: 'Views', icon: 'V', run: () => document.querySelector('.view-toggle button[data-view="public"]').click() },
+      { id: 'jump-participants', name: 'Jump to ' + LIST_LABELS.participants, section: 'Navigate', icon: '→', run: () => jumpCol('participants') },
+      { id: 'jump-waitlist', name: 'Jump to ' + LIST_LABELS.waitlist, section: 'Navigate', icon: '→', run: () => jumpCol('waitlist') },
+      { id: 'jump-deferred', name: 'Jump to ' + LIST_LABELS.deferred, section: 'Navigate', icon: '→', run: () => jumpCol('deferred') },
+      { id: 'jump-new', name: 'Jump to ' + LIST_LABELS.new, section: 'Navigate', icon: '→', run: () => jumpCol('new') }
+    ];
+
+    function fuzzyMatch(needle, hay) {
+      if (!needle) return true;
+      return hay.toLowerCase().includes(needle.toLowerCase().trim());
+    }
+
+    function render() {
+      const q = input.value;
+      const state = getState();
+      const players = state ? state.players : [];
+      const results = [];
+
+      const playerMatches = players
+        .filter(p => fuzzyMatch(q, p.name))
+        .slice(0, 12)
+        .map(p => {
+          const s = p.seasons && p.seasons[SEASON_CURRENT];
+          const where = s ? (listLabels[s.list] || s.list) : 'Not in ' + SEASON_CURRENT;
+          const status = s && s.status ? ' · ' + s.status : '';
+          return {
+            name: p.name,
+            section: 'Players',
+            icon: p.name.charAt(0).toUpperCase(),
+            meta: where + status,
+            // Open the modal directly via shared.js — works regardless of current view
+            // (kanban hidden on Roster view; archive seasons; column scrolled off-screen).
+            run: () => FW.showPlayerModal(p.id)
+          };
+        });
+      results.push(...playerMatches);
+      results.push(...ACTIONS.filter(a => fuzzyMatch(q, a.name)));
+
+      items = results;
+      activeIdx = Math.min(activeIdx, Math.max(0, items.length - 1));
+      paint();
+    }
+
+    // Full rebuild — only when the items array changes (input event).
+    function paint() {
+      if (items.length === 0) {
+        list.innerHTML = '<div class="cmdk-empty">No results. Try a player name or action.</div>';
+        return;
+      }
+      let html = '';
+      let lastSection = null;
+      items.forEach((it, i) => {
+        if (it.section !== lastSection) {
+          html += '<div class="cmdk-section">' + it.section + '</div>';
+          lastSection = it.section;
+        }
+        html += '<div class="cmdk-item' + (i === activeIdx ? ' active' : '') + '" data-idx="' + i + '">' +
+          '<span class="cmdk-item-icon">' + escapeHtml(it.icon) + '</span>' +
+          '<span class="cmdk-item-name">' + escapeHtml(it.name) + '</span>' +
+          (it.meta ? '<span class="cmdk-item-meta">' + escapeHtml(it.meta) + '</span>' : '') +
+        '</div>';
+      });
+      list.innerHTML = html;
+      list.querySelectorAll('.cmdk-item').forEach(el => {
+        // mouseenter only updates the highlight (paintActive); rebuilding mid-hover
+        // would detach the node between mousedown and click, swallowing the click.
+        // scroll: false — hovered items are by definition visible; scrolling here
+        // would yank the list when mousing back to a higher item after arrowing down.
+        el.onmouseenter = () => { activeIdx = Number(el.dataset.idx); paintActive(false); };
+        el.onclick = () => { activeIdx = Number(el.dataset.idx); execActive(); };
+      });
+      paintActive(true);
+    }
+
+    // Cheap update — only toggles .active class on existing nodes. No DOM rebuild.
+    function paintActive(scroll) {
+      let activeEl = null;
+      list.querySelectorAll('.cmdk-item').forEach(el => {
+        const isActive = Number(el.dataset.idx) === activeIdx;
+        el.classList.toggle('active', isActive);
+        if (isActive) activeEl = el;
+      });
+      if (scroll && activeEl) activeEl.scrollIntoView({ block: 'nearest' });
+    }
+
+    function execActive() {
+      const it = items[activeIdx];
+      if (!it) return;
+      // Close cmdk and run in the same tick — no flicker gap to bare page.
+      close();
+      it.run();
+    }
+
+    function open() {
+      overlay.classList.remove('hidden');
+      input.value = '';
+      activeIdx = 0;
+      render();
+      setTimeout(() => input.focus(), 10);
+    }
+    function close() { overlay.classList.add('hidden'); }
+
+    launcher.onclick = open;
+    input.addEventListener('input', render);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); activeIdx = Math.min(items.length - 1, activeIdx + 1); paintActive(true); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); activeIdx = Math.max(0, activeIdx - 1); paintActive(true); }
+      else if (e.key === 'Enter') { e.preventDefault(); execActive(); }
+      else if (e.key === 'Escape') { e.preventDefault(); close(); }
+    });
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+    document.addEventListener('keydown', e => {
+      if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        if (overlay.classList.contains('hidden')) open();
+        else close();
+      }
+    });
+
+    /* ========== Player modal enhancement (design-review pass) ==========
+       Idempotent via data-enhanced flag. The inner #history-list observer
+       is tracked and disconnected when the next modal opens, preventing
+       observer accumulation across many modal opens in a long session. */
+    const modalOverlay = document.getElementById('modal-overlay');
+    let activeHistoryObserver = null;
+
+    function statusLabelFor(listId, playerStatus, year) {
+      if (!listId) return 'Not in ' + year;
+      if (listId === 'participants') return playerStatus === 'pending' ? 'Pending confirmation · ' + year : 'In the field · ' + year;
+      if (listId === 'waitlist') return 'On the list';
+      if (listId === 'deferred') return 'Sitting out ' + year;
+      if (listId === 'new') return 'New signup · awaiting placement';
+      return listId;
+    }
+
+    function statusClassFor(listId, playerStatus) {
+      if (!listId) return 'unknown';
+      if (listId === 'participants') return playerStatus === 'pending' ? 'pending' : 'confirmed';
+      return listId;
+    }
+
+    function primaryActionFor(listId, year) {
+      if (listId === 'waitlist') return { label: 'Promote to the Field', target: 'participants' };
+      if (listId === 'deferred' && year === SEASON_CURRENT) return { label: 'Activate for ' + year, target: 'participants' };
+      if (listId === 'new') return { label: 'Add to the Field', target: 'participants' };
+      return null;
+    }
+
+    function enhanceModal(modal) {
+      const header = modal.querySelector('.modal-header');
+      const h2 = header && header.querySelector('h2');
+      if (!h2) return;
+      const name = h2.textContent.trim();
+
+      const state = getState();
+      const player = state && state.players && state.players.find(p => p.name === name);
+      if (!player) return;
+
+      const year = state.activeSeason || SEASON_CURRENT;
+      const seasonInfo = player.seasons && player.seasons[year];
+      const listId = seasonInfo ? seasonInfo.list : null;
+      const playerStatus = seasonInfo && seasonInfo.status;
+      const firstDate = player.history && player.history[0] && player.history[0].date;
+      const since = firstDate ? ' · since ' + firstDate.slice(0, 4) : '';
+
+      // 1. Avatar + status subtitle
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar';
+      avatar.textContent = name.charAt(0).toUpperCase();
+      const headerText = document.createElement('div');
+      headerText.className = 'header-text';
+      h2.parentNode.insertBefore(headerText, h2);
+      headerText.appendChild(h2);
+      const statusEl = document.createElement('div');
+      statusEl.className = 'player-status';
+      const dot = document.createElement('span');
+      dot.className = 'status-dot ' + statusClassFor(listId, playerStatus);
+      const label = document.createElement('span');
+      label.textContent = statusLabelFor(listId, playerStatus, year) + since;
+      statusEl.appendChild(dot);
+      statusEl.appendChild(label);
+      headerText.appendChild(statusEl);
+      header.insertBefore(avatar, headerText);
+
+      // 2. Hide zero/em-dash stats
+      modal.querySelectorAll('.stat-item').forEach(item => {
+        const text = item.querySelector('.stat-value')?.textContent.trim() || '';
+        if (text === '—' || text === '0') item.classList.add('zero');
+      });
+
+      // 3. Primary action button at top of body
+      const stats = modal.querySelector('.modal-body .stats-grid');
+      const primary = primaryActionFor(listId, year);
+      if (primary && stats) {
+        const row = document.createElement('div');
+        row.className = 'primary-action-row';
+        const btn = document.createElement('button');
+        btn.textContent = primary.label;
+        btn.onclick = () => modal.querySelector('[data-move="' + primary.target + '"]')?.click();
+        row.appendChild(btn);
+        stats.insertAdjacentElement('beforebegin', row);
+      }
+
+      // 4. Filter chip counts (createElement avoids the textContent-collapse
+      // bug if this ever ran twice on the same chip).
+      const history = player.history || [];
+      const counts = { all: history.length, moves: 0, deferrals: 0, notes: 0 };
+      for (const h of history) {
+        const cat = categoryFor[h.type || 'move'];
+        if (cat) counts[cat]++;
+      }
+      modal.querySelectorAll('.filter-chip').forEach(chip => {
+        const f = chip.dataset.filter;
+        const count = counts[f] || 0;
+        const countEl = document.createElement('span');
+        countEl.className = 'chip-count';
+        countEl.textContent = count;
+        chip.appendChild(countEl);
+        if (count === 0 && f !== 'all') chip.classList.add('empty');
+      });
+
+      // 5. History event-type dots. Build a Map keyed by date|event for O(1)
+      // lookup instead of O(n) Array.find on each entry.
+      const historyList = modal.querySelector('#history-list');
+      if (historyList) {
+        const typeByKey = new Map(history.map(h => [h.date + '|' + h.event, h.type || 'move']));
+        const decorate = () => {
+          historyList.querySelectorAll('.history-entry').forEach(entry => {
+            if (entry.querySelector('.h-dot')) return;
+            const date = entry.querySelector('.h-date')?.textContent.trim();
+            const event = entry.querySelector('.h-event')?.textContent.trim();
+            const type = typeByKey.get(date + '|' + event) || 'move';
+            const d = document.createElement('span');
+            d.className = 'h-dot ' + type;
+            entry.insertBefore(d, entry.firstChild);
+          });
+        };
+        decorate();
+        if (activeHistoryObserver) activeHistoryObserver.disconnect();
+        activeHistoryObserver = new MutationObserver(decorate);
+        activeHistoryObserver.observe(historyList, { childList: true });
+      }
+    }
+
+    new MutationObserver(() => {
+      const modal = modalOverlay.querySelector('.modal');
+      if (!modal) {
+        // Modal closed — disconnect any lingering history observer.
+        if (activeHistoryObserver) { activeHistoryObserver.disconnect(); activeHistoryObserver = null; }
+        return;
+      }
+      if (modal.dataset.enhanced) return;
+      modal.dataset.enhanced = '1';
+      enhanceModal(modal);
+    }).observe(modalOverlay, { childList: true });
+
+    /* ========== Print → PDF download ==========
+       Replaces shared.js's window.print() with an in-browser PDF export. We lazy-load
+       html2pdf.js from CDN on first click so the page itself stays dependency-free.
+       Falls back to window.print() if the CDN is unreachable (offline pro shop). */
+    const HTML2PDF_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+    function ensureHtml2Pdf() {
+      if (window.html2pdf) return Promise.resolve();
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = HTML2PDF_CDN;
+        s.onload = resolve;
+        s.onerror = () => reject(new Error('CDN unreachable'));
+        document.head.appendChild(s);
+      });
+    }
+
+    function buildPdfDom(state, year) {
+      const isCurrent = year === SEASON_CURRENT;
+      const cmp = (a, b) => a.localeCompare(b);
+      const allPart = playersInListForSeason(year, 'participants');
+      const confirmed = allPart.filter(p => !isCurrent || p.seasons[year].status !== 'pending').map(p => p.name).sort(cmp);
+      const pending = isCurrent ? allPart.filter(p => p.seasons[year].status === 'pending').map(p => p.name).sort(cmp) : [];
+      const waitlist = playersInListForSeason(year, 'waitlist').map(p => p.name).sort(cmp);
+
+      const printedOn = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      const summary = [
+        '<span><strong>' + confirmed.length + '</strong> confirmed / ' + CAP + ' slots</span>',
+        pending.length ? '<span>' + pending.length + ' pending</span>' : '',
+        '<span>' + waitlist.length + ' on waitlist</span>'
+      ].filter(Boolean).join('');
+
+      const rosterItems = [
+        ...confirmed.map(n => '<li>' + escapeHtml(n) + '</li>'),
+        ...pending.map(n => '<li class="pending">' + escapeHtml(n) + ' <span class="pending-tag">(pending)</span></li>')
+      ].join('');
+
+      const waitlistItems = waitlist.map(n => '<li>' + escapeHtml(n) + '</li>').join('');
+
+      // Render in a clipping wrapper (outer height:0 + overflow:hidden hides the brief
+      // flash from the user, inner stays in normal flow so html2canvas can measure it).
+      const div = document.createElement('div');
+      div.style.cssText = 'width: 7.5in; padding: 0; font-family: Georgia, "Times New Roman", serif; color: #111; background: white; line-height: 1.5;';
+      div.innerHTML =
+        '<style>' +
+          '.pdf-h1 { font-size: 24pt; font-weight: 600; margin: 0; letter-spacing: -0.3px; }' +
+          '.pdf-meta { font-size: 10pt; color: #555; margin-top: 6px; }' +
+          '.pdf-summary { display: flex; gap: 26px; margin: 18px 0 22px; font-size: 11pt; }' +
+          '.pdf-summary strong { font-weight: 600; }' +
+          '.pdf-section { margin-bottom: 24px; }' +
+          '.pdf-section h2 { font-size: 14pt; font-weight: 600; border-bottom: 1px solid #999; padding-bottom: 4px; margin: 0 0 12px; }' +
+          '.pdf-roster { list-style: none; padding: 0; margin: 0; column-count: 2; column-gap: 36px; font-size: 11pt; line-height: 1.7; }' +
+          '.pdf-roster li { break-inside: avoid; padding: 1px 0; }' +
+          '.pdf-roster li.pending { color: #555; font-style: italic; }' +
+          '.pdf-roster .pending-tag { font-size: 9pt; color: #888; font-style: normal; }' +
+          '.pdf-waitlist { margin: 0; padding-left: 28px; font-size: 11pt; line-height: 1.7; }' +
+          '.pdf-empty { color: #777; font-style: italic; font-size: 11pt; }' +
+        '</style>' +
+        '<div style="border-bottom: 2px solid #111; padding-bottom: 12px;">' +
+          '<h1 class="pdf-h1">The Fred Wright &mdash; ' + year + ' Roster</h1>' +
+          '<div class="pdf-meta">Oakley Country Club &middot; Printed ' + escapeHtml(printedOn) + '</div>' +
+        '</div>' +
+        '<div class="pdf-summary">' + summary + '</div>' +
+        '<section class="pdf-section">' +
+          '<h2>Participants</h2>' +
+          (rosterItems ? '<ul class="pdf-roster">' + rosterItems + '</ul>' : '<p class="pdf-empty">No participants yet.</p>') +
+        '</section>' +
+        '<section class="pdf-section">' +
+          '<h2>Waitlist</h2>' +
+          (waitlistItems ? '<ol class="pdf-waitlist">' + waitlistItems + '</ol>' : '<p class="pdf-empty">No players on the waitlist.</p>') +
+        '</section>';
+      return div;
+    }
+
+    async function downloadRosterPdf(triggerBtn) {
+      const state = getState();
+      if (!state) return;
+      const year = state.activeSeason || SEASON_CURRENT;
+      const origLabel = triggerBtn.textContent;
+      triggerBtn.disabled = true;
+      triggerBtn.textContent = 'Generating…';
+
+      let wrapper = null;
+      try {
+        await ensureHtml2Pdf();
+        const dom = buildPdfDom(state, year);
+        wrapper = document.createElement('div');
+        wrapper.style.cssText = 'position: relative; overflow: hidden; height: 0; width: 0;';
+        wrapper.appendChild(dom);
+        document.body.appendChild(wrapper);
+        await window.html2pdf().set({
+          filename: 'fred-wright-roster-' + year + '.pdf',
+          margin: [0.5, 0.5, 0.6, 0.5], // top, right, bottom, left (inches)
+          image: { type: 'jpeg', quality: 0.95 },
+          html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        }).from(dom).save();
+      } catch (err) {
+        console.warn('PDF generation failed; falling back to print dialog', err);
+        if (typeof origPrintHandler === 'function') origPrintHandler();
+        else window.print();
+      } finally {
+        if (wrapper) wrapper.remove();
+        triggerBtn.disabled = false;
+        triggerBtn.textContent = origLabel;
+      }
+    }
+
+    const btnPrint = document.getElementById('btn-print');
+    const origPrintHandler = btnPrint.onclick; // shared.js's renderPrintView + window.print
+    btnPrint.onclick = (e) => {
+      e.preventDefault();
+      downloadRosterPdf(btnPrint);
+    };
+  })();
+</script>
+</body>
+</html>
