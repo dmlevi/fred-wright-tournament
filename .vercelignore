@@ -1,8 +1,6 @@
-# While the placeholder index.html is live, hide the real app from production.
-# Remove this file (or empty it) when ready to ship the real demo.
-app.html
-standings.html
-the-program.html
-shared.js
+# Hide internal artifacts from production. Real pages (index.html,
+# standings.html, the-program.html, shared.js) all deploy.
 designs/
 .claude/
+.gstack/
+_placeholder.html

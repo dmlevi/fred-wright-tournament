@@ -14,13 +14,13 @@ Not a finished product. **Simplicity, demo-ability, and buy-in from the pro and 
 ## File layout
 
 ```
-index.html         placeholder (coming-soon page; deployed publicly)
-app.html           Tournament Builder — kanban admin (real, the work product)
-standings.html     Engagement standings — leaderboard + settings drawer (real)
-the-program.html   Member-facing tournament site
-shared.js          state library used by app.html and the-program.html
-oakley-logo.png    Oakley crest (used by the-program.html and the placeholder)
-.vercelignore      keeps real files off production while the placeholder is live
+index.html         Tournament Builder — kanban admin (the work product, deployed)
+standings.html     Engagement standings — leaderboard + settings drawer (deployed)
+the-program.html   Member-facing tournament site (deployed)
+shared.js          state library used by index.html and the-program.html
+oakley-logo.png    Oakley crest
+_placeholder.html  archived "coming soon" page from the pre-demo placeholder mode
+.vercelignore      hides internal artifacts (designs/, .claude/, .gstack/, _placeholder.html)
 .claude/launch.json  vercel dev / python http.server launch configs
 designs/           design exploration artifacts (variants, comparison boards) — not deployed
 ```
@@ -33,36 +33,31 @@ No build step. Serve however you like:
 - `python3 -m http.server 3001`
 - Or just open the file directly in a browser
 
-When working on the admin kanban, **hit `app.html`** directly — `index.html` is the placeholder.
+The kanban admin is at `/` (index.html). Standings at `/standings.html`. Member site at `/the-program.html`.
 
-## Deployment & the placeholder
+## Deployment
 
-`index.html` is intentionally a coming-soon page right now. The chair was sent the Vercel link before the demo was ready, so production is gated until the in-person walkthrough.
+Production is live: index.html (kanban), standings.html, the-program.html, shared.js all deploy. `.vercelignore` keeps designs/, .claude/, .gstack/, and the archived `_placeholder.html` out of production.
 
-While in placeholder mode:
-- `.vercelignore` excludes `app.html`, `standings.html`, `the-program.html`, `shared.js`, `designs/`, `.claude/` from production
-- Only `index.html` and `oakley-logo.png` reach Vercel
-- Direct URLs like `/standings.html` 404 on production but still work locally
-
-To flip to "demo live" for real:
+Standard deploy:
 ```sh
-mv index.html _placeholder.html && mv app.html index.html
-rm .vercelignore
 vercel --prod
 ```
 
-To flip back to placeholder:
+To flip BACK to placeholder mode (e.g., if the demo gets pulled before launch):
 ```sh
 mv index.html app.html && mv _placeholder.html index.html
-# restore .vercelignore (or git checkout it)
+# Then add app.html / standings.html / the-program.html / shared.js back to .vercelignore
+# AND change the Tournament Builder sidebar nav links in app.html and standings.html
+# from href="index.html" to href="app.html" so they don't point at the placeholder
 vercel --prod
 ```
 
 ## Architecture — kanban side
 
-**`shared.js`** is the state library. Owns the kanban data model, exposes helpers via `window.FW`. Loaded by `app.html` and `the-program.html`.
+**`shared.js`** is the state library. Owns the kanban data model, exposes helpers via `window.FW`. Loaded by `index.html` (Tournament Builder) and `the-program.html`.
 
-**`app.html`** is the Tournament Builder. Single page with:
+**`index.html`** is the Tournament Builder (was `app.html` before the production flip). Single page with:
 - Sticky left sidebar (Tournament Builder, Standings, Players soon, History soon, Members website external link, season switcher, Reset)
 - Page header (slot meter, ⌘K command palette, view toggle, Print)
 - Main view toggles between Board (kanban) and Roster (alphabetical)
@@ -169,7 +164,7 @@ A column labeled **Deferred in 2026** shows players with `seasons.2026.list === 
 
 ## Views
 
-### app.html
+### index.html (Tournament Builder)
 - **Board** (default): 4-column kanban — `new | waitlist | participants | deferred`. Column order is draggable via the header grip. Only the active season is editable; `LAST_SEASON` is read-only.
 - **Roster**: alphabetical by last name, split into "In the Tournament" vs "Waiting". Toggled via header.
 - **Print** (`renderPrintView`): hidden div styled via `@media print`. Header Print button calls `window.print()`. Roster + waitlist only.
@@ -195,7 +190,7 @@ The Reset button glows amber on initial load because the seeded state differs fr
 
 ## Common gotchas
 
-### Kanban (app.html / shared.js)
+### Kanban (index.html / shared.js)
 - **`render()` is called from many action handlers.** After mutating state: `saveState()` → `render()`. New mutation paths must follow this pattern.
 - **Drag conflict between cards and columns.** Both use HTML5 drag events. `dragging` (card) and `columnDragging` (column) are module-level flags; handlers check the "other" flag and bail out to avoid stepping on each other.
 - **`listDisplayName(listId, year)`** is the single source of truth for column labels — use it everywhere labels appear (kanban titles, modal move buttons, search aria-labels, history log entries).
@@ -210,8 +205,8 @@ The Reset button glows amber on initial load because the seeded state differs fr
 - **No persistence yet.** Refresh = clean state. By design for demos. When persisting, route through shared.js / `STORAGE_KEY`.
 
 ### Deployment
-- **`.vercelignore` is the source of truth for what's hidden.** File naming (`_app.html` etc.) doesn't protect anything; Vercel deploys whatever isn't excluded.
-- **Confirm which `index.html` is current before `vercel --prod`.** Placeholder vs real is a single rename in production. The pulsing dot on the placeholder is the cheap way to verify locally before pushing.
+- **`.vercelignore` is the source of truth for what's hidden.** File naming alone doesn't protect anything; Vercel deploys whatever isn't excluded.
+- **`index.html` is the kanban now.** Pre-flip it was the placeholder; the placeholder lives at `_placeholder.html` (gitignored from production via `.vercelignore`). Confirm which `index.html` is current before `vercel --prod` if you ever need to flip back.
 
 ## Skill routing
 

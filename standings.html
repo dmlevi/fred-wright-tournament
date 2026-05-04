@@ -1230,7 +1230,7 @@
 
   <nav class="sidebar-nav">
     <div class="nav-section-label">Tournament</div>
-    <a class="nav-item" href="index.html" data-nav-tb>
+    <a class="nav-item" href="index.html">
       <span class="nav-item-label">Tournament Builder</span>
     </a>
     <a class="nav-item active" href="standings.html">
@@ -2255,14 +2255,6 @@
   render();
   attachHandlers();
 })();
-</script>
-<script>
-  // Pre-flip dev mode: app.html is the kanban (index.html is the placeholder).
-  // Post-flip prod: app.html no longer exists (renamed to index.html).
-  // Probe app.html and route the Tournament Builder nav link accordingly.
-  fetch('app.html', { method: 'HEAD' })
-    .then(function(r) { if (r.ok) document.querySelectorAll('[data-nav-tb]').forEach(function(a){ a.href = 'app.html'; }); })
-    .catch(function(){});
 </script>
 
 </body>
