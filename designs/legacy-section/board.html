@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legacy Section · Comparison Board · The Fred Wright</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,700;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #1a1611;
+    --bg-soft: #2a2418;
+    --bg-rule: #3a3020;
+    --paper: #faf4e8;
+    --ink: #1f1a14;
+    --ink-soft: #4a3f2e;
+    --brass: #b08838;
+    --brass-soft: #dec79a;
+    --forest: #2d6a4a;
+    --wine: #b85060;
+    --serif: "Fraunces", Georgia, serif;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--brass-soft);
+    font-family: var(--sans);
+    overflow: hidden;
+  }
+
+  /* ============ HEADER ============ */
+  .board-header {
+    position: relative;
+    padding: 14px 24px 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--bg-rule);
+    z-index: 10;
+  }
+  .board-title-row {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  .board-title {
+    font-family: var(--serif); font-weight: 400;
+    font-variation-settings: "opsz" 96, "wght" 400;
+    font-size: 22px; color: var(--paper);
+    letter-spacing: -0.01em;
+  }
+  .board-title em { font-style: italic; color: var(--brass); }
+  .board-subtitle {
+    font-family: var(--serif); font-style: italic;
+    font-size: 13px; color: #8a7a5a;
+  }
+  .board-meta {
+    margin-left: auto;
+    font-family: var(--sans); font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: #6a5a3a; font-weight: 600;
+  }
+  .board-meta .bullet { color: var(--brass); margin: 0 6px; }
+
+  .board-nav {
+    display: flex;
+    gap: 4px;
+    padding-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .nav-btn {
+    background: transparent;
+    color: var(--brass-soft);
+    border: 1px solid var(--bg-rule);
+    padding: 8px 14px;
+    font-family: var(--sans); font-size: 11px;
+    letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .nav-btn:hover { background: var(--bg-soft); border-color: var(--brass); color: var(--paper); }
+  .nav-btn.active { background: var(--brass); border-color: var(--brass); color: var(--bg); }
+  .nav-btn .letter {
+    font-family: var(--serif); font-weight: 700;
+    font-size: 14px; letter-spacing: 0;
+    color: var(--brass);
+  }
+  .nav-btn.active .letter { color: var(--bg); }
+
+  .hint {
+    font-family: var(--serif); font-style: italic;
+    font-size: 12px; color: #6a5a3a;
+    padding-bottom: 10px;
+  }
+  .hint kbd {
+    font-family: var(--sans);
+    font-size: 10px;
+    padding: 1px 5px;
+    background: var(--bg-soft);
+    border: 1px solid var(--bg-rule);
+    border-radius: 2px;
+    color: var(--brass-soft);
+    margin: 0 2px;
+    font-style: normal;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+
+  /* ============ BOARD ============ */
+  .board {
+    position: relative;
+    height: calc(100vh - 130px);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--bg-rule);
+  }
+  .board.focus-a { grid-template-columns: 1fr 0 0 0; }
+  .board.focus-b { grid-template-columns: 0 1fr 0 0; }
+  .board.focus-c { grid-template-columns: 0 0 1fr 0; }
+  .board.focus-d { grid-template-columns: 0 0 0 1fr; }
+  .board.compare-ab { grid-template-columns: 1fr 1fr 0 0; }
+  .board.compare-cd { grid-template-columns: 0 0 1fr 1fr; }
+
+  .pane {
+    background: var(--paper);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.18s;
+  }
+  .board.focus-a .pane:not([data-variant="a"]),
+  .board.focus-b .pane:not([data-variant="b"]),
+  .board.focus-c .pane:not([data-variant="c"]),
+  .board.focus-d .pane:not([data-variant="d"]),
+  .board.compare-ab .pane[data-variant="c"],
+  .board.compare-ab .pane[data-variant="d"],
+  .board.compare-cd .pane[data-variant="a"],
+  .board.compare-cd .pane[data-variant="b"] {
+    width: 0; opacity: 0; pointer-events: none;
+  }
+
+  .pane-header {
+    background: rgba(31, 26, 20, 0.94);
+    color: var(--brass-soft);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .pane-letter {
+    background: var(--brass); color: var(--bg);
+    font-family: var(--serif); font-weight: 700;
+    font-size: 14px; letter-spacing: 0;
+    width: 22px; height: 22px;
+    border-radius: 2px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-variation-settings: "opsz" 72, "wght" 700;
+  }
+  .pane-name { color: var(--paper); }
+  .pane-tag { color: #8a7a5a; font-weight: 400; font-style: italic; text-transform: none; letter-spacing: 0.02em; font-family: var(--serif); }
+  .pane-open {
+    margin-left: auto;
+    color: var(--brass-soft); text-decoration: none;
+    padding: 4px 10px;
+    border: 1px solid var(--bg-rule);
+    border-radius: 2px;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    font-size: 10px;
+  }
+  .pane-open:hover { background: var(--brass); color: var(--bg); border-color: var(--brass); }
+
+  .pane iframe {
+    flex: 1;
+    width: 100%;
+    border: 0;
+    background: var(--paper);
+  }
+
+  /* ============ FOOTER LEGEND ============ */
+  .legend {
+    display: flex;
+    gap: 24px;
+    padding: 8px 14px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    font-family: var(--serif); font-style: italic;
+    font-size: 12px; color: #8a7a5a;
+    line-height: 1.4;
+  }
+  .legend-item strong {
+    color: var(--paper);
+    font-style: normal; font-weight: 500;
+    margin-right: 4px;
+  }
+  .legend-item .letter {
+    color: var(--brass); font-weight: 700;
+    font-family: var(--serif);
+    margin-right: 6px;
+  }
+
+  /* responsive — at narrow widths, stack to 2x2 */
+  @media (max-width: 1280px) {
+    .board:not(.focus-a):not(.focus-b):not(.focus-c):not(.focus-d):not(.compare-ab):not(.compare-cd) {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="board-header">
+  <div class="board-title-row">
+    <h1 class="board-title">Legacy Section · <em>Comparison Board</em></h1>
+    <span class="board-subtitle">Four directions for honoring Fred Wright on the member program</span>
+    <span class="board-meta">
+      <span>4 Variants</span>
+      <span class="bullet">·</span>
+      <span>Designs / Legacy-Section</span>
+    </span>
+  </div>
+
+  <nav class="board-nav">
+    <button class="nav-btn active" data-view="all">All Four</button>
+    <button class="nav-btn" data-view="a"><span class="letter">A</span> Hall of Memory</button>
+    <button class="nav-btn" data-view="b"><span class="letter">B</span> Frontispiece</button>
+    <button class="nav-btn" data-view="c"><span class="letter">C</span> Plate Section</button>
+    <button class="nav-btn" data-view="d"><span class="letter">D</span> In Memoriam Folio</button>
+    <span style="flex:1"></span>
+    <button class="nav-btn" data-view="ab">A · B</button>
+    <button class="nav-btn" data-view="cd">C · D</button>
+  </nav>
+
+  <div class="hint">
+    Each pane scrolls independently. Click a label above to focus a single variant, or
+    pair <kbd>A · B</kbd> / <kbd>C · D</kbd> for two-up comparison. Open ↗ to see a
+    variant fullscreen in its own tab.
+  </div>
+</div>
+
+<div class="board" id="board">
+
+  <article class="pane" data-variant="a">
+    <header class="pane-header">
+      <span class="pane-letter">A</span>
+      <span class="pane-name">Hall of Memory</span>
+      <span class="pane-tag">vertical timeline</span>
+      <a class="pane-open" href="variant-a.html" target="_blank" rel="noopener">Open ↗</a>
+    </header>
+    <iframe src="variant-a.html" title="Variant A — Hall of Memory"></iframe>
+  </article>
+
+  <article class="pane" data-variant="b">
+    <header class="pane-header">
+      <span class="pane-letter">B</span>
+      <span class="pane-name">Frontispiece</span>
+      <span class="pane-tag">cinematic hero</span>
+      <a class="pane-open" href="variant-b.html" target="_blank" rel="noopener">Open ↗</a>
+    </header>
+    <iframe src="variant-b.html" title="Variant B — Frontispiece"></iframe>
+  </article>
+
+  <article class="pane" data-variant="c">
+    <header class="pane-header">
+      <span class="pane-letter">C</span>
+      <span class="pane-name">Plate Section</span>
+      <span class="pane-tag">vintage golf-book gallery</span>
+      <a class="pane-open" href="variant-c.html" target="_blank" rel="noopener">Open ↗</a>
+    </header>
+    <iframe src="variant-c.html" title="Variant C — Plate Section"></iframe>
+  </article>
+
+  <article class="pane" data-variant="d">
+    <header class="pane-header">
+      <span class="pane-letter">D</span>
+      <span class="pane-name">In Memoriam Folio</span>
+      <span class="pane-tag">open-book spread</span>
+      <a class="pane-open" href="variant-d.html" target="_blank" rel="noopener">Open ↗</a>
+    </header>
+    <iframe src="variant-d.html" title="Variant D — In Memoriam Folio"></iframe>
+  </article>
+
+</div>
+
+<script>
+  const board = document.getElementById('board');
+  const buttons = document.querySelectorAll('.nav-btn');
+  const VIEW_CLASSES = ['focus-a', 'focus-b', 'focus-c', 'focus-d', 'compare-ab', 'compare-cd'];
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const view = btn.dataset.view;
+      VIEW_CLASSES.forEach(c => board.classList.remove(c));
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (view === 'all') return;
+      if (view === 'ab') board.classList.add('compare-ab');
+      else if (view === 'cd') board.classList.add('compare-cd');
+      else board.classList.add('focus-' + view);
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    const map = { '0': 'all', '1': 'a', '2': 'b', '3': 'c', '4': 'd' };
+    if (map[e.key]) {
+      const btn = document.querySelector(`.nav-btn[data-view="${map[e.key]}"]`);
+      if (btn) btn.click();
+    }
+  });
+</script>
+
+</body>
+</html>

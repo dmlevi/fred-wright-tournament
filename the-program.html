@@ -481,6 +481,7 @@
   /* When Admin view is active, show management kanban but heavily soften the chrome. */
   body.is-admin header.masthead,
   body.is-admin .dedication,
+  body.is-admin .legacy,
   body.is-admin .program-preamble,
   body.is-admin .program-search-wrap,
   body.is-admin footer.colophon { display: none; }
@@ -911,7 +912,7 @@
   @media print {
     @page { margin: 0.5in; size: letter; }
     body { background: white !important; color: black; background-image: none; }
-    .draft-ribbon, .top-nav, header.masthead, .dedication, main, footer.colophon,
+    .draft-ribbon, .top-nav, header.masthead, .dedication, .legacy, main, footer.colophon,
     .overlay, #modal-overlay, #print-view, .admin-chrome { display: none !important; }
 
     #program-print { display: block; font-family: "Fraunces", Georgia, serif; color: black; }
@@ -1008,6 +1009,133 @@
       color: #555; text-align: center;
     }
   }
+
+  /* =========== LEGACY · HALL OF MEMORY =========== */
+  .legacy {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 32px 80px;
+  }
+  .legacy-header {
+    text-align: center;
+    padding: 28px 0 28px;
+    border-top: 3px double var(--ink);
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 56px;
+  }
+  .legacy-eyebrow {
+    font-family: var(--sans); font-size: 11px;
+    letter-spacing: 0.32em; text-transform: uppercase; font-weight: 700;
+    color: var(--brass); margin-bottom: 12px;
+  }
+  .legacy-title {
+    font-family: var(--serif); font-weight: 400;
+    font-variation-settings: "opsz" 96, "wght" 400;
+    font-size: 44px; letter-spacing: -0.02em; line-height: 1.05;
+    color: var(--ink); margin-bottom: 14px;
+  }
+  .legacy-title em { font-style: italic; color: var(--forest); }
+  .legacy-lede {
+    font-family: var(--serif); font-style: italic;
+    font-size: 17px; color: var(--ink-soft);
+    max-width: 560px; margin: 0 auto; line-height: 1.55;
+  }
+
+  .timeline {
+    position: relative;
+    padding: 0 0 0 4px;
+  }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 156px; top: 22px; bottom: 22px;
+    width: 1px;
+    background: linear-gradient(to bottom,
+      transparent 0%,
+      var(--brass) 8%,
+      var(--brass) 92%,
+      transparent 100%);
+    opacity: 0.6;
+  }
+  .station {
+    display: grid;
+    grid-template-columns: 156px 1fr;
+    gap: 0;
+    margin-bottom: 64px;
+    position: relative;
+  }
+  .station:last-child { margin-bottom: 0; }
+  .station-marker {
+    padding-right: 36px;
+    text-align: right;
+    position: relative;
+  }
+  .station-marker::after {
+    content: "";
+    position: absolute;
+    right: -5px; top: 18px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1.5px solid var(--brass);
+  }
+  .station-year {
+    font-family: var(--serif);
+    font-variation-settings: "opsz" 144, "wght" 300;
+    font-size: 56px; line-height: 1; color: var(--ink);
+    letter-spacing: -0.03em;
+  }
+  .station-roman {
+    font-family: var(--serif); font-style: italic;
+    font-size: 13px; color: var(--ink-muted);
+    letter-spacing: 0.08em; margin-top: 6px;
+    font-variant-caps: small-caps;
+  }
+  .station-content { padding-left: 44px; }
+  .station-photo {
+    margin-bottom: 18px;
+    box-shadow: 0 2px 8px rgba(31, 26, 20, 0.12), 0 8px 32px rgba(31, 26, 20, 0.06);
+    border: 1px solid var(--rule-soft);
+    background: var(--paper-deep);
+  }
+  .station-photo img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .station.is-archival .station-photo img {
+    filter: sepia(0.55) contrast(0.95) saturate(0.85);
+  }
+  .station-title {
+    font-family: var(--serif);
+    font-variation-settings: "opsz" 72, "wght" 500;
+    font-size: 22px; color: var(--ink);
+    letter-spacing: -0.01em; margin-bottom: 8px;
+  }
+  .station-title em { font-style: italic; color: var(--forest); }
+  .station-caption {
+    font-family: var(--serif); font-size: 15px;
+    line-height: 1.6; color: var(--ink-soft);
+    max-width: 560px;
+  }
+  .station-caption em { font-style: italic; }
+  .station-attrib {
+    font-family: var(--sans); font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-muted); font-weight: 600;
+    margin-top: 14px;
+  }
+  .station.is-living .station-photo img { filter: none; }
+  .station.is-living .station-marker::after { background: var(--brass); }
+
+  @media (max-width: 720px) {
+    .timeline::before { left: 14px; }
+    .station { grid-template-columns: 1fr; gap: 16px; }
+    .station-marker { padding-right: 0; padding-left: 36px; text-align: left; }
+    .station-marker::after { left: 9px; right: auto; top: 22px; }
+    .station-year { font-size: 38px; }
+    .station-content { padding-left: 36px; }
+  }
 </style>
 </head>
 <body>
@@ -1053,18 +1181,144 @@
   </div>
 </header>
 
-<!-- Dedication (placeholder content — obvious seams) -->
+<!-- Dedication — verified biography from 1958 Golfdom obit; pull-quote awaits family/chair input -->
 <section class="dedication">
   <div class="dedication-kicker">In Honor Of</div>
   <div class="dedication-body">
     <span class="pull">
       &ldquo;<span class="placeholder-mark" title="Replace with a real pull-quote about Fred Wright">PULL QUOTE</span>&rdquo;
     </span>
-    Fred Wright served as <span class="placeholder-mark" title="Role">[ROLE]</span> at Oakley Country Club from <span class="placeholder-mark" title="Year">MCMXLVIII</span> to <span class="placeholder-mark" title="Year">MCMXCI</span>.
-    He <span class="placeholder-mark" title="2&ndash;3 sentences about who he was, what he meant to the club, what the tournament celebrates">[BIOGRAPHICAL DETAIL &mdash; 2&ndash;3 SENTENCES]</span>.
-    This tournament is played each spring in his memory.
+    Frederick J. Wright Jr. (1898&ndash;1958) was an amateur of the first rank &mdash; a member of the winning 1923 United States Walker Cup team, seven-time Massachusetts state champion, and the 1956 USGA Senior Amateur champion. He was still competing for the National Amateur on August 26, 1958, when he collapsed at the thirteenth tee of The Country Club at Brookline. This tournament is played each spring in his memory.
   </div>
   <div class="dedication-sig">&mdash; The Board of Governors</div>
+</section>
+
+<!-- ============ LEGACY · HALL OF MEMORY ============ -->
+<section class="legacy">
+  <div class="legacy-header">
+    <div class="legacy-eyebrow">A Life In Golf</div>
+    <h2 class="legacy-title">Hall of <em>Memory</em></h2>
+    <p class="legacy-lede">
+      Five moments from the archive &mdash; from a young Wright on the United States team
+      at Hoylake through his prime at Oakley and into living memory at the Club.
+    </p>
+  </div>
+
+  <div class="timeline">
+
+    <!-- Station I — 1921 (the keystone: Wright on the US team) -->
+    <article class="station is-archival">
+      <div class="station-marker">
+        <div class="station-year">1921</div>
+        <div class="station-roman">MCMXXI</div>
+      </div>
+      <div class="station-content">
+        <figure class="station-photo">
+          <img src="history/america-vs-britain-1921.jpg"
+               alt="America vs. Great Britain, International Singles Matches, 1921, Royal Liverpool Golf Club, Hoylake. From left: William C. Fownes Jr., Robert T. Jones Jr., J. Wood Platt, Fred Wright, Francis D. Ouimet, Paul Hunter, Jesse P. Guilford. Beside the photograph, the printed match card listing the singles pairings."
+               loading="lazy">
+        </figure>
+        <h3 class="station-title">America v. <em>Great Britain</em></h3>
+        <p class="station-caption">
+          At Royal Liverpool&rsquo;s Hoylake links, the informal match between America and
+          Great Britain &mdash; the contest that would formalize, the next year, as the
+          Walker Cup. Wright (fourth from left) played for the United States alongside
+          Bobby Jones, Francis Ouimet, and Jesse Guilford under captain William C.
+          Fownes Jr., paired in the singles against Britain&rsquo;s E. W. Holderness.
+        </p>
+        <div class="station-attrib">Oakley Archives, MCMXXI</div>
+      </div>
+    </article>
+
+    <!-- Station II — 1923 -->
+    <article class="station is-archival">
+      <div class="station-marker">
+        <div class="station-year">1923</div>
+        <div class="station-roman">MCMXXIII</div>
+      </div>
+      <div class="station-content">
+        <figure class="station-photo">
+          <img src="history/walker-cup-1923.jpg"
+               alt="The 1923 United States Walker Cup team aboard ship — Francis Ouimet, Robert Gardner, George Rotan, Dr. Oscar W. Willing, Harrison Johnson, David Herron"
+               loading="lazy">
+        </figure>
+        <h3 class="station-title">A <em>Walker Cup</em> Won</h3>
+        <p class="station-caption">
+          Two years on, the United States team aboard the liner for St. Andrews and the
+          second Walker Cup: Ouimet, Gardner, Rotan, Willing, Johnson, Herron. Wright was
+          a member of the winning American side; the United States took the cup
+          6&frac12;&ndash;5&frac12;. The photograph carries Ouimet&rsquo;s hand.
+        </p>
+        <div class="station-attrib">Signed by Ouimet &middot; Oakley Archives, MCMXXIII</div>
+      </div>
+    </article>
+
+    <!-- Station III — c.1920s -->
+    <article class="station is-archival">
+      <div class="station-marker">
+        <div class="station-year">c.1920s</div>
+        <div class="station-roman">MCMXX&ndash;XXIX</div>
+      </div>
+      <div class="station-content">
+        <figure class="station-photo">
+          <img src="history/wright-with-ouimet-guilford-hancock.jpg"
+               alt="Fred Wright with Jess Guilford, Francis Ouimet, and Roland Hancock"
+               loading="lazy">
+        </figure>
+        <h3 class="station-title">Among <em>Champions</em></h3>
+        <p class="station-caption">
+          Wright (right) with Jess Guilford, Francis Ouimet, and Roland Hancock
+          &mdash; four amateurs of national rank. Guilford was the 1921 U.S. Amateur
+          champion; Ouimet, the 1913 U.S. Open champion at Brookline.
+        </p>
+        <div class="station-attrib">Oakley Archives, c. MCMXX&ndash;XXIX</div>
+      </div>
+    </article>
+
+    <!-- Station IV — 1948 -->
+    <article class="station is-archival">
+      <div class="station-marker">
+        <div class="station-year">1948</div>
+        <div class="station-roman">MCMXLVIII</div>
+      </div>
+      <div class="station-content">
+        <figure class="station-photo">
+          <img src="history/wright-1948-ace.jpg"
+               alt="Fred Wright posing after an ace on Oakley's 14th hole, c.1948"
+               loading="lazy">
+        </figure>
+        <h3 class="station-title">An <em>Ace</em> on the Fourteenth</h3>
+        <p class="station-caption">
+          An afternoon at Oakley, the ball in the cup at the fourteenth. Wright posed
+          with the flagstick the way a man poses for a photograph he expects his
+          grandchildren to see.
+        </p>
+        <div class="station-attrib">Oakley Archives, c. MCMXLVIII</div>
+      </div>
+    </article>
+
+    <!-- Station V — 2019 (restored color: legacy lives on) -->
+    <article class="station is-living">
+      <div class="station-marker">
+        <div class="station-year">2019</div>
+        <div class="station-roman">MMXIX</div>
+      </div>
+      <div class="station-content">
+        <figure class="station-photo">
+          <img src="history/granddaughters-2019.jpg"
+               alt="Fred Wright's granddaughters with the oil portrait donated by the Wright family to the Club, 2019"
+               loading="lazy">
+        </figure>
+        <h3 class="station-title">The <em>Portrait</em> Returns</h3>
+        <p class="station-caption">
+          Wright&rsquo;s granddaughters with the oil portrait donated by the Wright family
+          to the Club. The painting hangs at Oakley.
+        </p>
+        <div class="station-attrib">Oakley Archives, MMXIX</div>
+      </div>
+    </article>
+
+  </div>
 </section>
 
 <!-- Shared.js renders into <main id="main-view"> (and banner-area).

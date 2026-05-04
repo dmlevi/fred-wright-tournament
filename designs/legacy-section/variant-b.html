@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Variant B · Frontispiece · The Fred Wright</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --paper: #faf4e8;
+    --paper-deep: #f1e8d5;
+    --paper-shade: #e8ddc0;
+    --ink: #1f1a14;
+    --ink-soft: #4a3f2e;
+    --ink-muted: #877761;
+    --rule: #c9bd9e;
+    --rule-soft: #e0d5b6;
+    --forest: #133825;
+    --forest-dark: #0a2018;
+    --brass: #b08838;
+    --brass-soft: #dec79a;
+    --wine: #6a1a2a;
+    --serif: "Fraunces", "Playfair Display", Georgia, serif;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  body {
+    min-height: 100vh;
+    font-family: var(--serif);
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(at 10% 0%, rgba(176, 136, 56, 0.04) 0%, transparent 40%),
+      radial-gradient(at 90% 100%, rgba(19, 56, 37, 0.03) 0%, transparent 45%),
+      radial-gradient(rgba(31, 26, 20, 0.015) 1px, transparent 1px);
+    background-size: auto, auto, 3px 3px;
+  }
+
+  .variant-tag {
+    position: fixed; top: 12px; left: 12px; z-index: 90;
+    background: var(--ink); color: var(--brass-soft);
+    padding: 6px 12px; border-radius: 2px;
+    font-family: var(--sans); font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700;
+  }
+  .variant-tag strong { color: var(--brass); }
+
+  /* MASTHEAD */
+  header.masthead {
+    padding: 56px 32px 28px; text-align: center;
+    max-width: 1100px; margin: 0 auto; position: relative;
+  }
+  header.masthead::after {
+    content: ""; display: block; width: 60px; height: 1px;
+    background: var(--brass); margin: 28px auto 0; opacity: 0.5;
+  }
+  .masthead-kicker {
+    font-family: var(--sans); font-size: 11px;
+    letter-spacing: 0.4em; text-transform: uppercase; font-weight: 600;
+    color: var(--ink-muted); margin-bottom: 14px;
+  }
+  .masthead-kicker .bullet { color: var(--brass); }
+  .masthead-title {
+    font-family: var(--serif); font-weight: 400;
+    font-variation-settings: "opsz" 144, "wght" 400;
+    font-size: clamp(48px, 7vw, 84px);
+    letter-spacing: -0.035em; line-height: 0.95; color: var(--ink); margin: 0;
+  }
+  .masthead-title .article {
+    display: block; font-style: italic; font-size: 0.3em;
+    letter-spacing: 0.04em; color: var(--brass); margin-bottom: 4px; text-transform: lowercase;
+  }
+  .masthead-title .given { display: block; font-weight: 300; }
+  .masthead-title .family { display: block; font-style: italic; color: var(--forest); }
+  .masthead-sub {
+    font-family: var(--serif); font-style: italic; font-size: 16px;
+    color: var(--ink-soft); margin-top: 14px; letter-spacing: 0.01em;
+  }
+  .masthead-sub .edition { font-style: normal; font-variant-caps: small-caps; letter-spacing: 0.1em; color: var(--ink); }
+
+  /* DEDICATION */
+  .dedication { max-width: 640px; margin: 0 auto; padding: 0 32px 56px; text-align: center; }
+  .dedication-kicker {
+    font-family: var(--sans); font-size: 10px;
+    letter-spacing: 0.32em; text-transform: uppercase; font-weight: 700;
+    color: var(--wine); margin-bottom: 14px;
+  }
+  .dedication-body { font-family: var(--serif); font-size: 19px; line-height: 1.55; color: var(--ink-soft); }
+  .dedication-body em { font-style: italic; color: var(--ink); }
+  .dedication-body .pull {
+    display: block; font-size: 26px; font-style: italic;
+    color: var(--ink); line-height: 1.35; margin-bottom: 14px;
+  }
+  .placeholder-mark {
+    display: inline-block; padding: 1px 6px;
+    background: rgba(176, 136, 56, 0.14);
+    border: 1px dashed var(--brass); border-radius: 2px;
+    font-family: var(--sans); font-size: 11px; font-style: normal;
+    color: var(--wine); letter-spacing: 0.04em; font-weight: 600;
+    vertical-align: 2px; margin: 0 2px; cursor: help;
+  }
+  .dedication-sig { margin-top: 22px; font-family: var(--serif); font-style: italic; font-size: 14px; color: var(--ink-muted); }
+
+  /* =================================================================
+     LEGACY · VARIANT B: FRONTISPIECE
+     Full-bleed sepia hero of the 1948 ace, pull-quote overlaid,
+     plates strip beneath with the other three photos.
+     ================================================================= */
+
+  .frontispiece {
+    position: relative;
+    width: 100%;
+    margin: 0 0 0;
+    background: var(--ink);
+    overflow: hidden;
+  }
+  .frontispiece-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    max-height: 80vh;
+    overflow: hidden;
+    background: #2a2418;
+  }
+  .frontispiece-image img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center 32%;
+    filter: sepia(0.7) contrast(0.92) saturate(0.7) brightness(1.02);
+    display: block;
+  }
+  /* paper-edge vignette so the photo melts into the cream paper above & below */
+  .frontispiece-image::before {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(to bottom,
+        var(--paper) 0%, transparent 12%, transparent 88%, var(--paper) 100%),
+      radial-gradient(ellipse at center,
+        transparent 50%, rgba(31, 26, 20, 0.35) 100%);
+    pointer-events: none;
+  }
+
+  .frontispiece-overlay {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: var(--brass-soft);
+    max-width: 720px;
+    padding: 0 32px;
+    pointer-events: none;
+  }
+  .frontispiece-overlay-eyebrow {
+    font-family: var(--sans); font-size: 11px;
+    letter-spacing: 0.4em; text-transform: uppercase; font-weight: 700;
+    color: var(--brass); margin-bottom: 22px;
+  }
+  .frontispiece-overlay-eyebrow::before,
+  .frontispiece-overlay-eyebrow::after {
+    content: ""; display: inline-block; width: 36px; height: 1px;
+    background: var(--brass); vertical-align: middle; margin: 0 14px;
+    opacity: 0.7;
+  }
+  .frontispiece-pull {
+    font-family: var(--serif); font-style: italic;
+    font-variation-settings: "opsz" 96, "wght" 400;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.18;
+    color: #f9efd6;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55);
+    letter-spacing: -0.005em;
+  }
+  .frontispiece-pull::before { content: "\201C"; color: var(--brass); margin-right: 4px; }
+  .frontispiece-pull::after  { content: "\201D"; color: var(--brass); margin-left: 4px; }
+  .frontispiece-attrib {
+    font-family: var(--serif); font-style: italic;
+    font-size: 15px; color: var(--brass-soft);
+    margin-top: 18px; letter-spacing: 0.04em;
+  }
+
+  /* the ace photo caption sits below the frontispiece, on cream paper */
+  .frontispiece-caption {
+    max-width: 760px; margin: 0 auto;
+    padding: 28px 32px 0; text-align: center;
+  }
+  .frontispiece-caption-title {
+    font-family: var(--serif); font-weight: 400;
+    font-variation-settings: "opsz" 96, "wght" 400;
+    font-size: 32px; color: var(--ink);
+    letter-spacing: -0.015em; margin-bottom: 8px;
+  }
+  .frontispiece-caption-title em { font-style: italic; color: var(--forest); }
+  .frontispiece-caption-body {
+    font-family: var(--serif); font-style: italic;
+    font-size: 16px; color: var(--ink-soft);
+    line-height: 1.55; max-width: 560px; margin: 0 auto;
+  }
+  .frontispiece-caption-attrib {
+    font-family: var(--sans); font-size: 10px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink-muted); font-weight: 600;
+    margin-top: 16px;
+  }
+  .frontispiece-caption-attrib::before {
+    content: ""; display: inline-block; width: 32px; height: 1px;
+    background: var(--brass); vertical-align: middle; margin-right: 12px;
+    opacity: 0.6;
+  }
+  .frontispiece-caption-attrib::after {
+    content: ""; display: inline-block; width: 32px; height: 1px;
+    background: var(--brass); vertical-align: middle; margin-left: 12px;
+    opacity: 0.6;
+  }
+
+  /* PLATES STRIP — the other three, smaller, captioned */
+  .plates-strip {
+    max-width: 1040px;
+    margin: 64px auto 0;
+    padding: 0 32px 80px;
+  }
+  .plates-strip-header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  .plates-strip-eyebrow {
+    font-family: var(--sans); font-size: 10px;
+    letter-spacing: 0.32em; text-transform: uppercase; font-weight: 700;
+    color: var(--brass); margin-bottom: 10px;
+  }
+  .plates-strip-title {
+    font-family: var(--serif); font-style: italic;
+    font-size: 22px; color: var(--ink-soft);
+    font-weight: 400;
+  }
+
+  .plates-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 44px 56px;
+  }
+  @media (max-width: 720px) {
+    .plates-grid { grid-template-columns: 1fr; gap: 36px; }
+  }
+  .plate {
+    text-align: center;
+  }
+  .plate-photo {
+    background: var(--paper-deep);
+    padding: 6px;
+    border: 1px solid var(--rule-soft);
+    box-shadow: 0 2px 6px rgba(31, 26, 20, 0.10), 0 6px 24px rgba(31, 26, 20, 0.06);
+    margin-bottom: 16px;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+  .plate-photo img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: sepia(0.55) contrast(0.95) saturate(0.85);
+    display: block;
+  }
+  .plate-photo.is-living img { filter: none; }
+
+  .plate-num {
+    font-family: var(--sans); font-size: 10px;
+    letter-spacing: 0.32em; text-transform: uppercase; font-weight: 700;
+    color: var(--brass); margin-bottom: 4px;
+  }
+  .plate-title {
+    font-family: var(--serif); font-weight: 400;
+    font-variation-settings: "opsz" 72, "wght" 500;
+    font-size: 18px; color: var(--ink);
+    letter-spacing: -0.01em; margin-bottom: 6px;
+  }
+  .plate-title em { font-style: italic; color: var(--forest); }
+  .plate-caption {
+    font-family: var(--serif); font-style: italic;
+    font-size: 13px; color: var(--ink-muted);
+    line-height: 1.5;
+  }
+
+  /* Below stub */
+  .below-stub {
+    max-width: 1040px; margin: 0 auto;
+    padding: 0 32px 56px; text-align: center; opacity: 0.5;
+  }
+  .below-stub-rule { border-top: 3px double var(--ink); padding-top: 22px; }
+  .below-stub h2 { font-family: var(--serif); font-weight: 400; font-size: 28px; color: var(--ink-muted); font-style: italic; }
+  .below-stub-note {
+    font-family: var(--sans); font-size: 10px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink-muted); font-weight: 600; margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="variant-tag">Variant <strong>B</strong> · Frontispiece</div>
+
+<header class="masthead">
+  <div class="masthead-kicker">Oakley Country Club <span class="bullet">·</span> 1898</div>
+  <h1 class="masthead-title">
+    <span class="article">the</span>
+    <span class="given">Fred</span>
+    <span class="family">Wright</span>
+  </h1>
+  <div class="masthead-sub">
+    <span class="edition">LII Annual</span> &middot; <em>Anno Domini</em> MMXXVI
+  </div>
+</header>
+
+<section class="dedication">
+  <div class="dedication-kicker">In Honor Of</div>
+  <div class="dedication-body">
+    <span class="pull">
+      &ldquo;<span class="placeholder-mark" title="Real Wright quote or family remembrance">A REMEMBRANCE OF FRED</span>&rdquo;
+    </span>
+    Frederick J. Wright Jr. (1898&ndash;1958) was an amateur of the first rank &mdash; a member of the winning 1923 United States Walker Cup team, seven-time Massachusetts state champion, and the 1956 USGA Senior Amateur champion. He was still competing for the National Amateur on the morning of August 26th, 1958, when he collapsed at the thirteenth tee of The Country Club at Brookline. This tournament is played each spring in his memory.
+  </div>
+  <div class="dedication-sig">&mdash; The Board of Governors</div>
+</section>
+
+<!-- ============ FRONTISPIECE ============ -->
+<section class="frontispiece" aria-label="Frontispiece: Fred Wright, c.1948">
+  <div class="frontispiece-image">
+    <img src="../../history/wright-1948-ace.jpg"
+         alt="Fred Wright posing after an ace on Oakley's 14th hole, c.1948"
+         loading="lazy">
+    <div class="frontispiece-overlay">
+      <div class="frontispiece-overlay-eyebrow">In Memoriam</div>
+      <div class="frontispiece-pull"><span class="placeholder-mark" title="Real Wright quote — about the game, the club, or how members remember him">A REMEMBRANCE OF FRED</span></div>
+      <div class="frontispiece-attrib">&mdash; Fred Wright Jr., c. MCMXLVIII</div>
+    </div>
+  </div>
+</section>
+
+<div class="frontispiece-caption">
+  <h2 class="frontispiece-caption-title">An <em>Ace</em> on the Fourteenth</h2>
+  <p class="frontispiece-caption-body">
+    A spring afternoon at Oakley, the ball in the cup at the par-three 14th. Wright posed
+    with the flagstick the way a man poses for a photograph he expects his grandchildren
+    to see.
+  </p>
+  <div class="frontispiece-caption-attrib">Oakley Archives, c. MCMXLVIII</div>
+</div>
+
+<!-- ============ PLATES STRIP — the other four ============ -->
+<section class="plates-strip">
+  <div class="plates-strip-header">
+    <div class="plates-strip-eyebrow">From the Archive</div>
+    <h3 class="plates-strip-title">Four more leaves from the Wright file</h3>
+  </div>
+
+  <div class="plates-grid">
+    <figure class="plate">
+      <div class="plate-photo">
+        <img src="../../history/america-vs-britain-1921.jpg"
+             alt="America vs. Great Britain, International Singles Matches, 1921, Royal Liverpool — Wright on the United States team alongside Bobby Jones, Ouimet, and Guilford"
+             loading="lazy">
+      </div>
+      <div class="plate-num">Plate I &middot; MCMXXI</div>
+      <h4 class="plate-title">America v. <em>Great Britain</em></h4>
+      <p class="plate-caption">
+        At Hoylake, the informal match that became the Walker Cup. Wright on the United
+        States team with Bobby Jones, Ouimet, and Guilford.
+      </p>
+    </figure>
+
+    <figure class="plate">
+      <div class="plate-photo">
+        <img src="../../history/walker-cup-1923.jpg"
+             alt="Walker Cup team aboard ship, 1923"
+             loading="lazy">
+      </div>
+      <div class="plate-num">Plate II &middot; MCMXXIII</div>
+      <h4 class="plate-title">The <em>Walker Cup</em> Era</h4>
+      <p class="plate-caption">
+        Ouimet, Gardner, Rotan, Willing, Johnson, and Herron &mdash; bound for the
+        second Walker Cup match.
+      </p>
+    </figure>
+
+    <figure class="plate">
+      <div class="plate-photo">
+        <img src="../../history/wright-with-ouimet-guilford-hancock.jpg"
+             alt="Fred Wright with Jess Guilford, Francis Ouimet, and Roland Hancock"
+             loading="lazy">
+      </div>
+      <div class="plate-num">Plate III &middot; c. MCMXX&ndash;XXIX</div>
+      <h4 class="plate-title">Among <em>Champions</em></h4>
+      <p class="plate-caption">
+        Wright (right) with Jess Guilford, Francis Ouimet, and Roland Hancock &mdash;
+        a Massachusetts foursome of national reputation.
+      </p>
+    </figure>
+
+    <figure class="plate">
+      <div class="plate-photo is-living">
+        <img src="../../history/granddaughters-2019.jpg"
+             alt="Fred Wright's four granddaughters with the donated oil portrait, 2019"
+             loading="lazy">
+      </div>
+      <div class="plate-num">Plate IV &middot; MMXIX</div>
+      <h4 class="plate-title">The <em>Portrait</em> Returns</h4>
+      <p class="plate-caption">
+        Wright&rsquo;s four granddaughters with the oil portrait donated by the family
+        to the Club &mdash; now hanging in the room where pairings are read.
+      </p>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ STUB ============ -->
+<div class="below-stub">
+  <div class="below-stub-rule">
+    <h2>The 2026 Field</h2>
+    <div class="below-stub-note">&mdash; Continues below in the program &mdash;</div>
+  </div>
+</div>
+
+</body>
+</html>

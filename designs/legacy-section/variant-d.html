@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Variant D · In Memoriam Folio · The Fred Wright</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --paper: #faf4e8;
+    --paper-deep: #f1e8d5;
+    --paper-shade: #e8ddc0;
+    --paper-aged: #efe2c4;
+    --ink: #1f1a14;
+    --ink-soft: #4a3f2e;
+    --ink-muted: #877761;
+    --rule: #c9bd9e;
+    --rule-soft: #e0d5b6;
+    --forest: #133825;
+    --forest-dark: #0a2018;
+    --brass: #b08838;
+    --brass-soft: #dec79a;
+    --wine: #6a1a2a;
+    --serif: "Fraunces", "Playfair Display", Georgia, serif;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  body {
+    min-height: 100vh;
+    font-family: var(--serif);
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(at 10% 0%, rgba(176, 136, 56, 0.04) 0%, transparent 40%),
+      radial-gradient(at 90% 100%, rgba(19, 56, 37, 0.03) 0%, transparent 45%),
+      radial-gradient(rgba(31, 26, 20, 0.015) 1px, transparent 1px);
+    background-size: auto, auto, 3px 3px;
+  }
+
+  .variant-tag {
+    position: fixed; top: 12px; left: 12px; z-index: 90;
+    background: var(--ink); color: var(--brass-soft);
+    padding: 6px 12px; border-radius: 2px;
+    font-family: var(--sans); font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700;
+  }
+  .variant-tag strong { color: var(--brass); }
+
+  /* MASTHEAD */
+  header.masthead {
+    padding: 56px 32px 28px; text-align: center;
+    max-width: 1100px; margin: 0 auto; position: relative;
+  }
+  header.masthead::after {
+    content: ""; display: block; width: 60px; height: 1px;
+    background: var(--brass); margin: 28px auto 0; opacity: 0.5;
+  }
+  .masthead-kicker {
+    font-family: var(--sans); font-size: 11px;
+    letter-spacing: 0.4em; text-transform: uppercase; font-weight: 600;
+    color: var(--ink-muted); margin-bottom: 14px;
+  }
+  .masthead-kicker .bullet { color: var(--brass); }
+  .masthead-title {
+    font-family: var(--serif); font-weight: 400;
+    font-variation-settings: "opsz" 144, "wght" 400;
+    font-size: clamp(48px, 7vw, 84px);
+    letter-spacing: -0.035em; line-height: 0.95; color: var(--ink); margin: 0;
+  }
+  .masthead-title .article {
+    display: block; font-style: italic; font-size: 0.3em;
+    letter-spacing: 0.04em; color: var(--brass); margin-bottom: 4px; text-transform: lowercase;
+  }
+  .masthead-title .given { display: block; font-weight: 300; }
+  .masthead-title .family { display: block; font-style: italic; color: var(--forest); }
+  .masthead-sub {
+    font-family: var(--serif); font-style: italic; font-size: 16px;
+    color: var(--ink-soft); margin-top: 14px; letter-spacing: 0.01em;
+  }
+  .masthead-sub .edition { font-style: normal; font-variant-caps: small-caps; letter-spacing: 0.1em; color: var(--ink); }
+
+  /* DEDICATION (no longer a separate section here — folded into the folio's left page) */
+
+  .placeholder-mark {
+    display: inline-block; padding: 1px 6px;
+    background: rgba(176, 136, 56, 0.14);
+    border: 1px dashed var(--brass); border-radius: 2px;
+    font-family: var(--sans); font-size: 11px; font-style: normal;
+    color: var(--wine); letter-spacing: 0.04em; font-weight: 600;
+    vertical-align: 2px; margin: 0 2px; cursor: help;
+  }
+
+  /* =================================================================
+     LEGACY · VARIANT D: IN MEMORIAM FOLIO
+     A two-page-spread that reads like an opened hardcover book.
+     Left page: dedication + Wright's 1948 portrait.
+     Right page: scrapbook montage of the other three with corner mounts.
+     ================================================================= */
+
+  .folio-wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 28px 24px 80px;
+    perspective: 1200px;
+  }
+
+  .folio {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: var(--paper-aged);
+    box-shadow:
+      0 1px 2px rgba(31, 26, 20, 0.10),
+      0 8px 32px rgba(31, 26, 20, 0.18),
+      0 32px 80px rgba(31, 26, 20, 0.10);
+    position: relative;
+    border: 1px solid var(--rule);
+    background-image:
+      radial-gradient(rgba(31, 26, 20, 0.018) 1px, transparent 1px);
+    background-size: 4px 4px;
+  }
+  /* aged edge ring inside */
+  .folio::before {
+    content: "";
+    position: absolute; inset: 12px;
+    border: 1px solid rgba(176, 136, 56, 0.22);
+    pointer-events: none;
+  }
+  /* Center binding — gutter shadow */
+  .folio::after {
+    content: "";
+    position: absolute;
+    left: 50%; top: 0; bottom: 0;
+    width: 56px; transform: translateX(-50%);
+    background:
+      linear-gradient(to right,
+        transparent 0%,
+        rgba(31, 26, 20, 0.08) 35%,
+        rgba(31, 26, 20, 0.22) 50%,
+        rgba(31, 26, 20, 0.08) 65%,
+        transparent 100%);
+    pointer-events: none;
+  }
+
+  .folio-page {
+    padding: 64px 56px;
+    position: relative;
+    min-height: 720px;
+  }
+  .folio-page-left { padding-right: 72px; }
+  .folio-page-right { padding-left: 72px; }
+
+  /* Page-folio numbering, like an old book */
+  .folio-page-num {
+    position: absolute;
+    bottom: 28px;
+    font-family: var(--serif); font-style: italic;
+    font-size: 12px; color: var(--ink-muted);
+    letter-spacing: 0.18em;
+    font-variant-caps: small-caps;
+  }
+  .folio-page-left .folio-page-num { left: 56px; }
+  .folio-page-right .folio-page-num { right: 56px; }
+
+  /* LEFT PAGE — prologue (1921) + dedication + portrait (1948) */
+  .folio-prologue {
+    margin: -14px auto 38px;
+    max-width: 380px;
+    text-align: center;
+  }
+  .folio-prologue-mat {
+    background: var(--paper);
+    padding: 8px 8px 10px;
+    border: 1px solid var(--rule);
+    box-shadow:
+      0 1px 2px rgba(31, 26, 20, 0.08),
+      0 4px 14px rgba(31, 26, 20, 0.07);
+    transform: rotate(0.8deg);
+    position: relative;
+  }
+  .folio-prologue-mat::before {
+    content: "";
+    position: absolute; inset: 4px;
+    border: 1px solid rgba(176, 136, 56, 0.28);
+    pointer-events: none;
+  }
+  .folio-prologue-mat img {
+    display: block; width: 100%; height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: left center;
+    filter: sepia(0.55) contrast(0.95) saturate(0.85);
+  }
+  .folio-prologue-caption {
+    margin-top: 14px;
+    font-family: var(--serif); font-style: italic;
+    font-size: 13px; color: var(--ink-muted);
+    line-height: 1.5;
+  }
+  .folio-prologue-caption strong {
+    display: block;
+    font-style: normal;
+    font-weight: 500;
+    color: var(--ink);
+    font-size: 14px;
+    margin-bottom: 2px;
+    letter-spacing: 0.04em;
+    font-variant-caps: small-caps;
+  }
+  .folio-prologue-divider {
+    margin: 28px auto 0;
+    width: 60px; height: 1px;
+    background: var(--brass);
+    opacity: 0.55;
+  }
+
+  .folio-eyebrow {
+    font-family: var(--sans); font-size: 10px;
+    letter-spacing: 0.36em; text-transform: uppercase; font-weight: 700;
+    color: var(--wine); margin-bottom: 14px;
+    text-align: center;
+  }
+  .folio-dedication-pull {
+    font-family: var(--serif); font-style: italic;
+    font-variation-settings: "opsz" 96, "wght" 400;
+    font-size: 24px; line-height: 1.32;
+    color: var(--ink); text-align: center;
+    margin-bottom: 18px;
+  }
+  .folio-dedication-body {
+    font-family: var(--serif); font-size: 16px;
+    line-height: 1.6; color: var(--ink-soft);
+    text-align: center;
+    max-width: 440px; margin: 0 auto 28px;
+  }
+  .folio-dedication-body em { font-style: italic; color: var(--ink); }
+
+  /* Wright's portrait — 1948 ace photo, mounted center */
+  .folio-portrait {
+    margin: 36px auto 0;
+    max-width: 360px;
+    background: var(--paper);
+    padding: 12px 12px 14px;
+    border: 1px solid var(--rule);
+    box-shadow:
+      0 1px 2px rgba(31, 26, 20, 0.10),
+      0 6px 20px rgba(31, 26, 20, 0.08);
+    transform: rotate(-1.2deg);
+    position: relative;
+  }
+  .folio-portrait::before {
+    content: "";
+    position: absolute; inset: 6px;
+    border: 1px solid rgba(176, 136, 56, 0.3);
+    pointer-events: none;
+  }
+  .folio-portrait img {
+    display: block; width: 100%; height: auto;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    filter: sepia(0.6) contrast(0.95) saturate(0.85);
+  }
+  .folio-portrait-caption {
+    text-align: center;
+    margin-top: 14px;
+    font-family: var(--serif); font-style: italic;
+    font-size: 13px; color: var(--ink-muted);
+    line-height: 1.45;
+  }
+  .folio-portrait-caption strong {
+    display: block;
+    font-style: normal;
+    font-weight: 500;
+    color: var(--ink);
+    font-size: 15px;
+    margin-bottom: 2px;
+  }
+  .folio-sig {
+    margin-top: 32px;
+    text-align: center;
+    font-family: var(--serif); font-style: italic;
+    font-size: 13px; color: var(--ink-muted);
+  }
+
+  /* RIGHT PAGE — scrapbook of the other three */
+  .folio-right-eyebrow {
+    font-family: var(--sans); font-size: 10px;
+    letter-spacing: 0.36em; text-transform: uppercase; font-weight: 700;
+    color: var(--brass); margin-bottom: 24px;
+    text-align: center;
+  }
+  .folio-right-title {
+    font-family: var(--serif); font-weight: 400;
+    font-variation-settings: "opsz" 96, "wght" 400;
+    font-size: 32px; letter-spacing: -0.015em;
+    line-height: 1.1; color: var(--ink);
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .folio-right-title em { font-style: italic; color: var(--forest); }
+  .folio-right-foot {
+    font-family: var(--serif); font-style: italic;
+    font-size: 14px; color: var(--ink-muted);
+    text-align: center; margin-bottom: 36px;
+  }
+
+  /* Scrapbook items — three photos with corner mounts, slight rotation */
+  .scrapbook {
+    position: relative;
+    min-height: 580px;
+  }
+  .scrap {
+    position: absolute;
+    background: var(--paper);
+    padding: 8px 8px 10px;
+    border: 1px solid var(--rule);
+    box-shadow:
+      0 1px 2px rgba(31, 26, 20, 0.08),
+      0 4px 14px rgba(31, 26, 20, 0.10);
+  }
+  .scrap img {
+    display: block;
+    width: 100%; height: auto;
+    object-fit: cover;
+  }
+  .scrap.is-archival img { filter: sepia(0.55) contrast(0.95) saturate(0.85); }
+
+  .scrap .scrap-caption {
+    margin-top: 8px;
+    font-family: var(--serif); font-style: italic;
+    font-size: 12px; line-height: 1.4;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+  .scrap .scrap-caption strong {
+    display: block; font-style: normal;
+    font-weight: 500; color: var(--ink);
+    font-size: 13px; margin-bottom: 2px;
+  }
+  .scrap .scrap-caption em { font-style: italic; }
+
+  /* Photographic corner mounts (4 little brackets, one per corner) */
+  .scrap::before,
+  .scrap::after,
+  .scrap .scrap-photo::before,
+  .scrap .scrap-photo::after {
+    content: "";
+    position: absolute;
+    width: 14px; height: 14px;
+    border: 0 solid rgba(176, 136, 56, 0.55);
+    pointer-events: none;
+  }
+  .scrap .scrap-photo { position: relative; }
+  .scrap::before { top: 4px; left: 4px; border-top-width: 1px; border-left-width: 1px; }
+  .scrap::after { top: 4px; right: 4px; border-top-width: 1px; border-right-width: 1px; }
+  .scrap .scrap-photo::before { bottom: -3px; left: -3px; border-bottom-width: 1px; border-left-width: 1px; }
+  .scrap .scrap-photo::after { bottom: -3px; right: -3px; border-bottom-width: 1px; border-right-width: 1px; }
+
+  /* Layout the three: walker cup top, ~1920s middle, granddaughters bottom */
+  .scrap-1 {
+    top: 0; right: 12px;
+    width: 62%;
+    transform: rotate(2.2deg);
+  }
+  .scrap-2 {
+    top: 200px; left: 0;
+    width: 60%;
+    transform: rotate(-1.8deg);
+    z-index: 2;
+  }
+  .scrap-3 {
+    top: 380px; right: 22px;
+    width: 64%;
+    transform: rotate(1.4deg);
+  }
+
+  /* Responsive — collapse the spread on narrow */
+  @media (max-width: 980px) {
+    .folio { grid-template-columns: 1fr; }
+    .folio::after { display: none; }
+    .folio-page-left, .folio-page-right { padding: 48px 28px; }
+    .folio-page { min-height: auto; }
+    .scrapbook { min-height: 0; display: flex; flex-direction: column; gap: 28px; align-items: center; padding: 8px 0; }
+    .scrap { position: static; width: 90%; max-width: 360px; transform: none !important; }
+    .scrap.is-rotate-left { transform: rotate(-1.5deg) !important; }
+    .scrap.is-rotate-right { transform: rotate(1.5deg) !important; }
+  }
+
+  /* Below stub */
+  .below-stub {
+    max-width: 1040px; margin: 64px auto 0;
+    padding: 0 32px 56px; text-align: center; opacity: 0.5;
+  }
+  .below-stub-rule { border-top: 3px double var(--ink); padding-top: 22px; }
+  .below-stub h2 { font-family: var(--serif); font-weight: 400; font-size: 28px; color: var(--ink-muted); font-style: italic; }
+  .below-stub-note {
+    font-family: var(--sans); font-size: 10px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink-muted); font-weight: 600; margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="variant-tag">Variant <strong>D</strong> · In Memoriam Folio</div>
+
+<header class="masthead">
+  <div class="masthead-kicker">Oakley Country Club <span class="bullet">·</span> 1898</div>
+  <h1 class="masthead-title">
+    <span class="article">the</span>
+    <span class="given">Fred</span>
+    <span class="family">Wright</span>
+  </h1>
+  <div class="masthead-sub">
+    <span class="edition">LII Annual</span> &middot; <em>Anno Domini</em> MMXXVI
+  </div>
+</header>
+
+<!-- ============ FOLIO (open-book spread) ============ -->
+<div class="folio-wrap">
+  <article class="folio" aria-label="In Memoriam folio for Fred Wright Jr.">
+
+    <!-- LEFT PAGE — prologue (1921) + dedication + portrait (1948) -->
+    <section class="folio-page folio-page-left">
+
+      <!-- Prologue: where he came from -->
+      <figure class="folio-prologue">
+        <div class="folio-prologue-mat">
+          <img src="../../history/america-vs-britain-1921.jpg"
+               alt="America vs. Great Britain, 1921, Royal Liverpool — Wright on the United States team alongside Bobby Jones, Ouimet, and Guilford"
+               loading="lazy">
+        </div>
+        <figcaption class="folio-prologue-caption">
+          <strong>Wright at Hoylake, MCMXXI</strong>
+          (fourth from left) on the United States team alongside Bobby Jones,
+          Francis Ouimet, and Jesse Guilford.
+        </figcaption>
+        <div class="folio-prologue-divider" aria-hidden="true"></div>
+      </figure>
+
+      <div class="folio-eyebrow">In Memoriam</div>
+      <p class="folio-dedication-pull">
+        &ldquo;<span class="placeholder-mark" title="Real Wright quote or family remembrance">A REMEMBRANCE OF FRED</span>&rdquo;
+      </p>
+      <p class="folio-dedication-body">
+        Frederick J. Wright Jr. (1898&ndash;1958) was an amateur of the first rank &mdash; a member of the winning 1923 United States Walker Cup team, seven-time Massachusetts state champion, and the 1956 USGA Senior Amateur champion. He was still competing for the National Amateur on the morning of August 26th, 1958, when he collapsed at the thirteenth tee of The Country Club at Brookline. This tournament is played each spring in his memory.
+      </p>
+
+      <figure class="folio-portrait">
+        <img src="../../history/wright-1948-ace.jpg"
+             alt="Fred Wright posing after an ace on Oakley's 14th hole, c.1948"
+             loading="lazy">
+        <figcaption class="folio-portrait-caption">
+          <strong>Fred Wright Jr., c. MCMXLVIII</strong>
+          posing after an ace on Oakley&rsquo;s fourteenth.
+        </figcaption>
+      </figure>
+
+      <div class="folio-sig">&mdash; The Board of Governors</div>
+      <div class="folio-page-num">i</div>
+    </section>
+
+    <!-- RIGHT PAGE — scrapbook -->
+    <section class="folio-page folio-page-right">
+      <div class="folio-right-eyebrow">From the Archive</div>
+      <h2 class="folio-right-title">A <em>Life</em> in Leaves</h2>
+      <p class="folio-right-foot">Three witnesses from the Oakley archive.</p>
+
+      <div class="scrapbook" aria-label="Scrapbook of three archival photographs">
+
+        <figure class="scrap scrap-1 is-archival is-rotate-right">
+          <div class="scrap-photo">
+            <img src="../../history/walker-cup-1923.jpg"
+                 alt="Walker Cup team aboard ship, 1923"
+                 loading="lazy">
+          </div>
+          <figcaption class="scrap-caption">
+            <strong>The Walker Cup, MCMXXIII</strong>
+            Ouimet, Gardner, Rotan, Willing, Johnson, Herron <em>&mdash; bound for the second match.</em>
+          </figcaption>
+        </figure>
+
+        <figure class="scrap scrap-2 is-archival is-rotate-left">
+          <div class="scrap-photo">
+            <img src="../../history/wright-with-ouimet-guilford-hancock.jpg"
+                 alt="Fred Wright with Jess Guilford, Francis Ouimet, and Roland Hancock"
+                 loading="lazy">
+          </div>
+          <figcaption class="scrap-caption">
+            <strong>Among Champions, c. MCMXX&ndash;XXIX</strong>
+            <em>Wright with</em> Guilford, Ouimet, and Hancock.
+          </figcaption>
+        </figure>
+
+        <figure class="scrap scrap-3 is-rotate-right">
+          <div class="scrap-photo">
+            <img src="../../history/granddaughters-2019.jpg"
+                 alt="Fred Wright's four granddaughters with the donated oil portrait, 2019"
+                 loading="lazy">
+          </div>
+          <figcaption class="scrap-caption">
+            <strong>The Portrait Returns, MMXIX</strong>
+            <em>Wright&rsquo;s granddaughters with the donated portrait.</em>
+          </figcaption>
+        </figure>
+
+      </div>
+      <div class="folio-page-num">ii</div>
+    </section>
+
+  </article>
+</div>
+
+<!-- ============ STUB ============ -->
+<div class="below-stub">
+  <div class="below-stub-rule">
+    <h2>The 2026 Field</h2>
+    <div class="below-stub-note">&mdash; Continues below in the program &mdash;</div>
+  </div>
+</div>
+
+</body>
+</html>
