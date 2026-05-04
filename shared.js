@@ -1354,8 +1354,12 @@
       const cursor = searchEl.selectionStart;
       renderPublic();
       const newSearch = document.getElementById('search');
-      newSearch.focus();
+      newSearch.focus({ preventScroll: true });
       newSearch.setSelectionRange(cursor, cursor);
+      if (searchQuery.trim()) {
+        const firstHit = document.querySelector('.player-row.highlighted');
+        if (firstHit) firstHit.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     });
   }
   function highlight(name) {
