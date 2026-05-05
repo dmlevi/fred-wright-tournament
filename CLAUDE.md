@@ -23,6 +23,7 @@ _placeholder.html  archived "coming soon" page from the pre-demo placeholder mod
 .vercelignore      hides internal artifacts (designs/, .claude/, .gstack/, _placeholder.html)
 .claude/launch.json  vercel dev / python http.server launch configs
 designs/           design exploration artifacts (variants, comparison boards) — not deployed
+history/           archival photos of Fred Wright (used by the-program.html legacy section)
 ```
 
 ## Running locally
