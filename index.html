@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fred Wright &mdash; Tournament Builder</title>
+<title>Fred Wright &middot; Tournament Builder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -421,7 +421,7 @@
   }
   .slot-meter-fill.high { background: var(--amber); }
   .slot-meter-fill.full { background: var(--red); }
-  /* Archived seasons: muted ink — past data, no over-cap warning. */
+  /* Archived seasons: muted ink. Past data, no over-cap warning. */
   .slot-meter-fill.archived { background: var(--ink-muted); }
 
   /* view toggle */
@@ -1020,7 +1020,7 @@
     background: var(--surface-warm);
   }
   /* shared.js injects an empty <div style="flex:1"> as a row-mode spacer.
-     In column mode it'd inject a vertical gap — hide just the empty spacer,
+     In column mode it'd inject a vertical gap; hide just the empty spacer,
      not any future div shared.js might add with content. */
   .modal-footer > div:empty { display: none; }
   .modal-footer button {
@@ -1276,7 +1276,7 @@
   }
   .rules-note strong { color: var(--ink); }
 
-  /* ========== PLAYER MODAL — design-review enhancements ========== */
+  /* ========== PLAYER MODAL: design-review enhancements ========== */
   /* Avatar + status subtitle in header */
   .modal-header { gap: 12px; align-items: flex-start; padding: 14px 18px 12px; }
   .modal-header .avatar {
@@ -1531,9 +1531,9 @@
 <script>
   // ========== Tournament Builder layer ==========
   // Three pieces on top of shared.js:
-  //   1) Friendly column names (from variant C) — clearer at a glance than "2026 Participants"
-  //   2) ⌘K command palette (from variant B) — fuzzy search across players + actions
-  //   3) Quick-stat strip (this file) — at-a-glance metrics before the pro even looks at a column
+  //   1) Friendly column names (from variant C): clearer at a glance than "2026 Participants"
+  //   2) ⌘K command palette (from variant B): fuzzy search across players + actions
+  //   3) Quick-stat strip (this file): at-a-glance metrics before the pro even looks at a column
   (function() {
     const FW = window.FW;
     if (!FW) return; // shared.js failed to load
@@ -1678,14 +1678,14 @@
       const activeBtn = seasonSwitcher.querySelector('.season-btn.active');
       if (!triggerYear || !activeBtn) return;
       const newYear = activeBtn.dataset.year;
-      if (triggerYear.textContent === newYear) return; // no change — skip DOM updates
+      if (triggerYear.textContent === newYear) return; // no change; skip DOM updates
       triggerYear.textContent = newYear;
       seasonSwitcher.querySelectorAll('.season-option').forEach(opt => {
         opt.classList.toggle('active', opt.dataset.year === newYear);
       });
     }
 
-    // Document-level dismissal — set once.
+    // Document-level dismissal; set once.
     document.addEventListener('click', e => {
       const panel = seasonSwitcher.querySelector('.season-panel');
       const trigger = seasonSwitcher.querySelector('.season-trigger');
@@ -1764,7 +1764,7 @@
             section: 'Players',
             icon: p.name.charAt(0).toUpperCase(),
             meta: where + status,
-            // Open the modal directly via shared.js — works regardless of current view
+            // Open the modal directly via shared.js; works regardless of current view
             // (kanban hidden on Roster view; archive seasons; column scrolled off-screen).
             run: () => FW.showPlayerModal(p.id)
           };
@@ -1777,7 +1777,7 @@
       paint();
     }
 
-    // Full rebuild — only when the items array changes (input event).
+    // Full rebuild: only when the items array changes (input event).
     function paint() {
       if (items.length === 0) {
         list.innerHTML = '<div class="cmdk-empty">No results. Try a player name or action.</div>';
@@ -1800,7 +1800,7 @@
       list.querySelectorAll('.cmdk-item').forEach(el => {
         // mouseenter only updates the highlight (paintActive); rebuilding mid-hover
         // would detach the node between mousedown and click, swallowing the click.
-        // scroll: false — hovered items are by definition visible; scrolling here
+        // scroll: false. Hovered items are by definition visible; scrolling here
         // would yank the list when mousing back to a higher item after arrowing down.
         el.onmouseenter = () => { activeIdx = Number(el.dataset.idx); paintActive(false); };
         el.onclick = () => { activeIdx = Number(el.dataset.idx); execActive(); };
@@ -1808,7 +1808,7 @@
       paintActive(true);
     }
 
-    // Cheap update — only toggles .active class on existing nodes. No DOM rebuild.
+    // Cheap update: only toggles .active class on existing nodes. No DOM rebuild.
     function paintActive(scroll) {
       let activeEl = null;
       list.querySelectorAll('.cmdk-item').forEach(el => {
@@ -1822,7 +1822,7 @@
     function execActive() {
       const it = items[activeIdx];
       if (!it) return;
-      // Close cmdk and run in the same tick — no flicker gap to bare page.
+      // Close cmdk and run in the same tick; no flicker gap to bare page.
       close();
       it.run();
     }
@@ -1922,7 +1922,7 @@
       // 2. Hide zero/em-dash stats
       modal.querySelectorAll('.stat-item').forEach(item => {
         const text = item.querySelector('.stat-value')?.textContent.trim() || '';
-        if (text === '—' || text === '0') item.classList.add('zero');
+        if (text === '–' || text === '0') item.classList.add('zero');
       });
 
       // 3. Primary action button at top of body
@@ -1982,7 +1982,7 @@
     new MutationObserver(() => {
       const modal = modalOverlay.querySelector('.modal');
       if (!modal) {
-        // Modal closed — disconnect any lingering history observer.
+        // Modal closed; disconnect any lingering history observer.
         if (activeHistoryObserver) { activeHistoryObserver.disconnect(); activeHistoryObserver = null; }
         return;
       }
@@ -2049,7 +2049,7 @@
           '.pdf-empty { color: #777; font-style: italic; font-size: 11pt; }' +
         '</style>' +
         '<div style="border-bottom: 2px solid #111; padding-bottom: 12px;">' +
-          '<h1 class="pdf-h1">The Fred Wright &mdash; ' + year + ' Roster</h1>' +
+          '<h1 class="pdf-h1">The Fred Wright &middot; ' + year + ' Roster</h1>' +
           '<div class="pdf-meta">Oakley Country Club &middot; Printed ' + escapeHtml(printedOn) + '</div>' +
         '</div>' +
         '<div class="pdf-summary">' + summary + '</div>' +

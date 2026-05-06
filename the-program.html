@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Fred Wright &mdash; LII &middot; Oakley Country Club</title>
+<title>The Fred Wright &middot; LII &middot; Oakley Country Club</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -245,6 +245,60 @@
     font-style: italic;
     font-size: 14px;
     color: var(--ink-muted);
+  }
+
+  /* =========== PROGRAM ANCHORS (sticky in-page nav) =========== */
+  .program-anchors {
+    position: sticky;
+    top: 22px; /* sits just below the draft ribbon when present */
+    z-index: 70;
+    background: rgba(250, 244, 232, 0.92);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid var(--rule-soft);
+    border-bottom: 1px solid var(--rule-soft);
+    padding: 11px 32px;
+    margin-bottom: 36px;
+  }
+  body:has(.draft-ribbon.hidden) .program-anchors,
+  body:not(:has(.draft-ribbon)) .program-anchors { top: 0; }
+  .program-anchors-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+  .program-anchors a {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--ink-muted);
+    text-decoration: none;
+    padding: 4px 2px;
+    border-bottom: 1px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .program-anchors a:hover { color: var(--ink); border-bottom-color: var(--brass); }
+  .program-anchors .sep { color: var(--brass); opacity: 0.5; font-size: 10px; }
+  @media (max-width: 600px) {
+    .program-anchors { padding: 9px 14px; margin-bottom: 28px; }
+    .program-anchors-inner { gap: 14px; }
+    .program-anchors a { font-size: 10px; letter-spacing: 0.16em; }
+    .program-anchors .sep { display: none; }
+  }
+  /* offset anchor targets so the sticky strip doesn't cover their headings */
+  #honoring, #hall-of-memory, #main-view { scroll-margin-top: 80px; }
+
+  /* tighten the gap between the search and the column headers */
+  .player-view .search-box {
+    display: block;
+    max-width: 480px;
+    margin: 0 auto 22px;
   }
 
   /* =========== PROGRAM BODY (Player View) =========== */
@@ -913,7 +967,7 @@
   @media print {
     @page { margin: 0.5in; size: letter; }
     body { background: white !important; color: black; background-image: none; }
-    .draft-ribbon, .top-nav, header.masthead, .dedication, .legacy, main, footer.colophon,
+    .draft-ribbon, .top-nav, header.masthead, .program-anchors, .dedication, .legacy, main, footer.colophon,
     .overlay, #modal-overlay, #print-view, .admin-chrome { display: none !important; }
 
     #program-print { display: block; font-family: "Fraunces", Georgia, serif; color: black; }
@@ -1169,7 +1223,7 @@
     Oakley Country Club <span class="bullet">·</span> 1898
   </div>
 
-  <!-- Oakley Country Club crest — oak wreath + acorn + 1898.
+  <!-- Oakley Country Club crest: oak wreath + acorn + 1898.
        Original raster file; replace with an SVG export if/when available. -->
   <img class="crest" src="oakley-logo.png" alt="Oakley Country Club crest" width="492" height="490">
 
@@ -1184,32 +1238,42 @@
   </div>
 </header>
 
-<!-- Dedication — verified biography from 1958 Golfdom obit; pull-quote awaits family/chair input -->
-<section class="dedication">
+<!-- In-page anchor nav. Sticks below the draft ribbon (or to the top once dismissed). -->
+<nav class="program-anchors" aria-label="Program sections">
+  <div class="program-anchors-inner">
+    <a href="#honoring">In Honor Of</a>
+    <span class="sep">&bull;</span>
+    <a href="#hall-of-memory">Hall of Memory</a>
+    <span class="sep">&bull;</span>
+    <a href="#main-view">The Roster</a>
+  </div>
+</nav>
+
+<!-- Dedication: verified biography from 1958 Golfdom obit. Pull text is drawn from
+     the same obit (acts as an epigraph rather than a sourced quote). -->
+<section class="dedication" id="honoring">
   <div class="dedication-kicker">In Honor Of</div>
   <div class="dedication-body">
-    <span class="pull">
-      &ldquo;<span class="placeholder-mark" title="Replace with a real pull-quote about Fred Wright">PULL QUOTE</span>&rdquo;
-    </span>
-    Frederick J. Wright Jr. (1898&ndash;1958) was an amateur of the first rank &mdash; a member of the winning 1923 United States Walker Cup team, seven-time Massachusetts state champion, and the 1956 USGA Senior Amateur champion. He was still competing for the National Amateur on August 26, 1958, when he collapsed at the thirteenth tee of The Country Club at Brookline. This tournament is played each spring in his memory.
+    <span class="pull">An amateur of the first rank.</span>
+    Frederick J. Wright Jr. (1898&ndash;1958) was a member of the winning 1923 United States Walker Cup team, seven-time Massachusetts state champion, and the 1956 USGA Senior Amateur champion. He was still competing for the National Amateur on August 26, 1958, when he collapsed at the thirteenth tee of The Country Club at Brookline. This tournament is played each spring in his memory.
   </div>
-  <div class="dedication-sig">&mdash; The Board of Governors</div>
+  <div class="dedication-sig">The Golf Committee</div>
 </section>
 
 <!-- ============ LEGACY · HALL OF MEMORY ============ -->
-<section class="legacy">
+<section class="legacy" id="hall-of-memory">
   <div class="legacy-header">
     <div class="legacy-eyebrow">A Life In Golf</div>
     <h2 class="legacy-title">Hall of <em>Memory</em></h2>
     <p class="legacy-lede">
-      Five moments from the archive &mdash; from a young Wright on the United States team
+      Five moments from the archive, from a young Wright on the United States team
       at Hoylake through his prime at Oakley and into living memory at the Club.
     </p>
   </div>
 
   <div class="timeline">
 
-    <!-- Station I — 1921 (the keystone: Wright on the US team) -->
+    <!-- Station I, 1921 (the keystone: Wright on the US team) -->
     <article class="station is-archival">
       <div class="station-marker">
         <div class="station-year">1921</div>
@@ -1224,7 +1288,7 @@
         <h3 class="station-title">America v. <em>Great Britain</em></h3>
         <p class="station-caption">
           At Royal Liverpool&rsquo;s Hoylake links, the informal match between America and
-          Great Britain &mdash; the contest that would formalize, the next year, as the
+          Great Britain. The contest would formalize, the next year, as the
           Walker Cup. Wright (fourth from left) played for the United States alongside
           Bobby Jones, Francis Ouimet, and Jesse Guilford under captain William C.
           Fownes Jr., paired in the singles against Britain&rsquo;s E. W. Holderness.
@@ -1233,7 +1297,7 @@
       </div>
     </article>
 
-    <!-- Station II — 1923 -->
+    <!-- Station II, 1923 -->
     <article class="station is-archival">
       <div class="station-marker">
         <div class="station-year">1923</div>
@@ -1242,7 +1306,7 @@
       <div class="station-content">
         <figure class="station-photo">
           <img src="history/walker-cup-1923.jpg"
-               alt="The 1923 United States Walker Cup team aboard ship — Francis Ouimet, Robert Gardner, George Rotan, Dr. Oscar W. Willing, Harrison Johnson, David Herron"
+               alt="The 1923 United States Walker Cup team aboard ship: Francis Ouimet, Robert Gardner, George Rotan, Dr. Oscar W. Willing, Harrison Johnson, David Herron"
                loading="lazy">
         </figure>
         <h3 class="station-title">A <em>Walker Cup</em> Won</h3>
@@ -1256,7 +1320,7 @@
       </div>
     </article>
 
-    <!-- Station III — c.1920s -->
+    <!-- Station III, c.1920s -->
     <article class="station is-archival">
       <div class="station-marker">
         <div class="station-year">c.1920s</div>
@@ -1270,15 +1334,15 @@
         </figure>
         <h3 class="station-title">Among <em>Champions</em></h3>
         <p class="station-caption">
-          Wright (right) with Jess Guilford, Francis Ouimet, and Roland Hancock
-          &mdash; four amateurs of national rank. Guilford was the 1921 U.S. Amateur
+          Wright (right) with Jess Guilford, Francis Ouimet, and Roland Hancock.
+          Four amateurs of national rank. Guilford was the 1921 U.S. Amateur
           champion; Ouimet, the 1913 U.S. Open champion at Brookline.
         </p>
         <div class="station-attrib">Oakley Archives, c. MCMXX&ndash;XXIX</div>
       </div>
     </article>
 
-    <!-- Station IV — 1948 -->
+    <!-- Station IV, 1948 -->
     <article class="station is-archival">
       <div class="station-marker">
         <div class="station-year">1948</div>
@@ -1300,7 +1364,7 @@
       </div>
     </article>
 
-    <!-- Station V — 2019 (restored color: legacy lives on) -->
+    <!-- Station V, 2019 (restored color: legacy lives on) -->
     <article class="station is-living">
       <div class="station-marker">
         <div class="station-year">2019</div>
@@ -1330,10 +1394,10 @@
 <div id="banner-area"></div>
 <main id="main-view">Loading&hellip;</main>
 
-<!-- Ceremonial colophon (program footer) — typography only; no second crest. -->
+<!-- Ceremonial colophon (program footer): typography only; no second crest. -->
 <footer class="colophon">
   <div class="colophon-text">
-    <strong>The Fred Wright</strong> &mdash; played each
+    <strong>The Fred Wright</strong>, played each
     <span class="placeholder-mark" title="Season">[SEASON]</span> on the
     <span class="placeholder-mark" title="Course name">[COURSE]</span> at
     Oakley Country Club, founded 1898. Field of sixty.
@@ -1371,7 +1435,7 @@
 </script>
 <script src="shared.js?v=6"></script>
 <script>
-  // The Program — ceremonial, read-only, public-facing website.
+  // The Program: ceremonial, read-only, public-facing website.
   // Locked to current season; shows only confirmed players and the waitlist.
   // Pending, deferred, and new-signup players are private.
   (function() {
@@ -1397,8 +1461,8 @@
     const AWAITING_LABEL = 'Awaiting a Place';
     const RULES_HTML =
       'Names listed <strong>alphabetically by surname</strong>. ' +
-      'Position on the waiting list does not reflect priority &mdash; ' +
-      'seats open through deferrals and declines throughout the season. ' +
+      'Position on the waiting list does not reflect priority. ' +
+      'Seats open through deferrals and declines throughout the season. ' +
       'Questions? Contact the pro shop.';
 
     let lastWaitlistKey = null; // signature of the rendered waitlist; bail early if unchanged
@@ -1409,7 +1473,7 @@
         .sort((a, b) => a.localeCompare(b));
 
       const key = names.join('|');
-      if (key === lastWaitlistKey) return; // no change — skip DOM work
+      if (key === lastWaitlistKey) return; // no change; skip DOM work
       lastWaitlistKey = key;
 
       const listEl = awaitingCol.querySelector('.public-list');
@@ -1533,7 +1597,7 @@
           '<div class="dedication">' +
             '<div class="kicker-small">In Honor Of</div>' +
             'Fred Wright served as [ROLE] at Oakley Country Club from [YEAR] to [YEAR]. ' +
-            '[2&ndash;3 sentence biographical dedication goes here &mdash; replace with real text.] ' +
+            '[2&ndash;3 sentence biographical dedication goes here. Replace with real text.] ' +
             'This tournament is played each spring in his memory.' +
           '</div>' +
         '</section>' +

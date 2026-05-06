@@ -121,7 +121,7 @@
 
     const demoExtras = {
       'Amico, Angelo': {
-        notes: 'Plays fast — prefers 7:30 tee time. Original tournament member.',
+        notes: 'Plays fast; prefers 7:30 tee time. Original tournament member.',
         history: [
           { date: '2019-11-01', event: 'Played in 2020 season', type: 'add' },
           { date: '2020-11-01', event: 'Played in 2021 season', type: 'add' },
@@ -151,7 +151,7 @@
         ]
       },
       'Chryssis, Alex': {
-        notes: 'Promoted from Waitlist in Feb 2023. Strong player — consistent low gross.',
+        notes: 'Promoted from Waitlist in Feb 2023. Strong player; consistent low gross.',
         history: [
           { date: '2021-11-15', event: 'Added to Waitlist for 2022 season', type: 'add' },
           { date: '2022-11-15', event: 'Carried on Waitlist for 2023 season', type: 'add' },
@@ -161,7 +161,7 @@
         ]
       },
       'Coughlin, John': {
-        notes: 'Attorney — schedule around trial calendar. Prefers late March weekends.',
+        notes: 'Attorney; schedule around trial calendar. Prefers late March weekends.',
         history: [
           { date: '2022-11-01', event: 'Played in 2023 season', type: 'add' },
           { date: '2023-11-01', event: 'Played in 2024 season', type: 'add' },
@@ -169,7 +169,7 @@
         ]
       },
       'Reynolds, Jim': {
-        notes: 'Shoulder surgery in 2022, back trouble late 2024 — check on status before confirming 2026.',
+        notes: 'Shoulder surgery in 2022, back trouble late 2024; check on status before confirming 2026.',
         history: [
           { date: '2020-11-01', event: 'Played in 2021 season', type: 'add' },
           { date: '2021-11-01', event: 'Deferred for 2022 season', type: 'defer', season: 2022 },
@@ -411,7 +411,7 @@
 
     printViewEl.innerHTML =
       '<div class="print-header">' +
-        '<h1>Fred Wright Tournament &mdash; ' + year + ' Roster</h1>' +
+        '<h1>Fred Wright Tournament &middot; ' + year + ' Roster</h1>' +
         '<div class="print-meta">Oakley Country Club &middot; Printed ' + escapeHtml(printedOn) + '</div>' +
       '</div>' +
       '<div class="print-summary">' + summaryParts.join('') + '</div>' +
@@ -932,9 +932,9 @@
     const status = isActive ? getStatus(p, year) : null;
 
     const initialHistory = p.history || [];
-    const firstYear = initialHistory.length ? initialHistory[0].date.slice(0, 4) : '—';
+    const firstYear = initialHistory.length ? initialHistory[0].date.slice(0, 4) : '–';
     const deferSeasons = getDeferSeasons(p);
-    const deferSeasonsStr = deferSeasons.length ? deferSeasons.join(', ') : '—';
+    const deferSeasonsStr = deferSeasons.length ? deferSeasons.join(', ') : '–';
 
     const currentListName = currentListId ? listDisplayName(currentListId, year) : 'Not in ' + year;
 
@@ -973,7 +973,7 @@
         (actionsHtml ? '<div class="action-row">' + actionsHtml + '</div>' : '') +
         '<div class="notes-section">' +
           '<h3>Notes</h3>' +
-          '<textarea class="notes-textarea" id="notes-textarea" placeholder="Back trouble — morning tee times only. Usually pairs with Mike Burke. Emailed 3/15, no reply yet."></textarea>' +
+          '<textarea class="notes-textarea" id="notes-textarea" placeholder="Back trouble; morning tee times only. Usually pairs with Mike Burke. Emailed 3/15, no reply yet."></textarea>' +
           '<button class="notes-save-btn" id="notes-save" disabled>Save notes</button>' +
         '</div>' +
         '<div class="history">' +
@@ -1070,7 +1070,7 @@
           guardDefer(p,
             () => {
               setSeason(p, year, { list: 'deferred' });
-              logHistory(p, 'Declined ' + year + ' — deferred (eligible to return ' + (year + 1) + ')', 'decline', { season: year });
+              logHistory(p, 'Declined ' + year + ', deferred (eligible to return ' + (year + 1) + ')', 'decline', { season: year });
               saveState();
               render();
             },
@@ -1230,7 +1230,7 @@
         if (overCap) {
           html +=
             '<div class="setup-summary-warn">' +
-              'Exceeds cap by ' + overBy + ' — you\'ll trim ' + overBy + ' pending down before confirming.' +
+              'Exceeds cap by ' + overBy + '. You\'ll trim ' + overBy + ' pending down before confirming.' +
             '</div>';
         }
         if (waitlistCount > 0) {

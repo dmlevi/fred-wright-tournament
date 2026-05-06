@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fred Wright &mdash; Standings</title>
+<title>Fred Wright &middot; Standings</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -524,7 +524,7 @@
   .std-row.expanded .std-expand { color: var(--forest); transform: rotate(90deg); display: inline-block; }
   .std-expand { transition: transform 0.15s; }
 
-  /* Muted breakdown line — used when a bonus doesn't apply to a player */
+  /* Muted breakdown line: used when a bonus doesn't apply to a player */
   .bd-line.muted .bd-label { color: var(--ink-muted); }
   .bd-line.muted .bd-pts   { color: var(--ink-dim); }
   /* The std-breakdown wrapper row's chrome */
@@ -679,7 +679,7 @@
     100% { background: transparent; }
   }
 
-  /* Drawer tabs — make them clickable */
+  /* Drawer tabs: make them clickable */
   .drawer-tab { cursor: pointer; }
 
   /* Tournaments tab placeholder */
@@ -1483,7 +1483,7 @@
     { key:'new',   label:'New',          match: p => p.source === 'new' },
     { key:'first', label:'First-timers', match: p => p.firstTimer }
   ];
-  // Filter counts only depend on PLAYERS (which is fixed) — compute once.
+  // Filter counts only depend on PLAYERS (which is fixed); compute once.
   const FILTER_COUNTS = {};
   FILTERS.forEach(f => { FILTER_COUNTS[f.key] = PLAYERS.filter(f.match).length; });
 
@@ -1509,7 +1509,7 @@
     p.noShows = p.noShows || [];
   });
 
-  // Player options never change — precompute the dropdown HTML once.
+  // Player options never change; precompute the dropdown HTML once.
   const PLAYER_OPTIONS_HTML = PLAYERS.map(p =>
     '<option value="' + p.id + '">' + escapeHtml(p.name) + '</option>'
   ).join('');
@@ -1610,7 +1610,7 @@
 
     // Hero lede
     document.getElementById('hero-lede').innerHTML =
-      'Engagement points lock at the application deadline &mdash; <strong>' + cutoffLabel +
+      'Engagement points lock at the application deadline, <strong>' + cutoffLabel +
       '</strong>. The top <strong>' + state.config.openSlots + ' of ' + PLAYERS.length +
       '</strong> eligible pool members currently qualify; the rest fill the waitlist. <strong>48</strong> returning participants have confirmed carryover; points only rank the remaining pool.';
 
@@ -1667,7 +1667,7 @@
 
     // Build all bar segments uniformly. Categories use --cat-{color}; bonuses use direct vars.
     // Bar percentages are over the SUM of positive segments (not entry.total), so a player with
-    // a no-show penalty doesn't make the bar over-fill — the penalty shows up in the total + breakdown.
+    // a no-show penalty doesn't make the bar over-fill; the penalty shows up in the total + breakdown.
     const segments = [];
     state.categories.forEach(c => {
       const pts = entry.byCategory[c.id];
@@ -1763,7 +1763,7 @@
     // No-show entries (always at the bottom of Tournament Play, in red).
     (entry.noShowEvents || []).forEach(t => {
       lines.push(bdLine({
-        dotClass: '', label: '<span style="color: var(--red);">' + escapeHtml(t.name) + ' &mdash; no-show</span>',
+        dotClass: '', label: '<span style="color: var(--red);">' + escapeHtml(t.name) + ' (no-show)</span>',
         sub: t.label + ' &middot; penalty',
         pts: state.bonuses.noShow
       }));
@@ -1776,13 +1776,13 @@
     })];
     bonuses.push(p.firstTimer
       ? bdLine({ dotClass:'first', label:'First-timer bonus', sub:'never played Fred Wright Jr.', pts:entry.firstTimer })
-      : bdLine({ dotClass:'first', label:'First-timer bonus', sub:'not applicable', pts:'&mdash;', muted:true }));
+      : bdLine({ dotClass:'first', label:'First-timer bonus', sub:'not applicable', pts:'&ndash;', muted:true }));
     if (p.discretionary && p.discretionary.length > 0) {
       p.discretionary.forEach(d => bonuses.push(bdLine({
         dotClass:'discretionary', label:'Discretionary', sub:escapeHtml(d.reason), pts:d.pts
       })));
     } else {
-      bonuses.push(bdLine({ dotClass:'discretionary', label:'Discretionary', sub:'none awarded', pts:'&mdash;', muted:true }));
+      bonuses.push(bdLine({ dotClass:'discretionary', label:'Discretionary', sub:'none awarded', pts:'&ndash;', muted:true }));
     }
 
     return '<div class="std-row std-row-breakdown">' +
@@ -1809,7 +1809,7 @@
     });
   }
 
-  // Pane lookup — adding a new tab is a one-line registration here.
+  // Pane lookup: adding a new tab is a one-line registration here.
   const PANES = {
     [TABS.CATEGORIES]:    renderCategoriesPane,
     [TABS.TOURNAMENTS]:   renderTournamentsPane,
@@ -1929,7 +1929,7 @@
           '<button data-tn-step="1" data-tn="' + t.id + '" aria-label="Increase">+</button>' +
         '</div>';
 
-      // Player options for the no-show picker — exclude players already marked no-show for this event.
+      // Player options for the no-show picker: exclude players already marked no-show for this event.
       const noShowSet = new Set(tNoShows.map(n => n.id));
       const pickerOptions = '<option value="">Mark a no-show…</option>' + PLAYERS
         .filter(p => !noShowSet.has(p.id))
@@ -2008,7 +2008,7 @@
     const exhausted = remaining <= 0;
 
     const awardsHtml = allAwards.length === 0
-      ? '<div class="disc-empty">No awards yet this season &mdash; award the first one above.</div>'
+      ? '<div class="disc-empty">No awards yet this season. Award the first one above.</div>'
       : allAwards.map(a =>
           '<div class="disc-award" data-award-id="' + a.id + '">' +
             '<div class="disc-award-main">' +
